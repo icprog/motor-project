@@ -1,0 +1,153 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:11 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\unitTests\unitTests.c                         #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\unitTests\unitTests.c" -D UNIT_TESTING=1      #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\unitTests.lst              #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\unitTests.o                 #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\unitTests\unitTests.c
+      1          /*******************************************************************************************
+      2          UNIT Test program
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "includes.h"
+     12          #include "embUnit/embUnit.h"
+     13          
+     14          
+     15          /**************************************************************************
+     16           *                                  Constants
+     17           **************************************************************************/
+     18          #define AS_PROTOTYPES(a)   extern TestRef a(void);
+     19          #define AS_TEST(a)         TestRunner_runTest(a());
+     20          
+     21          #define UNIT_TESTS(_)   \
+     22          _(CBufTests)            \
+     23          _(ItemQFifoTestsLen1)   \
+     24          _(ItemQLifoTestsLen1)   \
+     25          _(ItemQFifoTestsLen2)   \
+     26          _(ItemQLifoTestsLen2)   \
+     27          _(ItemQFifoTestsLen3)   \
+     28          _(ItemQLifoTestsLen3)   \
+     29          _(ItemQFifoTestsLen4)   \
+     30          _(ItemQLifoTestsLen4)   \
+     31          
+     32          
+     33          /**************************************************************************
+     34           *                                  Types
+     35           **************************************************************************/
+     36          /**************************************************************************
+     37           *                                  Variables
+     38           **************************************************************************/
+     39          /**************************************************************************
+     40           *                                  Prototypes
+     41           **************************************************************************/
+     42          UNIT_TESTS(AS_PROTOTYPES)
+     43          
+     44          
+     45          /**************************************************************************
+     46           *                                  Global Functions
+     47           **************************************************************************/
+     48          /**************************************************************************
+     49           *                                 Functions
+     50           **************************************************************************/
+     51          int  main(void)
+     52          {
+     53          	TestRunner_start();
+     54          	{
+     55                UNIT_TESTS(AS_TEST)
+     56          	}
+     57          
+     58          	return TestRunner_end();
+     59          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   main
+         8   -> CBufTests
+         8   -> ItemQFifoTestsLen1
+         8   -> ItemQFifoTestsLen2
+         8   -> ItemQFifoTestsLen3
+         8   -> ItemQFifoTestsLen4
+         8   -> ItemQLifoTestsLen1
+         8   -> ItemQLifoTestsLen2
+         8   -> ItemQLifoTestsLen3
+         8   -> ItemQLifoTestsLen4
+         8   -> TestRunner_end
+         8   -> TestRunner_runTest
+         8   -> TestRunner_start
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      84  main
+
+ 
+ 84 bytes in section .text
+ 
+ 84 bytes of CODE memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,220 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:38 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\utils\sysTick.c                               #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\utils\sysTick.c" -D __SAM3U2C__               #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\sysTick.lst                    #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\sysTick.o                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\utils\sysTick.c
+      1          /*******************************************************************************************
+      2          System Tick
+      3          
+      4          (c) Copyright 2012, Gas Clip Technologies Inc. All rights reserved.
+      5          This source code contains confidential, trade secret material. Any attempt or participation
+      6          in deciphering, decoding, reverse engineering or in any way altering the source code is
+      7          strictly prohibited, unless the prior written consent of Gas Clip Technologies Inc is obtained.
+      8          ********************************************************************************************/
+      9          
+     10          #include "systick.h"
+     11          #include "bsp.h"
+     12          #include "irq.h"
+     13          #include "core_cm3.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          #ifndef MS_TO_CPU_TICKS
+     20          #define MS_TO_CPU_TICKS(ms)      ((BspGetCpuClkFreq()/8000) * (ms))
+     21          #endif
+     22          
+     23          
+     24          /**************************************************************************
+     25           *                                  Types
+     26           **************************************************************************/
+     27          /**************************************************************************
+     28           *                                  Variables
+     29           **************************************************************************/
+     30          static vu32 sysTick;
+     31          
+     32          
+     33          /**************************************************************************
+     34           *                                  Prototypes
+     35           **************************************************************************/
+     36          /**************************************************************************
+     37           *                                  Global Functions
+     38           **************************************************************************/
+     39          void SysTickInitMs(u32 sysTickMs)
+     40          {
+     41             SysTickInit(MS_TO_CPU_TICKS(sysTickMs));
+     42          }
+     43          
+     44          void SysTickInit(u32 sysTicks)
+     45          {
+     46             SysTickStop();
+     47             NVIC_SetPriority(SysTick_IRQn, IRQ_PRIO_SYS_TICK);
+     48             sysTick = 0;
+     49          
+     50             // NOTE: SysTick is a 24-bit number.
+     51             SysTick->LOAD  = sysTicks - 1;
+     52             SysTick->VAL  = 0;
+     53             SysTick->CTRL = (0<<SYSTICK_CLKSOURCE) | (1<<SYSTICK_ENABLE) | (1<<SYSTICK_TICKINT);
+     54          }
+     55          
+     56          void SysTickStop(void)
+     57          {
+     58             SysTick->CTRL = 0;
+     59          }
+     60          
+     61          #ifndef _lint
+     62          void SysTick_Handler(void)
+     63          {
+     64             sysTick++;
+     65          }
+     66          #endif
+     67          
+     68          
+     69          u32 SysTickGet(void)
+     70          {
+     71             return sysTick;
+     72          }
+     73          
+     74          bool SysTickHasElapsed(u32 checkTick)
+     75          {
+     76          	return (bool)(((s32)sysTick - (s32)checkTick) >= 0);
+     77          }
+     78          
+     79          s32 SysTickRemaining(u32 checkTick)
+     80          {
+     81          	return (s32)checkTick - (s32)sysTick;
+     82          }
+     83          
+     84          void SysTickWait(void)
+     85          {
+     86             SysTickWaitTick(sysTick + 1);
+     87          }
+     88          
+     89          void SysTickWaitTick(u32 checkTick)
+     90          {
+     91             while (!SysTickHasElapsed(checkTick))
+     92             {
+     93                __disable_interrupt();
+     94                if (!SysTickHasElapsed(checkTick))
+     95                {
+     96                   __WFI();
+     97                }
+     98                __enable_interrupt();
+     99             }
+    100          }
+    101          
+    102          
+    103          /**************************************************************************
+    104           *                                 Private Functions
+    105           **************************************************************************/
+    106          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   NVIC_SetPriority
+       0   SysTickGet
+       0   SysTickHasElapsed
+       8   SysTickInit
+         8   -> NVIC_SetPriority
+         8   -> SysTickStop
+       8   SysTickInitMs
+         8   -> SysTickInit
+       0   SysTickRemaining
+       0   SysTickStop
+       8   SysTickWait
+         8   -> SysTickWaitTick
+       8   SysTickWaitTick
+         8   -> SysTickHasElapsed
+       0   SysTick_Handler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable7
+       4  ??DataTable7_1
+       4  ??DataTable7_2
+       4  ??DataTable7_3
+       4  ??DataTable7_4
+       4  ??DataTable7_5
+      32  NVIC_SetPriority
+       6  SysTickGet
+      20  SysTickHasElapsed
+      44  SysTickInit
+      18  SysTickInitMs
+       8  SysTickRemaining
+       8  SysTickStop
+      14  SysTickWait
+      34  SysTickWaitTick
+      12  SysTick_Handler
+       4  sysTick
+
+ 
+   4 bytes in section .bss
+ 220 bytes in section .text
+ 
+ 220 bytes of CODE memory
+   4 bytes of DATA memory
+
+Errors: none
+Warnings: none

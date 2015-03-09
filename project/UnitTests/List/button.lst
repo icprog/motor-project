@@ -1,0 +1,286 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:02 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\button.c                              #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\button.c" -D UNIT_TESTING=1           #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\button.lst                 #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\button.o                    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\button.c
+      1          /*******************************************************************************************
+      2          Button Driver
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "button.h"
+     12          #include "gpio.h"
+     13          
+     14          
+     15          /**************************************************************************
+     16           *                                  Constants
+     17           **************************************************************************/
+     18          #define BUTTON_IS_VALID(btn)     ((u8f)btn < (u8f)BTN_COUNT)
+     19          static const GPIO_PIN BtnToGpio[BTN_COUNT] =
+     20          {
+     21             [BTN_L]  = GPIO_PIN_BUTTON0,
+     22             [BTN_LM] = GPIO_PIN_BUTTON1,
+     23             [BTN_RM] = GPIO_PIN_BUTTON2,
+     24             [BTN_R]  = GPIO_PIN_BUTTON3,
+     25          };
+     26          
+     27          
+     28          /**************************************************************************
+     29           *                                  Types
+     30           **************************************************************************/
+     31          typedef struct
+     32          {
+     33             BUTTONS btn;
+     34             volatile bool wasPressed;
+     35             volatile bool holdAck;
+     36             volatile u32 pressTick;
+     37             BTN_EVENTS btnEvents;
+     38          }BTN;
+     39          
+     40          
+     41          /**************************************************************************
+     42           *                                  Variables
+     43           **************************************************************************/
+     44          static BTN btns[BTN_COUNT];
+     45          
+     46          
+     47          /**************************************************************************
+     48           *                                  Prototypes
+     49           **************************************************************************/
+     50          static void ButtonChangeIrq(GPIO_PIN pin);
+     51          
+     52          
+     53          /**************************************************************************
+     54           *                                  Global Functions
+     55           **************************************************************************/
+     56          void ButtonInit(void)
+     57          {
+     58             memset(btns, 0, sizeof(btns));
+     59             for (BUTTONS btn = (BUTTONS)0; btn < BTN_COUNT; btn++)
+     60             {
+     61                btns[btn].btn = btn;
+     62                ButtonChangeIrq(BtnToGpio[btn]);
+     63                btns[btn].wasPressed = false;
+     64                GpioIrqInstall(BtnToGpio[btn], GPIO_IRQ_CHANGE, ButtonChangeIrq);
+     65             }
+     66          }
+     67          
+     68          void ButtonUpdate(void)
+     69          {
+     70             for (BUTTONS btn = (BUTTONS)0; btn < BTN_COUNT; btn++)
+     71             {
+     72                if ((btns[btn].pressTick < UINT32_MAX) && ButtonIsPressed(btn))
+     73                {
+     74                   btns[btn].pressTick++;
+     75                   if (!btns[btn].holdAck && btns[btn].btnEvents.pfnBtnHeld && ButtonIsHeld(btn))
+     76                   {
+     77                      btns[btn].holdAck = true;
+     78                      btns[btn].btnEvents.pfnBtnHeld(btn);
+     79                   }
+     80                }
+     81             }
+     82          }
+     83          
+     84          void ButtonNotify(BUTTONS btn, BTN_EVENTS const *pBtnEvents)
+     85          {
+     86             if (BUTTON_IS_VALID(btn))
+     87             {
+     88                if (pBtnEvents == NULL)
+     89                {
+     90                   memset(&btns[btn].btnEvents, 0, sizeof(BTN_EVENTS));
+     91                }
+     92                else
+     93                {
+     94                   memcpy(&btns[btn].btnEvents, pBtnEvents, sizeof(BTN_EVENTS));
+     95                }
+     96             }
+     97          }
+     98          
+     99          bool ButtonIsPressed(BUTTONS btn)
+    100          {
+    101             return (btns[btn].pressTick > 0);
+    102          }
+    103          
+    104          bool ButtonWasPressed(BUTTONS btn)
+    105          {
+    106             return btns[btn].wasPressed;
+    107          }
+    108          
+    109          bool ButtonIsHeld(BUTTONS btn)
+    110          {
+    111             return ButtonIsHeldXMs(btn, BUTTON_HOLD_TIME_MS);
+    112          }
+    113          
+    114          bool ButtonIsHeldXMs(BUTTONS btn, u32 ms)
+    115          {
+    116             return (!btns[btn].holdAck && (btns[btn].pressTick >= MS_TO_TICKS_RATE(ms, BUTTON_UPDATE_RATE_MS)));
+    117          }
+    118          
+    119          void ButtonPressAck(BUTTONS btn)
+    120          {
+    121             if (BUTTON_IS_VALID(btn))
+    122             {
+    123                btns[btn].wasPressed = false;
+    124             }
+    125          }
+    126          
+    127          void ButtonHoldAck(BUTTONS btn)
+    128          {
+    129             if (BUTTON_IS_VALID(btn))
+    130             {
+    131                btns[btn].holdAck = true;
+    132             }
+    133          }
+    134          
+    135          
+    136          /**************************************************************************
+    137           *                                 Private Functions
+    138           **************************************************************************/
+    139          static void ButtonChangeIrq(GPIO_PIN pin)
+    140          {
+    141             for (BUTTONS btn = (BUTTONS)0; btn < BTN_COUNT; btn++)
+    142             {
+    143                if (BtnToGpio[btn] == pin)
+    144                {
+    145                   //NOTE: All buttons are active low
+    146                   if (GpioIsSet(pin))
+    147                   {
+    148                      // button released
+    149                      if (!btns[btn].holdAck)
+    150                         btns[btn].wasPressed = true;
+    151                      btns[btn].pressTick = 0;
+    152                      btns[btn].holdAck = false;
+    153                      if (btns[btn].btnEvents.pfnBtnReleased)
+    154                         btns[btn].btnEvents.pfnBtnReleased(btn);
+    155                   }
+    156                   else
+    157                   {
+    158                      // button pressed
+    159                      btns[btn].pressTick = 1;
+    160                      if (btns[btn].btnEvents.pfnBtnPressed)
+    161                         btns[btn].btnEvents.pfnBtnPressed(btn);
+    162                   }
+    163                   break;
+    164                }
+    165             }
+    166          }
+    167          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   ButtonChangeIrq
+        16   -- Indirect call
+        16   -> GpioIsSet
+       0   ButtonHoldAck
+       8   ButtonInit
+         8   -> ButtonChangeIrq
+         8   -> GpioIrqInstall
+         8   -> memset
+       8   ButtonIsHeld
+         8   -> ButtonIsHeldXMs
+       0   ButtonIsHeldXMs
+       0   ButtonIsPressed
+      16   ButtonNotify
+        16   -> memcpy
+        16   -> memset
+       0   ButtonPressAck
+       8   ButtonUpdate
+         8   -- Indirect call
+         8   -> ButtonIsHeld
+         8   -> ButtonIsPressed
+       0   ButtonWasPressed
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable8
+       4  ??DataTable8_1
+       4  BtnToGpio
+     186  ButtonChangeIrq
+      22  ButtonHoldAck
+      78  ButtonInit
+      18  ButtonIsHeld
+      48  ButtonIsHeldXMs
+      26  ButtonIsPressed
+      60  ButtonNotify
+      22  ButtonPressAck
+     148  ButtonUpdate
+      14  ButtonWasPressed
+      80  btns
+
+ 
+  80 bytes in section .bss
+   4 bytes in section .rodata
+ 630 bytes in section .text
+ 
+ 630 bytes of CODE  memory
+   4 bytes of CONST memory
+  80 bytes of DATA  memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,532 @@
+###############################################################################
+#                                                                             #
+# IAR ELF Linker V6.40.4.54170/W32 for ARM              26/Jan/2014  15:57:52 #
+# Copyright 2007-2012 IAR Systems AB.                                         #
+#                                                                             #
+#    Output file  =  ../../../bin/mpgL1Demo.out                               #
+#    Map file     =  ../../../bin/mpgL1Demo.map                               #
+#    Command line =  board_cstartup_iar.o core_cm3.o irq.o ccsbcs.o ff.o      #
+#                    beeper.o button.o bsp.o circularBuffer.o demo.o file.o   #
+#                    fileFat.o fileSystem.o futils.o gpio.o i2c.o itemQ.o     #
+#                    lcd.o led.o music.o songTwinkleTwinkle.o sysTick.o       #
+#                    textEditor.o threadUtils.o timer.o utils.o version.o     #
+#                    wdt.o main.o -o ../../../bin/mpgL1Demo.out --redirect    #
+#                    __write=__write_buffered --map                           #
+#                    ../../../bin/mpgL1Demo.map --config                      #
+#                    ../../../project/sam3u2-flash.icf --semihosting --entry  #
+#                    __iar_program_start --merge_duplicate_sections --vfe     #
+#                    --no_exceptions --inline                                 #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor                     = *
+__Heap_Handler                = Basic
+__SystemLibrary               = DLib
+__dlib_dynamic_initialization = normal
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A1":  place at 0x00080000 { ro section .intvec };
+"P1":  place in [from 0x00080000 to 0x0009ffff] { ro };
+"P2":  place in [from 0x20000000 to 0x20003fff] { rw, block HEAP };
+"P3":  place in [from 0x20080000 to 0x20083fff] { block CSTACK };
+
+  Section          Kind        Address    Size  Object
+  -------          ----        -------    ----  ------
+"A1":                                     0xbc
+  .intvec                   0x00080000    0xbc  <Block>
+    .intvec        const    0x00080000    0xbc  board_cstartup_iar.o [1]
+                          - 0x000800bc    0xbc
+
+"P1":                                   0x3af0
+  .text            ro code  0x000800bc   0xcce  xprintffull_nomb.o [3]
+  .text            ro code  0x00080d8a    0x46  irq.o [1]
+  .text            ro code  0x00080dd0    0x16  strchr.o [5]
+  .text            ro code  0x00080de6    0x22  zero_init3.o [5]
+  .text            ro code  0x00080e08    0x36  strlen.o [5]
+  .text            ro code  0x00080e3e    0x1a  xsnprout.o [3]
+  .text            ro code  0x00080e58    0x58  memchr.o [5]
+  .text            ro code  0x00080eb0    0xee  I64DivMod.o [5]
+  .text            ro code  0x00080fa0    0x76  ABImemcpy.o [5]
+  .text            ro code  0x00081016    0x42  xdnorm.o [4]
+  .text            ro code  0x00081058    0x2e  DblCmpLe.o [4]
+  .text            ro code  0x00081088    0x2e  DblCmpGe.o [4]
+  .text            ro code  0x000810b8   0x10c  xdscale.o [4]
+  .text            ro code  0x000811c4    0x58  DblToI32.o [4]
+  .text            ro code  0x0008121c    0x30  I32ToDbl.o [4]
+  .text            ro code  0x0008124c   0x180  DblSub.o [4]
+  .text            ro code  0x000813cc   0x1a2  DblMul.o [4]
+  .text            ro code  0x00081570   0x246  DblDiv.o [4]
+  .text            ro code  0x000817b6     0xe  div.o [3]
+  .text            ro code  0x000817c4     0x2  I64DivZer.o [5]
+  .text            ro code  0x000817c8    0xd4  DblAdd.o [4]
+  .text            ro code  0x0008189c   0x690  textEditor.o [1]
+  .text            ro code  0x00081f2c     0xc  utils.o [1]
+  .text            ro code  0x00081f38     0x4  textEditor.o [1]
+  .text            ro code  0x00081f3c    0x20  textEditor.o [1]
+  .text            ro code  0x00081f5c     0xc  textEditor.o [1]
+  .text            ro code  0x00081f68    0x2a  textEditor.o [1]
+  .text            ro code  0x00081f92    0x18  textEditor.o [1]
+  .text            ro code  0x00081fac   0x3e8  lcd.o [1]
+  .text            ro code  0x00082394    0x20  textEditor.o [1]
+  .text            ro code  0x000823b4     0xa  textEditor.o [1]
+  .text            ro code  0x000823c0    0x78  ABImemmove.o [5]
+  .text            ro code  0x00082438     0x4  textEditor.o [1]
+  .text            ro code  0x0008243c    0x14  version.o [1]
+  .text            ro code  0x00082450   0x2fc  i2c.o [1]
+  .text            ro code  0x0008274c   0x232  itemQ.o [1]
+  .text            ro code  0x00082980   0x390  gpio.o [1]
+  .text            ro code  0x00082d10   0x224  timer.o [1]
+  .text            ro code  0x00082f34    0x3c  vsnprint.o [3]
+  .text            ro code  0x00082f70    0x62  memcmp.o [5]
+  .text            ro code  0x00082fd2     0xa  utils.o [1]
+  .text            ro code  0x00082fdc     0xa  textEditor.o [1]
+  .text            ro code  0x00082fe6    0x26  textEditor.o [1]
+  .text            ro code  0x0008300c    0x66  ABImemset.o [5]
+  .text            ro code  0x00083074    0xf8  bsp.o [1]
+  .text            ro code  0x0008316c   0x290  led.o [1]
+  .text            ro code  0x000833fc   0x204  button.o [1]
+  .text            ro code  0x00083600   0x188  demo.o [1]
+  .text            ro code  0x00083788    0xc0  music.o [1]
+  .text            ro code  0x00083848    0xfc  beeper.o [1]
+  .rodata          const    0x00083944    0xb0  songTwinkleTwinkle.o [1]
+  .text            ro code  0x000839f4    0x86  sysTick.o [1]
+  .text            ro code  0x00083a7a    0x4e  main.o [1]
+  .text            ro code  0x00083ac8    0x10  wdt.o [1]
+  .rodata          const    0x00083ad8    0x40  version.o [1]
+  .text            ro code  0x00083b18    0x28  data_init3.o [5]
+  .iar.init_table  const    0x00083b40    0x10  - Linker created -
+  .text            ro code  0x00083b50    0x16  cmain.o [5]
+  .text            ro code  0x00083b68    0x14  board_cstartup_iar.o [1]
+  .text            ro code  0x00083b7c     0x4  exit.o [3]
+  .text            ro code  0x00083b80     0xa  cexit.o [5]
+  .text            ro code  0x00083b8c    0x14  exit.o [6]
+  .text            ro code  0x00083ba0     0xc  cstartup_M.o [5]
+  .rodata          const    0x00083bac     0x0  zero_init3.o [5]
+                          - 0x00083bac  0x3af0
+
+"P2":                                    0x3ac
+  .bss             zero     0x20000000    0xe4  gpio.o [1]
+  .bss             zero     0x200000e4    0xbc  lcd.o [1]
+  .bss             zero     0x200001a0    0x70  timer.o [1]
+  .bss             zero     0x20000210    0x64  demo.o [1]
+  .bss             zero     0x20000274    0x58  led.o [1]
+  .bss             zero     0x200002cc    0x50  button.o [1]
+  .bss             zero     0x2000031c    0x30  i2c.o [1]
+  .bss             zero     0x2000034c    0x24  textEditor.o [1]
+  .bss             zero     0x20000370    0x18  music.o [1]
+  .bss             zero     0x20000388    0x10  demo.o [1]
+  .bss             zero     0x20000398     0xc  led.o [1]
+  .bss             zero     0x200003a4     0x4  beeper.o [1]
+  .bss             zero     0x200003a8     0x4  sysTick.o [1]
+                          - 0x200003ac   0x3ac
+
+"P3":                                   0x2000
+  CSTACK                    0x20080000  0x2000  <Block>
+    CSTACK         uninit   0x20080000  0x2000  <Block tail>
+                          - 0x20082000  0x2000
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address     Size
+          -------     ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x3ac:
+          0x20000000  0x3ac
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                ro code  ro data  rw data
+    ------                -------  -------  -------
+D:\work\MPG\Demo\project\makeout\mpgL1Demo: [1]
+    beeper.o                  252                 4
+    board_cstartup_iar.o       20      188
+    bsp.o                     248
+    button.o                  516                80
+    demo.o                    392               116
+    gpio.o                    912               228
+    i2c.o                     764                48
+    irq.o                      70
+    itemQ.o                   562
+    lcd.o                   1 000               188
+    led.o                     656               100
+    main.o                     78
+    music.o                   192                24
+    songTwinkleTwinkle.o               176
+    sysTick.o                 134                 4
+    textEditor.o            1 888                36
+    timer.o                   548               112
+    utils.o                    22
+    version.o                  20       64
+    wdt.o                      16
+    -----------------------------------------------
+    Total:                  8 290      428      940
+
+command line: [2]
+    -----------------------------------------------
+    Total:
+
+dl7M_tln.a: [3]
+    div.o                      14
+    exit.o                      4
+    vsnprint.o                 60
+    xprintffull_nomb.o      3 278
+    xsnprout.o                 26
+    -----------------------------------------------
+    Total:                  3 382
+
+m7M_tl.a: [4]
+    DblAdd.o                  212
+    DblCmpGe.o                 46
+    DblCmpLe.o                 46
+    DblDiv.o                  582
+    DblMul.o                  418
+    DblSub.o                  384
+    DblToI32.o                 88
+    I32ToDbl.o                 48
+    xdnorm.o                   66
+    xdscale.o                 268
+    -----------------------------------------------
+    Total:                  2 158
+
+rt7M_tl.a: [5]
+    ABImemcpy.o               118
+    ABImemmove.o              120
+    ABImemset.o               102
+    I64DivMod.o               238
+    I64DivZer.o                 2
+    cexit.o                    10
+    cmain.o                    22
+    cstartup_M.o               12
+    data_init3.o               40
+    memchr.o                   88
+    memcmp.o                   98
+    strchr.o                   22
+    strlen.o                   54
+    zero_init3.o               34
+    -----------------------------------------------
+    Total:                    960
+
+shb_l.a: [6]
+    exit.o                     20
+    -----------------------------------------------
+    Total:                     20
+
+    Gaps                       22
+    Linker created                      16    8 192
+---------------------------------------------------
+    Grand Total:           14 832      444    9 132
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                    Address   Size  Type      Object
+-----                    -------   ----  ----      ------
+.intvec$$Base         0x00080000          --   Gb  - Linker created -
+.intvec$$Limit        0x000800bc          --   Gb  - Linker created -
+?main                 0x00083b51         Code  Gb  cmain.o [5]
+ADCC0_IrqHandler      0x00080dc7    0x2  Code  Wk  irq.o [1]
+ADCC1_IrqHandler      0x00080dc9    0x2  Code  Wk  irq.o [1]
+Beeper1Off            0x000838ff    0x4  Code  Gb  beeper.o [1]
+Beeper1On             0x000838c5    0x4  Code  Gb  beeper.o [1]
+BeeperChannelSetup    0x00083903   0x1a  Code  Lc  beeper.o [1]
+BeeperInit            0x00083849   0x24  Code  Gb  beeper.o [1]
+BeeperOff             0x000838c9   0x36  Code  Gb  beeper.o [1]
+BeeperOn              0x0008386d   0x58  Code  Gb  beeper.o [1]
+Beepers               0x00083934   0x10  Data  Lc  beeper.o [1]
+BspClockInit          0x000830d1   0x60  Code  Lc  bsp.o [1]
+BspGetCpuClkFreq      0x0008309f    0x4  Code  Gb  bsp.o [1]
+BspInit               0x00083075   0x2a  Code  Gb  bsp.o [1]
+BspPeriphOff          0x000830af    0xc  Code  Gb  bsp.o [1]
+BspPeriphOn           0x000830a3    0xc  Code  Gb  bsp.o [1]
+BspSleepWhile         0x000830bb   0x16  Code  Gb  bsp.o [1]
+BtnToGpio             0x000835fc    0x4  Data  Lc  button.o [1]
+BusFault_Handler      0x00080d91    0x2  Code  Wk  irq.o [1]
+ButtonChangeIrq       0x00083551   0xa6  Code  Lc  button.o [1]
+ButtonHoldAck         0x0008353d   0x14  Code  Gb  button.o [1]
+ButtonInit            0x000833fd   0x4a  Code  Gb  button.o [1]
+ButtonIsHeld          0x000834f5    0x4  Code  Gb  button.o [1]
+ButtonIsHeldXMs       0x000834f9   0x30  Code  Gb  button.o [1]
+ButtonIsPressed       0x000834d1   0x16  Code  Gb  button.o [1]
+ButtonPressAck        0x00083529   0x14  Code  Gb  button.o [1]
+ButtonUpdate          0x00083447   0x8a  Code  Gb  button.o [1]
+ButtonWasPressed      0x000834e7    0xe  Code  Gb  button.o [1]
+CSTACK$$Base          0x20080000          --   Gb  - Linker created -
+CSTACK$$Limit         0x20082000          --   Gb  - Linker created -
+DBGU_IrqHandler       0x00080dab    0x2  Code  Wk  irq.o [1]
+DebugMon_Handler      0x00080d97    0x2  Code  Wk  irq.o [1]
+DemoInit              0x00083601   0x56  Code  Gb  demo.o [1]
+DemoNameEntered       0x00083703   0x26  Code  Lc  demo.o [1]
+DemoTeKeyFromButton   0x00083687   0x7c  Code  Lc  demo.o [1]
+DemoUpdate            0x00083657   0x30  Code  Gb  demo.o [1]
+EFC0_IrqHandler       0x00080da7    0x2  Code  Wk  irq.o [1]
+EFC1_IrqHandler       0x00080da9    0x2  Code  Wk  irq.o [1]
+GpioClear             0x00082b61   0x1c  Code  Gb  gpio.o [1]
+GpioInit              0x000829ad  0x12a  Code  Gb  gpio.o [1]
+GpioIrqHandler        0x00082bf1   0x24  Code  Lc  gpio.o [1]
+GpioIrqInstall        0x00082ad7   0x6e  Code  Gb  gpio.o [1]
+GpioIsSet             0x00082b85   0x22  Code  Gb  gpio.o [1]
+GpioSet               0x00082b45   0x1c  Code  Gb  gpio.o [1]
+GpioSetGpioMode       0x00082bbf   0x18  Code  Gb  gpio.o [1]
+GpioSetPeriphMode     0x00082ba7   0x18  Code  Gb  gpio.o [1]
+GpioSetState          0x00082b7d    0x8  Code  Gb  gpio.o [1]
+HDMA_IrqHandler       0x00080dcb    0x2  Code  Wk  irq.o [1]
+HSMC4_IrqHandler      0x00080dad    0x2  Code  Wk  irq.o [1]
+HardFault_Handler     0x00080d8d    0x2  Code  Wk  irq.o [1]
+I2c0IsBusy            0x0008255d    0x6  Code  Gb  i2c.o [1]
+I2c1IsBusy            0x00082563    0x8  Code  Gb  i2c.o [1]
+I2cIrqHandler         0x000826cb   0x70  Code  Lc  i2c.o [1]
+I2cIsBusy             0x0008254f    0xe  Code  Gb  i2c.o [1]
+I2cOpen               0x00082479   0x90  Code  Gb  i2c.o [1]
+I2cSetupClock         0x00082591   0xc0  Code  Lc  i2c.o [1]
+I2cStartTx            0x00082671   0x5a  Code  Lc  i2c.o [1]
+I2cWait               0x0008256b   0x22  Code  Gb  i2c.o [1]
+I2cWriteRead          0x00082509   0x46  Code  Gb  i2c.o [1]
+IrqHandlerNotUsed     0x00080dcf    0x2  Code  Wk  irq.o [1]
+ItemQBytesFree        0x00082787   0x32  Code  Gb  itemQ.o [1]
+ItemQBytesUsed        0x00082765   0x22  Code  Gb  itemQ.o [1]
+ItemQFlush            0x0008275b    0xa  Code  Gb  itemQ.o [1]
+ItemQIndexUpdateFromWrite
+                      0x000828c1   0x1e  Code  Lc  itemQ.o [1]
+ItemQInit             0x0008274d    0xe  Code  Gb  itemQ.o [1]
+ItemQPop              0x0008281d   0x5c  Code  Gb  itemQ.o [1]
+ItemQPopBytes         0x000828df   0xa0  Code  Lc  itemQ.o [1]
+ItemQPush             0x000827b9   0x64  Code  Gb  itemQ.o [1]
+ItemQPushBytes        0x00082879   0x48  Code  Lc  itemQ.o [1]
+LcdClear              0x000820b5   0x28  Code  Gb  lcd.o [1]
+LcdCmd                0x000822e9   0x16  Code  Lc  lcd.o [1]
+LcdCmdDequeue         0x0008231d   0x2e  Code  Lc  lcd.o [1]
+LcdCmdQueue           0x000822ff   0x1e  Code  Lc  lcd.o [1]
+LcdConfigGet          0x0008208b    0x4  Code  Gb  lcd.o [1]
+LcdConfigSet          0x0008203d   0x4e  Code  Gb  lcd.o [1]
+LcdCtrl               0x00082279   0x22  Code  Lc  lcd.o [1]
+LcdI2cDone            0x00082351    0xa  Code  Lc  lcd.o [1]
+LcdI2cErr             0x0008235b    0xa  Code  Lc  lcd.o [1]
+LcdI2cWait            0x0008234b    0x6  Code  Lc  lcd.o [1]
+LcdInit               0x00081fad   0x90  Code  Gb  lcd.o [1]
+LcdPrintf             0x000820fd   0x1e  Code  Gb  lcd.o [1]
+LcdPutc               0x000820dd    0xc  Code  Gb  lcd.o [1]
+LcdPuts               0x000820e9   0x14  Code  Gb  lcd.o [1]
+LcdSetContrast        0x0008229b   0x24  Code  Lc  lcd.o [1]
+LcdSetCursor          0x000822d9   0x10  Code  Lc  lcd.o [1]
+LcdSetDblHeight       0x000822bf   0x1a  Code  Lc  lcd.o [1]
+LcdSetPos             0x0008208f   0x26  Code  Gb  lcd.o [1]
+LcdUpdate             0x000821d3   0xa6  Code  Gb  lcd.o [1]
+LcdWrite              0x0008211b   0xb8  Code  Gb  lcd.o [1]
+LedBlink              0x0008318d   0x34  Code  Gb  led.o [1]
+LedIoSetState         0x00083365    0xa  Code  Lc  led.o [1]
+LedRgbCycleSet        0x00083225   0x52  Code  Gb  led.o [1]
+LedRgbSet             0x00083201   0x24  Code  Gb  led.o [1]
+LedRgbUpdate          0x000832ff   0x5a  Code  Lc  led.o [1]
+LedSequence           0x000831c1   0x40  Code  Gb  led.o [1]
+LedSetPwm             0x0008316d   0x20  Code  Gb  led.o [1]
+LedUpdate             0x00083277   0x88  Code  Gb  led.o [1]
+MCI0_IrqHandler       0x00080db9    0x2  Code  Wk  irq.o [1]
+MainInit              0x00083aa5   0x24  Code  Lc  main.o [1]
+MemManage_Handler     0x00080d8f    0x2  Code  Wk  irq.o [1]
+MusicNoteOff          0x000837fd   0x44  Code  Lc  music.o [1]
+MusicNoteOn           0x000837cd   0x2e  Code  Lc  music.o [1]
+MusicPlaySong         0x00083789   0x32  Code  Gb  music.o [1]
+MusicStop             0x000837bb   0x12  Code  Gb  music.o [1]
+NMI_Handler           0x00080d8b    0x2  Code  Wk  irq.o [1]
+NVIC_ClearPendingIRQ  0x00082997   0x16  Code  Lc  gpio.o [1]
+NVIC_ClearPendingIRQ  0x00082465   0x14  Code  Lc  i2c.o [1]
+NVIC_EnableIRQ        0x00082981   0x16  Code  Lc  gpio.o [1]
+NVIC_EnableIRQ        0x00082451   0x14  Code  Lc  i2c.o [1]
+NVIC_EnableIRQ        0x00082d11   0x14  Code  Lc  timer.o [1]
+PIOA_IrqHandler       0x00082bd7    0xe  Code  Gb  gpio.o [1]
+PIOB_IrqHandler       0x00082be5    0xc  Code  Gb  gpio.o [1]
+PIOC_IrqHandler       0x00080daf    0x2  Code  Wk  irq.o [1]
+PMC_IrqHandler        0x00080da5    0x2  Code  Wk  irq.o [1]
+PWM_IrqHandler        0x00080dc5    0x2  Code  Wk  irq.o [1]
+PendSV_Handler        0x00080d99    0x2  Code  Wk  irq.o [1]
+RSTC_IrqHandler       0x00080d9d    0x2  Code  Wk  irq.o [1]
+RTC_IrqHandler        0x00080d9f    0x2  Code  Wk  irq.o [1]
+RTT_IrqHandler        0x00080da1    0x2  Code  Wk  irq.o [1]
+Region$$Table$$Base   0x00083b40          --   Gb  - Linker created -
+Region$$Table$$Limit  0x00083b50          --   Gb  - Linker created -
+SPI0_IrqHandler       0x00080dbd    0x2  Code  Wk  irq.o [1]
+SSC0_IrqHandler       0x00080dbf    0x2  Code  Wk  irq.o [1]
+SUPC_IrqHandler       0x00080d9b    0x2  Code  Wk  irq.o [1]
+SVC_Handler           0x00080d95    0x2  Code  Wk  irq.o [1]
+SysTickHasElapsed     0x00083a31    0xc  Code  Gb  sysTick.o [1]
+SysTickInit           0x000839fb   0x22  Code  Gb  sysTick.o [1]
+SysTickInitMs         0x000839f5    0x6  Code  Gb  sysTick.o [1]
+SysTickStop           0x00083a1d    0x8  Code  Gb  sysTick.o [1]
+SysTickWait           0x00083a4d    0xc  Code  Gb  sysTick.o [1]
+SysTickWaitTick       0x00083a59   0x22  Code  Gb  sysTick.o [1]
+SysTick_Handler       0x00083a25    0xc  Code  Gb  sysTick.o [1]
+TC0_IrqHandler        0x00082ec5   0x38  Code  Gb  timer.o [1]
+TC1_IrqHandler        0x00080dc1    0x2  Code  Wk  irq.o [1]
+TC2_IrqHandler        0x00080dc3    0x2  Code  Wk  irq.o [1]
+TWI0_IrqHandler       0x0008258d    0x4  Code  Gb  i2c.o [1]
+TWI1_IrqHandler       0x00080dbb    0x2  Code  Wk  irq.o [1]
+TeBackSpace           0x00081b5d   0x58  Code  Lc  textEditor.o [1]
+TeCharDown            0x00081abb   0x28  Code  Lc  textEditor.o [1]
+TeCharPtr             0x00081a6f   0x10  Code  Lc  textEditor.o [1]
+TeCharUp              0x00081ae3   0x30  Code  Lc  textEditor.o [1]
+TeCursorDown          0x00081c87   0x34  Code  Lc  textEditor.o [1]
+TeCursorLeft          0x00081bb5   0x4e  Code  Lc  textEditor.o [1]
+TeCursorRight         0x00081c03   0x84  Code  Lc  textEditor.o [1]
+TeCursorUp            0x00081cbb   0x5e  Code  Lc  textEditor.o [1]
+TeDisplayIndexUpdate  0x00081e17   0x62  Code  Lc  textEditor.o [1]
+TeDraw                0x00081e97   0x70  Code  Lc  textEditor.o [1]
+TeFinished            0x00081a7f   0x3c  Code  Lc  textEditor.o [1]
+TeHasReadOnly         0x00081a51   0x1e  Code  Lc  textEditor.o [1]
+TeIndexPreviousLine   0x00081e79   0x1e  Code  Lc  textEditor.o [1]
+TeInsert              0x00081b13   0x4a  Code  Lc  textEditor.o [1]
+TeIsReadOnly          0x00081a2d   0x24  Code  Lc  textEditor.o [1]
+TeModeNextCharPfns    0x00081f14   0x18  Data  Lc  textEditor.o [1]
+TeNextAlpha           0x0008195f   0x18  Code  Lc  textEditor.o [1]
+TeNextAlphaLower      0x0008197d    0x6  Code  Lc  textEditor.o [1]
+TeNextAlphaNumeric    0x00081989   0x18  Code  Lc  textEditor.o [1]
+TeNextAlphaUpper      0x00081977    0x6  Code  Lc  textEditor.o [1]
+TeNextChar            0x000819b5   0x1e  Code  Lc  textEditor.o [1]
+TeNextFull            0x00081959    0x6  Code  Lc  textEditor.o [1]
+TeNextNumeric         0x00081983    0x6  Code  Lc  textEditor.o [1]
+TeNextRange           0x000819a1   0x14  Code  Lc  textEditor.o [1]
+TeProcessKey          0x000819d5   0x58  Code  Lc  textEditor.o [1]
+TePtFromStrIndex      0x00081d19   0x54  Code  Lc  textEditor.o [1]
+TeStrIndexFromPt      0x00081d6d   0x58  Code  Lc  textEditor.o [1]
+TeStrLenForLine       0x00081dc5   0x52  Code  Lc  textEditor.o [1]
+TextEditorCfg         0x00081953    0x6  Code  Gb  textEditor.o [1]
+TextEditorInit        0x0008189d   0xa2  Code  Gb  textEditor.o [1]
+TextEditorStatus      0x0008194d    0x6  Code  Gb  textEditor.o [1]
+TextEditorUpdate      0x0008193f    0xe  Code  Gb  textEditor.o [1]
+TimerInit             0x00082d25   0x78  Code  Gb  timer.o [1]
+TimerMsStopIfUnused   0x00082e95   0x1c  Code  Gb  timer.o [1]
+TimerTimeXMs          0x00082d9d    0x2  Code  Gb  timer.o [1]
+TimerTimeXMsCancel    0x00082e11   0x32  Code  Gb  timer.o [1]
+TimerTimeXMsRestart   0x00082d9f   0x72  Code  Gb  timer.o [1]
+TimerWaitMsActive     0x00082ebd    0x8  Code  Lc  timer.o [1]
+TimerWaitXMs          0x00082e43   0x38  Code  Gb  timer.o [1]
+TimerWaitXMsCallback  0x00082eb1    0xa  Code  Lc  timer.o [1]
+TimerWaitXUs          0x00082e7b   0x1a  Code  Gb  timer.o [1]
+TwinkleTwinkle        0x000839ec    0x8  Data  Gb  songTwinkleTwinkle.o [1]
+TwinkleTwinkleNotes   0x00083944   0xa8  Data  Lc  songTwinkleTwinkle.o [1]
+UDPD_IrqHandler       0x00080dcd    0x2  Code  Wk  irq.o [1]
+USART0_IrqHandler     0x00080db1    0x2  Code  Wk  irq.o [1]
+USART1_IrqHandler     0x00080db3    0x2  Code  Wk  irq.o [1]
+USART2_IrqHandler     0x00080db5    0x2  Code  Wk  irq.o [1]
+USART3_IrqHandler     0x00080db7    0x2  Code  Wk  irq.o [1]
+UsageFault_Handler    0x00080d93    0x2  Code  Wk  irq.o [1]
+WDT_IrqHandler        0x00080da3    0x2  Code  Wk  irq.o [1]
+WdtInit               0x00083ac9    0x2  Code  Gb  wdt.o [1]
+WdtKill               0x00083acb    0xa  Code  Gb  wdt.o [1]
+_GenldFullNoMb        0x00080add  0x266  Code  Lc  xprintffull_nomb.o [3]
+_LdtobFullNoMb        0x000806dd  0x3fa  Code  Lc  xprintffull_nomb.o [3]
+_LitobFullNoMb        0x000805c7  0x10e  Code  Lc  xprintffull_nomb.o [3]
+_LocaleC_isalpha      0x00082395   0x20  Code  Gb  textEditor.o [1]
+_LocaleC_islower      0x00082fd3    0xa  Code  Gb  utils.o [1]
+_LocaleC_ispunct      0x00082fe7   0x26  Code  Gb  textEditor.o [1]
+_LocaleC_isupper      0x00082fdd    0xa  Code  Gb  textEditor.o [1]
+_PrintfFullNoMb       0x000800bd  0x504  Code  Gb  xprintffull_nomb.o [3]
+_PutcharsFullNoMb     0x00080d43   0x2e  Code  Lc  xprintffull_nomb.o [3]
+_SNProut              0x00080e3f   0x1a  Code  Gb  xsnprout.o [3]
+__ICFEDIT_intvec_start__ {Abs}
+                      0x00080000          --   Gb  command line/config [2]
+__aeabi_cdcmple       0x00081059         Code  Gb  DblCmpLe.o [4]
+__aeabi_cdrcmple      0x00081089         Code  Gb  DblCmpGe.o [4]
+__aeabi_d2iz          0x000811c5         Code  Gb  DblToI32.o [4]
+__aeabi_d2uiz         0x000811f1         Code  Gb  DblToI32.o [4]
+__aeabi_ddiv          0x00081571         Code  Gb  DblDiv.o [4]
+__aeabi_dmul          0x000813cd         Code  Gb  DblMul.o [4]
+__aeabi_dsub          0x0008124d         Code  Gb  DblSub.o [4]
+__aeabi_i2d           0x0008121d         Code  Gb  I32ToDbl.o [4]
+__aeabi_ldiv0         0x000817c5         Code  Gb  I64DivZer.o [5]
+__aeabi_memcpy        0x00080fa1         Code  Gb  ABImemcpy.o [5]
+__aeabi_memcpy4       0x00080fc1         Code  Gb  ABImemcpy.o [5]
+__aeabi_memcpy8       0x00080fc1         Code  Gb  ABImemcpy.o [5]
+__aeabi_memmove       0x000823c1         Code  Gb  ABImemmove.o [5]
+__aeabi_memmove4      0x000823c1         Code  Gb  ABImemmove.o [5]
+__aeabi_memmove8      0x000823c1         Code  Gb  ABImemmove.o [5]
+__aeabi_memset        0x0008300d         Code  Gb  ABImemset.o [5]
+__aeabi_ui2d          0x00081231         Code  Gb  I32ToDbl.o [4]
+__aeabi_uldivmod      0x00080eb1         Code  Gb  I64DivMod.o [5]
+__cmain               0x00083b51         Code  Gb  cmain.o [5]
+__exit                0x00083b8d   0x14  Code  Gb  exit.o [6]
+__iar_Dnorm           0x00081017   0x42  Code  Gb  xdnorm.o [4]
+__iar_Dscale          0x000810b9  0x10c  Code  Gb  xdscale.o [4]
+__iar_Memchr          0x00080e59         Code  Gb  memchr.o [5]
+__iar_Memset          0x0008300d         Code  Gb  ABImemset.o [5]
+__iar_Memset_word     0x00083015         Code  Gb  ABImemset.o [5]
+__iar_Strchr          0x00080dd1         Code  Gb  strchr.o [5]
+__iar_d2uiz           0x000811fd         Code  Gb  DblToI32.o [4]
+__iar_dadd            0x000817c9         Code  Gb  DblAdd.o [4]
+__iar_data_init3      0x00083b19   0x28  Code  Gb  data_init3.o [5]
+__iar_dsub            0x00081261         Code  Gb  DblSub.o [4]
+__iar_dsubStart       0x00081273         Code  Gb  DblSub.o [4]
+__iar_program_start   0x00083ba1         Code  Gb  cstartup_M.o [5]
+__iar_ui2d            0x00081235         Code  Gb  I32ToDbl.o [4]
+__iar_zero_init3      0x00080de7   0x22  Code  Gb  zero_init3.o [5]
+__low_level_init      0x00083b69   0x14  Code  Gb  board_cstartup_iar.o [1]
+__vector_table        0x00080000   0xbc  Data  Gb  board_cstartup_iar.o [1]
+_call_main            0x00083b5d         Code  Gb  cmain.o [5]
+_exit                 0x00083b81         Code  Gb  cexit.o [5]
+_main                 0x00083b63         Code  Gb  cmain.o [5]
+beeper                0x200003a4    0x4  Data  Lc  beeper.o [1]
+btns                  0x200002cc   0x50  Data  Lc  button.o [1]
+demo                  0x20000210   0x64  Data  Lc  demo.o [1]
+div                   0x000817b7    0xe  Code  Gb  div.o [3]
+exit                  0x00083b7d    0x4  Code  Gb  exit.o [3]
+i2cDefs               0x0008273c   0x10  Data  Lc  i2c.o [1]
+i2cDev                0x2000031c   0x30  Data  Lc  i2c.o [1]
+isalnum               0x00081f3d   0x20  Code  Gb  textEditor.o [1]
+isalpha               0x00081f39    0x4  Code  Gb  textEditor.o [1]
+isdigit               0x000823b5    0xa  Code  Gb  textEditor.o [1]
+isgraph               0x00081f93   0x18  Code  Gb  textEditor.o [1]
+isprint               0x00081f69   0x2a  Code  Gb  textEditor.o [1]
+ispunct               0x00082439    0x4  Code  Gb  textEditor.o [1]
+lcd                   0x200000e4   0xbc  Data  Lc  lcd.o [1]
+ledPins               0x00083370    0xc  Data  Lc  led.o [1]
+ledRgbState           0x20000398    0xc  Data  Lc  led.o [1]
+ledSinTable           0x0008337c   0x80  Data  Lc  led.o [1]
+ledState              0x20000274   0x58  Data  Lc  led.o [1]
+main                  0x00083a7b   0x2a  Code  Gb  main.o [1]
+memchr                0x00080e59         Code  Gb  memchr.o [5]
+memcmp                0x00082f71         Code  Gb  memcmp.o [5]
+memcpy                0x00081f2d    0xc  Code  Gb  utils.o [1]
+memmove               0x00081f5d    0xc  Code  Gb  textEditor.o [1]
+memset                0x0008243d   0x14  Code  Gb  version.o [1]
+music                 0x20000370   0x18  Data  Lc  music.o [1]
+pGpioReg              0x00082d08    0x8  Data  Lc  gpio.o [1]
+pfnGpioIrqs           0x20000000   0xe4  Data  Lc  gpio.o [1]
+programId             0x00083ad8   0x40  Data  Gb  version.o [1]
+strchr                0x00080dd1         Code  Gb  strchr.o [5]
+strlen                0x00080e09         Code  Gb  strlen.o [5]
+sysTick               0x200003a8    0x4  Data  Lc  sysTick.o [1]
+te                    0x2000034c   0x24  Data  Lc  textEditor.o [1]
+timer                 0x200001a0   0x70  Data  Lc  timer.o [1]
+vsnprintf             0x00082f35   0x3c  Code  Gb  vsnprint.o [3]
+
+
+[1] = D:\work\MPG\Demo\project\makeout\mpgL1Demo
+[2] = command line
+[3] = dl7M_tln.a
+[4] = m7M_tl.a
+[5] = rt7M_tl.a
+[6] = shb_l.a
+
+  14 832 bytes of readonly  code memory
+     444 bytes of readonly  data memory
+   9 132 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

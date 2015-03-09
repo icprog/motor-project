@@ -1,0 +1,184 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      26/Feb/2015  21:37:09 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\src\app\motorDemo.c                              #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\src\app\motorDemo.c" -D __SAM3U2C__              #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\Moto #
+#                    r Project\project\Debug\List\" -lcN                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\Motor     #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\project\Debug\List\motorDemo.lst                 #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\project\Debug\Obj\motorDemo.o                    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\Motor Project\src\app\motorDemo.c
+      1          /*******************************************************************************************
+      2          Demonstrate LCD, Tact, LED and button functionality
+      3          
+      4          
+      5          Quinn Miller
+      6          ********************************************************************************************/
+      7          
+      8          
+      9          #include "MotorDemo.h"
+     10          #include "button.h"
+     11          #include "lcd.h"
+     12          #include "led.h"
+     13          #include "timer.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          char lcdRowB[20] = "STOP  UP   DWN  POKE";
+     20          /**************************************************************************
+     21           *                                  Types
+     22           **************************************************************************/
+     23          /**************************************************************************
+     24           *                                  Variables
+     25           **************************************************************************/
+     26          
+     27          char lcdRowA[19];
+     28          char setpointChar[3];
+     29          
+     30          u16 setpoint = 1000;
+     31          u8 pokePerMin = 0;
+     32          
+     33          /**************************************************************************
+     34           *                                  Prototypes
+     35           **************************************************************************/
+     36          void updateLcdRow(char *pRowA, char *pRowB);
+     37          /**************************************************************************
+     38           *                                  Global Functions
+     39           **************************************************************************/
+     40          void MotorDemoInit()
+     41          {
+     42            LcdClear();
+     43            LedRgbSet(0x000000FF);
+     44          }
+     45          
+     46          void MotorDemoUpdate()
+     47          {
+     48            
+     49            if( ButtonWasPressed(BTN_LM)) {
+     50              ButtonPressAck(BTN_LM);
+     51              setpoint+=50;
+     52            }
+     53            if( ButtonWasPressed(BTN_RM)) {
+     54              ButtonPressAck(BTN_RM);
+     55              if( setpoint>0) setpoint-=50;
+     56            }
+     57            
+     58            sprintf(lcdRowA,"%d",setpoint);  
+     59            
+     60            updateLcdRow(&lcdRowA[0], &lcdRowB[0]);
+     61          }
+     62          
+     63          /**************************************************************************
+     64           *                                 Private Functions
+     65           **************************************************************************/
+     66          void updateLcdRow(char *pRowA, char *pRowB) {
+     67            LcdClear();
+     68            LcdSetPos(1,0);
+     69            LcdPrintf(pRowB);
+     70            LcdSetPos(0,0);
+     71            LcdPrintf(pRowA);
+     72          }
+     73          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   MotorDemoInit
+         8   -> LcdClear
+         8   -> LedRgbSet
+       8   MotorDemoUpdate
+         8   -> ButtonPressAck
+         8   -> ButtonWasPressed
+         8   -> sprintf
+         8   -> updateLcdRow
+      16   updateLcdRow
+        16   -> LcdClear
+        16   -> LcdPrintf
+        16   -> LcdSetPos
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ?<Constant "%d">
+       4  ??DataTable0
+       4  ??DataTable0_1
+       4  ??DataTable0_2
+       4  ??DataTable0_3
+      14  MotorDemoInit
+      84  MotorDemoUpdate
+      20  lcdRowA
+      20  lcdRowB
+       1  pokePerMin
+       2  setpoint
+       4  setpointChar
+      40  updateLcdRow
+
+ 
+  25 bytes in section .bss
+  22 bytes in section .data
+   4 bytes in section .rodata
+ 154 bytes in section .text
+ 
+ 154 bytes of CODE  memory
+   4 bytes of CONST memory
+  47 bytes of DATA  memory
+
+Errors: none
+Warnings: 1

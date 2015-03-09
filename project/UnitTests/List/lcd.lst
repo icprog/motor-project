@@ -1,0 +1,530 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:07 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\lcd.c                                 #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\lcd.c" -D UNIT_TESTING=1              #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\lcd.lst                    #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\lcd.o                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\lcd.c
+      1          /*******************************************************************************************
+      2          NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD driver
+      3          2x20 characters, I2C, FSTN
+      4          
+      5          This is free, public domain software and there is NO WARRANTY.
+      6          No restriction on use. You can use, modify and redistribute it for
+      7          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      8          
+      9          Sheldon Patterson
+     10          ********************************************************************************************/
+     11          
+     12          
+     13          #include "lcd.h"
+     14          #include "st7036_def.h"
+     15          #include "i2c.h"
+     16          #include "gpio.h"
+     17          #include "timer.h"
+     18          #include "itemQ.h"
+     19          
+     20          
+     21          /**************************************************************************
+     22           *                                  Constants
+     23           **************************************************************************/
+     24          #define LCD_I2C_ADDR				(0x78)
+     25          #define LCD_I2C_BUS_SPEED_HZ	(200000)
+     26          #define LCD_I2C_DEV				(I2C_DEV0)
+     27          #define LCD_RESET_TIME_US		(150)
+     28          #define LCD_INIT_TIME_MS		(45)
+     29          #define LCD_GPIO_RST          (GPIO_PIN_LCD_RST)
+     30          
+     31          #define LCD_FUNC_SET				(ST7036_CMD_FUNC_SET | ST7036_FUNC_8_BIT)
+     32          #define LCD_FUNC_SET_2_LINE	(LCD_FUNC_SET | ST7036_FUNC_2_LINE | ST7036_FUNC_INSN_EXT1)
+     33          #define LCD_FUNC_SET_DBL_HT	(LCD_FUNC_SET | ST7036_FUNC_DBL_HEIGHT | ST7036_FUNC_INSN_EXT1)
+     34          #define LCD_DEF_CONTRAST		(0x28)
+     35          #define LCD_FLWR_AMP				(0x05)
+     36          
+     37          
+     38          /**************************************************************************
+     39           *                                  Types
+     40           **************************************************************************/
+     41          typedef struct
+     42          {
+     43             ITEM_Q i2cQ;
+     44             u8 i2cQMem[LCD_NUM_CHARS + 16];
+     45             u8 i2cTxBuf[LCD_NUM_CHARS_PER_LINE + 1];
+     46             char newText[LCD_NUM_CHARS];
+     47             char lcdText[LCD_NUM_CHARS];
+     48             u8 row;
+     49             u8 col;
+     50             bool cursorUpdate;
+     51             bool i2cErr;
+     52             LCD_CFG config;
+     53          }LCD_INFO;
+     54          
+     55          
+     56          /**************************************************************************
+     57           *                                  Variables
+     58           **************************************************************************/
+     59          static LCD_INFO lcd;
+     60          
+     61          
+     62          /**************************************************************************
+     63           *                                  Prototypes
+     64           **************************************************************************/
+     65          static void LcdCtrl(LCD_CFG const *pCfg);
+     66          static void LcdSetContrast(u8 val);
+     67          static void LcdSetDblHeight(bool on);
+     68          static void LcdSetCursor(u8 row, u8 col);
+     69          static void LcdCmd(u8 cmd);
+     70          static void LcdCmdQueue(void const *pSrc, u8 len);
+     71          static void LcdCmdDequeue(void);
+     72          
+     73          static bool LcdI2cWait(void);
+     74          static void LcdI2cDone(void);
+     75          static void LcdI2cErr(void);
+     76          
+     77          
+     78          /**************************************************************************
+     79           *                                  Global Functions
+     80           **************************************************************************/
+     81          void LcdInit(void)
+     82          {
+     83             u8 lcdInitCmds[] =
+     84             {
+     85                LCD_FUNC_SET | ST7036_FUNC_2_LINE,
+     86                LCD_FUNC_SET_2_LINE,
+     87                ST7036_CMD_DISP_SHIFT | ST7036_SHIFT_RIGHT,
+     88                ST7036_CMD_CONTRAST | ST7036_CONTRAST_CONT(LCD_DEF_CONTRAST),
+     89                ST7036_CMD_ICON_CTRL | ST7036_ICON_ON | ST7036_ICON_BOOST_ON | ST7036_CONTRAST_ICON(LCD_DEF_CONTRAST),
+     90                ST7036_CMD_FLWR_CTRL | ST7036_FLWR_ON | ST7036_FLWR_AMP(LCD_FLWR_AMP),
+     91                ST7036_CMD_DISP_CTRL | ST7036_DISP_ON,
+     92             };
+     93             I2C_CBS cbs =
+     94             {
+     95                .doneCallback = (PFN_I2C_CB)LcdI2cDone,
+     96                .errorCallback = (PFN_I2C_CB)LcdI2cErr,
+     97             };
+     98             memset(&lcd, 0, sizeof(lcd));
+     99             I2cOpen(LCD_I2C_DEV, LCD_I2C_BUS_SPEED_HZ, &cbs);
+    100             ItemQInit(&lcd.i2cQ, lcd.i2cQMem, sizeof(lcd.i2cQMem), ITEM_Q_FIFO, sizeof(u8));
+    101          
+    102             for (u8f lcdRetry = 0; lcdRetry < 5; lcdRetry++)
+    103             {
+    104                GpioClear(LCD_GPIO_RST);
+    105                TimerWaitXUs(LCD_RESET_TIME_US);
+    106                GpioSet(LCD_GPIO_RST);
+    107                TimerWaitXMs(LCD_INIT_TIME_MS);
+    108                LcdCmdQueue(lcdInitCmds, NELEMENTS(lcdInitCmds));
+    109                if (LcdI2cWait())
+    110                {
+    111                   break;
+    112                }
+    113             }
+    114             // NOTE: Sometimes the display doesn't fully initialize properly. Ensure that it gets enabled
+    115             //       by resending the command to turn on the display.
+    116             LcdCmd(ST7036_CMD_DISP_CTRL | ST7036_DISP_ON);
+    117             lcd.config.on = true;
+    118             lcd.config.contrast = LCD_DEF_CONTRAST;
+    119          }
+    120          
+    121          void LcdConfigSet(LCD_CFG const *pNew)
+    122          {
+    123             LCD_CFG *pOld = &lcd.config;
+    124             if ((pOld->on != pNew->on) || (pOld->cursorOn != pNew->cursorOn) || (pOld->blinkOn != pNew->blinkOn))
+    125             {
+    126                LcdCtrl(pNew);
+    127             }
+    128             if (pOld->contrast != pNew->contrast)
+    129             {
+    130                LcdSetContrast(pNew->contrast);
+    131             }
+    132             if (pOld->doubleHeight != pNew->doubleHeight)
+    133             {
+    134                LcdSetDblHeight(pNew->doubleHeight);
+    135             }
+    136             memcpy(pOld, pNew, sizeof(LCD_CFG));
+    137          }
+    138          
+    139          LCD_CFG const * LcdConfigGet(void)
+    140          {
+    141             return &lcd.config;
+    142          }
+    143          
+    144          
+    145          void LcdSetPos(u8 row, u8 col)
+    146          {
+    147             if ((row < LCD_NUM_LINES) && (col < LCD_NUM_CHARS_PER_LINE))
+    148             {
+    149                lcd.cursorUpdate = true;
+    150                lcd.row = row;
+    151                lcd.col = col;
+    152          
+    153                if (lcd.config.autoUpdate)
+    154                {
+    155                   LcdUpdate();
+    156                }
+    157             }
+    158          }
+    159          
+    160          void LcdClear(void)
+    161          {
+    162             memset(lcd.newText, ' ', sizeof(lcd.newText));
+    163             lcd.row = lcd.col = 0;
+    164          
+    165             if (lcd.config.autoUpdate)
+    166             {
+    167                LcdUpdate();
+    168             }
+    169          }
+    170          
+    171          void LcdPutc(char c)
+    172          {
+    173             LcdWrite(&c, 1);
+    174          }
+    175          
+    176          void LcdPuts(char const *pSrc)
+    177          {
+    178             LcdWrite(pSrc, (u8)strlen(pSrc));
+    179          }
+    180          
+    181          void LcdPrintf(char const *pFormat, ...)
+    182          {
+    183             char newText[LCD_NUM_CHARS];
+    184             va_list pArg;
+    185             va_start(pArg, pFormat);
+    186             vsnprintf(newText, sizeof(newText), pFormat, pArg); //lint !e534
+    187             va_end(pArg);
+    188             LcdPuts(newText);
+    189          }
+    190          
+    191          void LcdWrite(void const *pSrcVoid, u8 len)
+    192          {
+    193             char const *pSrc = pSrcVoid;
+    194             while (len > 0)
+    195             {
+    196                u8 pos = LCD_ROW_COL_TO_POS(lcd.row, lcd.col);
+    197                if (*pSrc == '\n')
+    198                {
+    199                   // Fill remainder of line with spaces
+    200                   memset(&lcd.newText[pos], ' ', LCD_NUM_CHARS_PER_LINE - lcd.col);
+    201                   lcd.col = 0;
+    202                   if (!lcd.config.doubleHeight)
+    203                      lcd.row ^= 1;
+    204                }
+    205                else if (!isprint(*pSrc))
+    206                {}    // ignore it
+    207                else
+    208                {
+    209                   lcd.newText[pos] = *pSrc;
+    210                   lcd.col++;
+    211                   if (lcd.col >= LCD_NUM_CHARS_PER_LINE)
+    212                   {
+    213                      lcd.col = 0;
+    214                      if (!lcd.config.doubleHeight)
+    215                         lcd.row ^= 1;
+    216                   }
+    217                }
+    218                pSrc++;
+    219                len--;
+    220             }
+    221          
+    222             if (lcd.config.autoUpdate)
+    223             {
+    224                LcdUpdate();
+    225             }
+    226          }
+    227          
+    228          
+    229          void LcdUpdate(void)
+    230          {
+    231             for (u8f line = 0; line < LCD_NUM_LINES; line++)
+    232             {
+    233                u8f offset = line * LCD_NUM_CHARS_PER_LINE;
+    234                if (lcd.i2cErr ||
+    235                    (memcmp(&lcd.newText[offset], &lcd.lcdText[offset], LCD_NUM_CHARS_PER_LINE) != MEM_CMP_MATCH))
+    236                {
+    237                   char buf[LCD_NUM_CHARS_PER_LINE + 1];
+    238                   buf[0] = ST7036_CMD_SET_CGRAM;
+    239          
+    240                   LcdSetCursor((u8)line, 0);
+    241                   memcpy(&buf[1], &lcd.newText[offset], LCD_NUM_CHARS_PER_LINE);
+    242                   memcpy(&lcd.lcdText[offset], &lcd.newText[offset], LCD_NUM_CHARS_PER_LINE);
+    243                   LcdCmdQueue(buf, sizeof(buf));
+    244                   lcd.cursorUpdate = true;
+    245                }
+    246             }
+    247          
+    248             if (lcd.cursorUpdate || lcd.i2cErr)
+    249             {
+    250                LcdSetCursor(lcd.row, lcd.col);
+    251                lcd.cursorUpdate = false;
+    252             }
+    253          }
+    254          
+    255          
+    256          /**************************************************************************
+    257           *                                 Private Functions
+    258           **************************************************************************/
+    259          static void LcdCtrl(LCD_CFG const *pCfg)
+    260          {
+    261             u8 cmd = ST7036_CMD_DISP_CTRL;
+    262             if (pCfg->on)
+    263                cmd |= ST7036_DISP_ON;
+    264             if (pCfg->cursorOn)
+    265                cmd |= ST7036_DISP_CURSOR_ON;
+    266             if (pCfg->blinkOn)
+    267                cmd |= ST7036_DISP_CURSOR_BLINK_ON;
+    268             LcdCmd(cmd);
+    269          }
+    270          
+    271          static void LcdSetContrast(u8 val)
+    272          {
+    273             if (val > ST7036_CONTRAST_MAX)
+    274             {
+    275                val = ST7036_CONTRAST_MAX;
+    276             }
+    277             LcdCmd(ST7036_CMD_ICON_CTRL | ST7036_CONTRAST_ICON(val));
+    278             LcdCmd(ST7036_CMD_CONTRAST | ST7036_CONTRAST_CONT(val));
+    279          }
+    280          
+    281          static void LcdSetDblHeight(bool on)
+    282          {
+    283             LcdCmd(on? LCD_FUNC_SET_DBL_HT : LCD_FUNC_SET_2_LINE);
+    284             lcd.row = 0;
+    285          }
+    286          
+    287          static void LcdSetCursor(u8 row, u8 col)
+    288          {
+    289             u8 cmd;
+    290             cmd = (row == 0) ? 0x00 : 0x40;  // (2-line display)
+    291             cmd |= (ST7036_CMD_SET_DDRAM | col);
+    292             LcdCmd(cmd);
+    293          }
+    294          
+    295          static void LcdCmd(u8 cmd)
+    296          {
+    297             u8 pkt[2] = { 0x00, cmd };
+    298             LcdCmdQueue(pkt, sizeof(pkt));
+    299          }
+    300          
+    301          static void LcdCmdQueue(void const *pSrc, u8 len)
+    302          {
+    303             ItemQPush(&lcd.i2cQ, pSrc, len);
+    304             if (!I2cIsBusy(LCD_I2C_DEV))
+    305             {
+    306                LcdCmdDequeue();
+    307             }
+    308          }
+    309          
+    310          static void LcdCmdDequeue(void)
+    311          {
+    312             u8 len = (u8)ItemQPop(lcd.i2cTxBuf, sizeof(lcd.i2cTxBuf), &lcd.i2cQ);
+    313             if (len > 0)
+    314             {
+    315                I2C_TRANSFER_PARAMS i2cTx =
+    316                {
+    317                   .destAddr = LCD_I2C_ADDR,
+    318                   .pTxData = lcd.i2cTxBuf,
+    319                   .txLen = len,
+    320                };
+    321          
+    322                // NOTE: most cmds require 14-26us delay (clear display takes 590-1080us)
+    323                // experimentation shows that no delay is necessary between commands except
+    324                // the "Clear Display" command
+    325                I2cWriteRead(LCD_I2C_DEV, &i2cTx);
+    326             }
+    327          }
+    328          
+    329          
+    330          static bool LcdI2cWait(void)
+    331          {
+    332             return I2cWait(LCD_I2C_DEV);
+    333          }
+    334          
+    335          static void LcdI2cDone(void)
+    336          {
+    337             lcd.i2cErr = false;
+    338             LcdCmdDequeue();
+    339          }
+    340          
+    341          static void LcdI2cErr(void)
+    342          {
+    343             lcd.i2cErr = true;
+    344             LcdCmdDequeue();
+    345          }
+    346          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   LcdClear
+         8   -> LcdUpdate
+         8   -> memset
+      16   LcdCmd
+        16   -> LcdCmdQueue
+      16   LcdCmdDequeue
+        16   -> I2cWriteRead
+        16   -> ItemQPop
+      16   LcdCmdQueue
+        16   -> I2cIsBusy
+        16   -> ItemQPush
+        16   -> LcdCmdDequeue
+       0   LcdConfigGet
+      16   LcdConfigSet
+        16   -> LcdCtrl
+        16   -> LcdSetContrast
+        16   -> LcdSetDblHeight
+        16   -> memcpy
+      16   LcdCtrl
+        16   -> LcdCmd
+       8   LcdI2cDone
+         8   -> LcdCmdDequeue
+       8   LcdI2cErr
+         8   -> LcdCmdDequeue
+       8   LcdI2cWait
+         8   -> I2cWait
+      32   LcdInit
+        32   -> GpioClear
+        32   -> GpioSet
+        32   -> I2cOpen
+        32   -> ItemQInit
+        32   -> LcdCmd
+        32   -> LcdCmdQueue
+        32   -> LcdI2cWait
+        32   -> TimerWaitXMs
+        32   -> TimerWaitXUs
+        32   -> memset
+      64   LcdPrintf
+        64   -> LcdPuts
+        64   -> vsnprintf
+       8   LcdPutc
+         8   -> LcdWrite
+       8   LcdPuts
+         8   -> LcdWrite
+         8   -> strlen
+       8   LcdSetContrast
+         8   -> LcdCmd
+      16   LcdSetCursor
+        16   -> LcdCmd
+       8   LcdSetDblHeight
+         8   -> LcdCmd
+      16   LcdSetPos
+        16   -> LcdUpdate
+      40   LcdUpdate
+        40   -> LcdCmdQueue
+        40   -> LcdSetCursor
+        40   -> memcmp
+        40   -> memcpy
+      24   LcdWrite
+        24   -> LcdUpdate
+        24   -> isprint
+        24   -> memset
+       8   isprint
+         8   -> isalpha
+         8   -> ispunct
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant {(void (*)(I2C_DEV))LcdI2cDone, (vo
+       2  ?<Constant {0, 0}>
+       8  ?<Constant {120, 0, (void const *)(((char *)(&
+       8  ?<Constant {56, 57, 20, 120, 94, 109, 12}>
+       4  ??DataTable11
+       4  ??DataTable11_1
+       4  ??DataTable11_2
+       4  ??DataTable11_3
+       4  ??DataTable11_4
+       4  ??DataTable11_5
+       4  ??DataTable11_6
+       4  ??DataTable11_7
+       4  ??DataTable11_8
+      42  LcdClear
+      26  LcdCmd
+      44  LcdCmdDequeue
+      34  LcdCmdQueue
+       6  LcdConfigGet
+      78  LcdConfigSet
+      46  LcdCtrl
+      16  LcdI2cDone
+      16  LcdI2cErr
+      10  LcdI2cWait
+     154  LcdInit
+      38  LcdPrintf
+      12  LcdPutc
+      22  LcdPuts
+      44  LcdSetContrast
+      34  LcdSetCursor
+      32  LcdSetDblHeight
+      54  LcdSetPos
+     172  LcdUpdate
+     200  LcdWrite
+      42  isprint
+     188  lcd
+
+ 
+   188 bytes in section .bss
+    26 bytes in section .rodata
+ 1 158 bytes in section .text
+ 
+ 1 116 bytes of CODE  memory (+ 42 bytes shared)
+    26 bytes of CONST memory
+   188 bytes of DATA  memory
+
+Errors: none
+Warnings: none

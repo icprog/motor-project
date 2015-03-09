@@ -1,0 +1,562 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:39 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\usart.c                               #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\usart.c" -D __SAM3U2C__               #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\usart.lst                      #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\usart.o                         #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\usart.c
+      1          /*******************************************************************************************
+      2          ATSAM3U2C USART Driver
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "usart.h"
+     12          #include "bsp.h"
+     13          #include "irq.h"
+     14          #include "core_cm3.h"
+     15          
+     16          
+     17          /**************************************************************************
+     18           *                                  Constants
+     19           **************************************************************************/
+     20          #define UART_IS_VALID(num) ((num) < USART_COUNT)
+     21          #define UART_IS_OPEN(num)	(UART_IS_VALID(num) && usartCfg[num].initialized)
+     22          
+     23          static const USART_SETUP UsartDefault =
+     24          {
+     25          	.baud = 115200,
+     26             .lsbFirst = true,
+     27             .mode = USART_MODE_ASYNC,
+     28          
+     29          	.parity = USART_PARITY_NONE,
+     30          	.dataBits = 8,
+     31          	.stopBits = USART_STOP_BITS_1,
+     32          
+     33             .spiMode = SPI_MODE0,
+     34          };
+     35          
+     36          typedef struct
+     37          {
+     38             AT91PS_USART const pReg;
+     39             PERIPH_ID periphId;
+     40          }USART_DEFS;
+     41          static const USART_DEFS UsartDefs[USART_COUNT] =
+     42          {
+     43             [USART0] = { .pReg = AT91C_BASE_US0, .periphId = PERIPH_US0 },
+     44             [USART1] = { .pReg = AT91C_BASE_US1, .periphId = PERIPH_US1 },  //lint !e485
+     45             [USART2] = { .pReg = AT91C_BASE_US2, .periphId = PERIPH_US2 },  //lint !e485
+     46             [USART3] = { .pReg = AT91C_BASE_US3, .periphId = PERIPH_US3 },  //lint !e485
+     47             [UART0]  = { .pReg = (AT91PS_USART)AT91C_BASE_DBGU,.periphId = PERIPH_DBGU },  //lint !e485 !e740
+     48          };
+     49          
+     50          
+     51          /**************************************************************************
+     52           *                                  Types
+     53           **************************************************************************/
+     54          typedef struct
+     55          {
+     56             AT91PS_USART pReg;
+     57             USART_CBS cbs;
+     58             u32 actualBaud;
+     59             s32 rxLen;
+     60             bool initialized;
+     61             USART_DEV usartNum;
+     62          } USART_BASE;
+     63          
+     64          
+     65          /**************************************************************************
+     66           *                                  Variables
+     67           **************************************************************************/
+     68          static USART_BASE usartCfg[USART_COUNT];
+     69          
+     70          
+     71          /**************************************************************************
+     72           *                                  Prototypes
+     73           **************************************************************************/
+     74          static void UsartSetup(USART_BASE *pUsart, USART_SETUP const *pSetup);
+     75          static void UsartSetBaud(USART_BASE *pUsart, USART_SETUP const *pSetup);
+     76          static void UsartSetupCallbacks(USART_BASE *pUsart, USART_CBS const *pCbs);
+     77          static s32 UsartSpiSingle(USART_BASE const *pUsart, u32 txByte);
+     78          static void UsartSpiTxfr(USART_BASE const *pUsart, USART_TRANSFER_PARAMS const *pTxfr);
+     79          static void UsartStopTxfr(USART_BASE const *pUsart, USART_TXFR_FLAG txfr);
+     80          static s32 UsartStatus(USART_BASE const *pUsart, USART_STATUS cmd);
+     81          static s32 UsartRxRemain(USART_BASE const *pUsart);
+     82          static s32 UsartTxRemain(USART_BASE const *pUsart);
+     83          static void UsartHandler(USART_BASE const *pUsart);
+     84          
+     85          
+     86          /**************************************************************************
+     87           *                                  Global Functions
+     88           **************************************************************************/
+     89          s32 UsartOpen (s32 usart, USART_SETUP const *pSetup)
+     90          {
+     91          	USART_BASE *pUsart = &usartCfg[usart];
+     92          	if (!UART_IS_VALID(usart) || pUsart->initialized)
+     93                return ERROR;
+     94          
+     95             pUsart->initialized = TRUE;
+     96             pUsart->usartNum = (USART_DEV)usart;
+     97             pUsart->rxLen = 0;
+     98             memset(&pUsart->cbs, 0, sizeof(pUsart->cbs));
+     99             pUsart->pReg = UsartDefs[usart].pReg;
+    100             BspPeriphOn(UsartDefs[usart].periphId);
+    101          
+    102             // Leave interrupts disabled until a callback function is registered
+    103             pUsart->pReg->US_IDR = UINT32_MAX;
+    104             UsartSetup(pUsart, pSetup? pSetup: &UsartDefault);
+    105             return NO_ERROR;
+    106          }
+    107          
+    108          s32 UsartClose(s32 usart)
+    109          {
+    110             if (!UART_IS_OPEN(usart))
+    111                return ERROR;
+    112          
+    113             USART_BASE *pUsart = &usartCfg[usart];
+    114             pUsart->initialized = FALSE;
+    115             pUsart->pReg->US_IDR = UINT32_MAX;
+    116             NVIC_DisableIRQ((IRQn_Type)UsartDefs[usart].periphId);
+    117             BspPeriphOff(UsartDefs[usart].periphId);
+    118             return NO_ERROR;
+    119          }
+    120          
+    121          s32 UsartRead (s32 usart, void *pDest, s32 len)
+    122          {
+    123             if (!UART_IS_OPEN(usart))
+    124                return ERROR;
+    125          
+    126             AT91PS_USART const pReg = usartCfg[usart].pReg;
+    127             // NOTE: Using the 'Next' PDC registers will automatically transfer to the 'current' registers
+    128             //       immediately if there is no current transfer. Otherwise, this will queue up the RX.
+    129             usartCfg[usart].rxLen = (s32)pReg->US_RCR + len;
+    130             pReg->US_RNPR = (u32)pDest;
+    131             pReg->US_RNCR = (u32)len;
+    132             pReg->US_CR = AT91C_US_RXEN;
+    133             pReg->US_PTCR = AT91C_PDC_RXTEN;
+    134             if (usartCfg[usart].cbs.pfnRxDoneOrTimeout || usartCfg[usart].cbs.pfnRxErr)
+    135             {
+    136                pReg->US_IER = (AT91C_US_ENDRX | AT91C_US_FRAME | AT91C_US_OVRE | AT91C_US_PARE | AT91C_US_TIMEOUT);
+    137             }
+    138             return len;
+    139          }
+    140          
+    141          s32 UsartWrite(s32 usart, const void *pSrc, s32 len)
+    142          {
+    143             if (!UART_IS_OPEN(usart))
+    144                return ERROR;
+    145          
+    146             AT91PS_USART const pReg = usartCfg[usart].pReg;
+    147             // NOTE: Using the 'Next' PDC registers will automatically transfer to the 'current' registers
+    148             //       immediately if there is no current transfer. Otherwise, this will queue up the RX.
+    149             pReg->US_MR &= ~AT91C_US_INACK;
+    150             pReg->US_TNPR = (u32)pSrc;
+    151             pReg->US_TNCR = (u32)len;
+    152             pReg->US_CR = AT91C_US_TXEN;
+    153             pReg->US_PTCR = AT91C_PDC_TXTEN;
+    154             if (usartCfg[usart].cbs.pfnTxDone)
+    155             {
+    156                pReg->US_IER = AT91C_US_ENDTX;
+    157             }
+    158             return len;
+    159          }
+    160          
+    161          s32 UsartIoctl(s32 usart, s32 cmd, u32 arg)
+    162          {
+    163             if (!UART_IS_OPEN(usart))
+    164                return ERROR;
+    165          
+    166             USART_BASE *pUsart = &usartCfg[usart];
+    167             s32 res = NO_ERROR;
+    168             switch ((USART_IOCTL_CMD)cmd)
+    169             {
+    170             case USART_IOCTL_SETUP:       UsartSetup(pUsart, (USART_SETUP const *)arg);               break;
+    171             case USART_IOCTL_INSTALL_CBS: UsartSetupCallbacks(pUsart, (USART_CBS const *)arg);        break;
+    172             case USART_IOCTL_SPI_SINGLE:  res = UsartSpiSingle(pUsart, arg);                          break;
+    173             case USART_IOCTL_SPI_WR_RD:   UsartSpiTxfr(pUsart, (USART_TRANSFER_PARAMS const *)arg);   break;
+    174             case USART_IOCTL_STOP_TXFR:   UsartStopTxfr(pUsart, (USART_TXFR_FLAG)arg);                break;
+    175             case USART_IOCTL_STATUS:      res = UsartStatus(pUsart, (USART_STATUS)arg);               break;
+    176             default:                      res = ERROR;                                                break;
+    177             }
+    178             return res;
+    179          }
+    180          
+    181          
+    182          void DBGU_IrqHandler(void)    {UsartHandler(&usartCfg[UART0]);}
+    183          void USART0_IrqHandler(void)  {UsartHandler(&usartCfg[USART0]);}
+    184          void USART1_IrqHandler(void)  {UsartHandler(&usartCfg[USART1]);}
+    185          void USART2_IrqHandler(void)  {UsartHandler(&usartCfg[USART2]);}
+    186          void USART3_IrqHandler(void)  {UsartHandler(&usartCfg[USART3]);}
+    187          
+    188          
+    189          /**************************************************************************
+    190           *                                 Private Functions
+    191           **************************************************************************/
+    192          static void UsartSetup(USART_BASE *pUsart, USART_SETUP const *pSetup)
+    193          {
+    194             AT91PS_USART const pReg = pUsart->pReg;
+    195             if (pSetup->mode == USART_MODE_ASYNC)
+    196             {
+    197                pReg->US_MR = (AT91C_US_USMODE_NORMAL | AT91C_US_CLKS_CLOCK | AT91C_US_CHMODE_NORMAL |
+    198                               ((pSetup->dataBits - 5U) << 6U) |
+    199                               (pSetup->lsbFirst? 0 : AT91C_US_MSBF) |
+    200                               (AT91C_US_CHMODE_NORMAL) |
+    201                               ((u8)pSetup->parity << 9U) |
+    202                               ((u8)pSetup->stopBits << 12U));
+    203                pReg->US_RTOR = 10;  // standard timeout is 1 frame (8N1 = 10 bits)
+    204             }
+    205             else
+    206             {
+    207                pReg->US_MR = (0xEUL | AT91C_US_CLKS_CLOCK | AT91C_US_CHMODE_NORMAL |
+    208                               ((pSetup->dataBits - 5U) << 6) |
+    209                               (((u8)pSetup->spiMode & BIT0)? AT91C_US_SYNC : 0) |
+    210                               ((u8)USART_PARITY_NONE << 9) |
+    211                               (AT91C_US_CHMODE_NORMAL) |
+    212                               (((u8)pSetup->spiMode & BIT1)? AT91C_US_MSBF : 0) |
+    213                               (AT91C_US_CKLO));
+    214                pReg->US_RTOR = 0;
+    215             }
+    216             UsartSetBaud(pUsart, pSetup);
+    217             pReg->US_CR = (AT91C_US_RSTRX | AT91C_US_RXDIS | AT91C_US_RSTTX | AT91C_US_TXDIS | AT91C_US_RSTSTA);
+    218          }
+    219          
+    220          static void UsartSetBaud(USART_BASE *pUsart, USART_SETUP const *pSetup)
+    221          {
+    222             // normal: 48MHz / (CD * 16)
+    223             // Fractional: 48MHz / (CD * 16 * FP/8)
+    224             // SPI: 48MHz / CD
+    225             u32 mck = BspGetCpuClkFreq();
+    226             u32 bestCd, bestFp;
+    227             u32 bestBaudDif = UINT32_MAX;
+    228          
+    229             for (u32 fp = 8; (fp > 0) || ((fp == 7) && (pUsart->usartNum == UART0)); fp--)
+    230             {
+    231                for (u32 cd = ((pSetup->mode == USART_MODE_SPI)? 6 : 1); cd < 256; cd++)
+    232                {
+    233                   u32 actualBaud = (pSetup->mode == USART_MODE_SPI)
+    234                      ? ((mck * fp) / (cd * 8))
+    235                      : ((mck * fp) / (cd * (8 * 16)));
+    236                   if (ABS_DIF(actualBaud, pSetup->baud) < bestBaudDif)
+    237                   {
+    238                      bestBaudDif = ABS_DIF(actualBaud, pSetup->baud);
+    239                      pUsart->actualBaud = actualBaud;
+    240                      bestCd = cd;
+    241                      bestFp = (fp == 8)? 0 : fp;
+    242                      if ((bestBaudDif == 0) && (fp == 8))
+    243                         goto USART_BAUD_FOUND;  //lint !e801
+    244                   }
+    245                   else if (actualBaud < pSetup->baud)
+    246                   {
+    247                      break;
+    248                   }
+    249                }
+    250             }
+    251          USART_BAUD_FOUND:
+    252             pUsart->pReg->US_BRGR = bestCd | (bestFp << 16);   //lint !e644
+    253          }
+    254          
+    255          static void UsartSetupCallbacks(USART_BASE *pUsart, USART_CBS const *pCbs)
+    256          {
+    257             IRQn_Type irq = (IRQn_Type)UsartDefs[pUsart->usartNum].periphId;
+    258             if ((pCbs == NULL) ||
+    259                 ((pCbs->pfnRxDoneOrTimeout == NULL) && (pCbs->pfnRxErr == NULL) && (pCbs->pfnTxDone == NULL)))
+    260             {
+    261                NVIC_DisableIRQ(irq);
+    262                memset(&pUsart->cbs, 0, sizeof(pUsart->cbs));
+    263             }
+    264             else
+    265             {
+    266                memcpy(&pUsart->cbs, pCbs, sizeof(pUsart->cbs));
+    267                NVIC_SetPriority(irq, IRQ_PRIO_USART);
+    268                NVIC_ClearPendingIRQ(irq);
+    269                NVIC_EnableIRQ(irq);
+    270             }
+    271          }
+    272          
+    273          static s32 UsartSpiSingle(USART_BASE const *pUsart, u32 txByte)
+    274          {
+    275             AT91PS_USART const pReg = pUsart->pReg;
+    276             pReg->US_IDR = UINT32_MAX;
+    277             pReg->US_CR = (AT91C_US_RXEN | AT91C_US_TXEN);
+    278             pReg->US_RHR;  // dummy read to clear
+    279             pReg->US_THR = txByte;
+    280             do{} while (!(pReg->US_CSR & AT91C_US_RXRDY));
+    281             s32 retVal = (s32)pReg->US_RHR;
+    282             pReg->US_CR = (AT91C_US_RXDIS | AT91C_US_TXDIS);
+    283             return retVal;
+    284          }
+    285          
+    286          static void UsartSpiTxfr(USART_BASE const *pUsart, USART_TRANSFER_PARAMS const *pTxfr)
+    287          {
+    288             AT91PS_USART const pReg = pUsart->pReg;
+    289             pReg->US_MR |= AT91C_US_INACK;
+    290             pReg->US_IDR = UINT32_MAX;
+    291          
+    292             pReg->US_PTCR = AT91C_PDC_RXTDIS | AT91C_PDC_TXTDIS;
+    293             pReg->US_RNPR = (u32)pTxfr->pRxData;
+    294             pReg->US_TNPR = (u32)pTxfr->pTxData;
+    295             pReg->US_RNCR = (u32)pTxfr->len;
+    296             pReg->US_TNCR = (u32)pTxfr->len;
+    297             pReg->US_CR = (AT91C_US_RXEN | AT91C_US_TXEN);
+    298             pReg->US_PTCR = AT91C_PDC_RXTEN | AT91C_PDC_TXTEN;
+    299             pReg->US_IER = AT91C_US_ENDRX;   // IRQ on RX (not TX)
+    300          }
+    301          
+    302          static void UsartStopTxfr(USART_BASE const *pUsart, USART_TXFR_FLAG txfr)
+    303          {
+    304             AT91PS_USART const pReg = pUsart->pReg;
+    305             if ((u8f)txfr & (u8f)USART_TXFR_FLAG_RD)
+    306             {
+    307                pReg->US_PTCR = AT91C_PDC_RXTDIS;
+    308                pReg->US_CR = AT91C_US_RXDIS;
+    309             }
+    310             if ((u8f)txfr & (u8f)USART_TXFR_FLAG_WR)
+    311             {
+    312                pReg->US_PTCR = AT91C_PDC_TXTDIS;
+    313                pReg->US_CR = AT91C_US_TXDIS;
+    314             }
+    315          }
+    316          
+    317          static s32 UsartStatus(USART_BASE const *pUsart, USART_STATUS cmd)
+    318          {
+    319             s32 res;
+    320             switch (cmd)
+    321             {
+    322             case USART_STATUS_REG:        res = (s32)pUsart->pReg->US_CSR; break;
+    323             case USART_STATUS_BAUD:       res = (s32)pUsart->actualBaud;   break;
+    324             case USART_STATUS_RX_REMAIN:  res = UsartRxRemain(pUsart);     break;
+    325             case USART_STATUS_TX_REMAIN:  res = UsartTxRemain(pUsart);     break;
+    326             default:                      res = ERROR;                     break;
+    327             }
+    328             return res;
+    329          }
+    330          
+    331          static s32 UsartRxRemain(USART_BASE const *pUsart)
+    332          {
+    333             s32 rxRemain = (s32)pUsart->pReg->US_RCR;
+    334             rxRemain += (s32)pUsart->pReg->US_RNCR;
+    335             return (pUsart->rxLen - rxRemain);
+    336          }
+    337          
+    338          static s32 UsartTxRemain(USART_BASE const *pUsart)
+    339          {
+    340             s32 txRemain = (s32)pUsart->pReg->US_TCR;
+    341             txRemain += (s32)pUsart->pReg->US_TNCR;
+    342             return (pUsart->rxLen - txRemain);
+    343          }
+    344          
+    345          static void UsartHandler(USART_BASE const *pUsart)
+    346          {
+    347             AT91PS_USART const pReg = pUsart->pReg;
+    348             u32 irq = pReg->US_CSR;
+    349             irq &= pReg->US_IMR;
+    350             if (irq & (AT91C_US_RXRDY | AT91C_US_TIMEOUT))
+    351             {
+    352                if (irq & AT91C_US_TIMEOUT)
+    353                {
+    354                   pReg->US_CR = AT91C_US_STTTO;
+    355                   usartCfg[pUsart->usartNum].rxLen = UsartRxRemain(pUsart);
+    356                   pReg->US_RCR = 0;
+    357                }
+    358                if (pReg->US_RCR == 0)
+    359                {
+    360                   pReg->US_IDR = AT91C_US_RXRDY;
+    361                }
+    362                if (pUsart->cbs.pfnRxDoneOrTimeout)
+    363                {
+    364                   pUsart->cbs.pfnRxDoneOrTimeout((s32)pUsart->usartNum);
+    365                }
+    366             }
+    367             if (irq & AT91C_US_ENDTX)
+    368             {
+    369                if (pReg->US_TCR == 0)
+    370                {
+    371                   pReg->US_IDR = AT91C_US_ENDTX;
+    372                }
+    373                if (pUsart->cbs.pfnTxDone)
+    374                {
+    375                   pUsart->cbs.pfnTxDone((s32)pUsart->usartNum);
+    376                }
+    377             }
+    378             if (irq & (AT91C_US_FRAME | AT91C_US_OVRE | AT91C_US_PARE))
+    379             {
+    380                pReg->US_CR = AT91C_US_RSTSTA;
+    381                if (pUsart->cbs.pfnRxErr)
+    382                {
+    383                   pUsart->cbs.pfnRxErr((s32)pUsart->usartNum);
+    384                }
+    385             }
+    386          }
+    387          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   DBGU_IrqHandler
+         8   -> UsartHandler
+       4   NVIC_ClearPendingIRQ
+       4   NVIC_DisableIRQ
+       4   NVIC_EnableIRQ
+       0   NVIC_SetPriority
+       8   USART0_IrqHandler
+         8   -> UsartHandler
+       8   USART1_IrqHandler
+         8   -> UsartHandler
+       8   USART2_IrqHandler
+         8   -> UsartHandler
+       8   USART3_IrqHandler
+         8   -> UsartHandler
+      16   UsartClose
+        16   -> BspPeriphOff
+        16   -> NVIC_DisableIRQ
+      24   UsartHandler
+        24   -- Indirect call
+        24   -> UsartRxRemain
+      24   UsartIoctl
+        24   -> UsartSetup
+        24   -> UsartSetupCallbacks
+        24   -> UsartSpiSingle
+        24   -> UsartSpiTxfr
+        24   -> UsartStatus
+        24   -> UsartStopTxfr
+      16   UsartOpen
+        16   -> BspPeriphOn
+        16   -> UsartSetup
+        16   -> memset
+       8   UsartRead
+       0   UsartRxRemain
+      24   UsartSetBaud
+        24   -> BspGetCpuClkFreq
+      16   UsartSetup
+        16   -> UsartSetBaud
+      16   UsartSetupCallbacks
+        16   -> NVIC_ClearPendingIRQ
+        16   -> NVIC_DisableIRQ
+        16   -> NVIC_EnableIRQ
+        16   -> NVIC_SetPriority
+        16   -> memcpy
+        16   -> memset
+       4   UsartSpiSingle
+       0   UsartSpiTxfr
+      16   UsartStatus
+        16   -> UsartRxRemain
+        16   -> UsartTxRemain
+       0   UsartStopTxfr
+       0   UsartTxRemain
+       8   UsartWrite
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable15
+       4  ??DataTable15_1
+       4  ??DataTable15_10
+       4  ??DataTable15_11
+       4  ??DataTable15_2
+       4  ??DataTable15_3
+       4  ??DataTable15_4
+       4  ??DataTable15_5
+       4  ??DataTable15_6
+       4  ??DataTable15_7
+       4  ??DataTable15_8
+       4  ??DataTable15_9
+      10  DBGU_IrqHandler
+      26  NVIC_ClearPendingIRQ
+      26  NVIC_DisableIRQ
+      26  NVIC_EnableIRQ
+      36  NVIC_SetPriority
+      10  USART0_IrqHandler
+      10  USART1_IrqHandler
+      10  USART2_IrqHandler
+      10  USART3_IrqHandler
+      88  UsartClose
+      12  UsartDefault
+      40  UsartDefs
+     132  UsartHandler
+     156  UsartIoctl
+     106  UsartOpen
+     122  UsartRead
+      20  UsartRxRemain
+     190  UsartSetBaud
+     124  UsartSetup
+      98  UsartSetupCallbacks
+      36  UsartSpiSingle
+      66  UsartSpiTxfr
+      68  UsartStatus
+      34  UsartStopTxfr
+      20  UsartTxRemain
+      96  UsartWrite
+     140  usartCfg
+
+ 
+   140 bytes in section .bss
+    52 bytes in section .rodata
+ 1 568 bytes in section .text
+ 
+ 1 568 bytes of CODE  memory
+    52 bytes of CONST memory
+   140 bytes of DATA  memory
+
+Errors: none
+Warnings: none

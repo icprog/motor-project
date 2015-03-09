@@ -1,0 +1,947 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:34 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\file\file.c                               #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\file\file.c" -D __SAM3U2C__               #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\file.lst                       #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\file.o                          #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\file\file.c
+      1          /*******************************************************************************************
+      2          Top-Level FILE API
+      3          
+      4          This file provides all of the file API calls for the disk(s) and file system(s). It is layered:
+      5          [file API] --> [Disk] --> [File System translation] --> [actual file system (i.e. FAT)]
+      6          
+      7          This is free, public domain software and there is NO WARRANTY.
+      8          No restriction on use. You can use, modify and redistribute it for
+      9          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+     10          
+     11          Sheldon Patterson
+     12          ********************************************************************************************/
+     13          
+     14          
+     15          #include "fileSystem.h"
+     16          #include "futils.h"
+     17          #include <stdio.h>		// vsprintf()
+     18          
+     19          
+     20          /**************************************************************************
+     21           *                                  Constants
+     22           **************************************************************************/
+     23          #define FILE_DISK_OFFSET				(3)		// Reserve disks 0-2 for stdin/stdout/stderr
+     24          #define FFILE_FIND_FLAG					BIT15
+     25          
+     26          #define FILE_ASSERT_RET(n, ret)		{if (!(n)) return ret;}
+     27          #define FILE_ASSERT_VALID_HANDLE(h)	FILE_ASSERT_RET(FileHandleIsValid(h), (int)FERR_INVALID)
+     28          #define FILE_ASSERT_VALID_DISK(d)	FILE_ASSERT_RET(FDISK_NUM_IS_VALID(d), (int)FERR_INVALID)
+     29          
+     30          
+     31          /**************************************************************************
+     32           *                                  Types
+     33           **************************************************************************/
+     34          /**************************************************************************
+     35           *                                  Variables
+     36           **************************************************************************/
+     37          static UINT16 fileHandleCounter = 0;
+     38          static FDISK *pFileDisks[FDISK_COUNT] = {NULL};
+     39          
+     40          
+     41          /**************************************************************************
+     42           *                                  Prototypes
+     43           **************************************************************************/
+     44          static FFILE_HANDLE * FileHandleOpen(FDISK *pDisk);
+     45          static void FileHandleClose(FFILE_HANDLE *pHandle);
+     46          static FFILE FileHandleGetNew(FDISK_NUM disk, UINT16F index, BOOL find);
+     47          static FDISK_NUM FileDiskFromHandle(FFILE file);
+     48          static UINT16F FileIndexFromHandle(FFILE file);
+     49          static FFILE_HANDLE * FileFromHandle(FFILE file);
+     50          
+     51          static int FileIdFromHandle(FFILE file);
+     52          static BOOL FileHandleIsValid(FFILE file);
+     53          static FDISK_NUM FileDiskNumFromStr(char const *pStr);
+     54          
+     55          #ifndef FS_READONLY
+     56          static void FileCreatePath(FDISK_NUM disk, char const *pName);
+     57          #endif
+     58          
+     59          #ifndef FS_NO_FIND
+     60          static FFIND_HANDLE * FileFindHandleOpen(FDISK *pDisk);
+     61          static void FileFindHandleClose(FFIND_HANDLE *pHandle);
+     62          static FFIND_HANDLE * FileFindFromHandle(FFILE file);
+     63          static BOOL FileUpDir(FFIND_HANDLE *pHandle, FFIND *pFind);
+     64          #ifndef FS_READONLY
+     65          static int FileRemoveMask(char const *pName);
+     66          #endif
+     67          #endif
+     68          
+     69          
+     70          /**************************************************************************
+     71           *                                  Global Functions
+     72           **************************************************************************/
+     73          BOOL FileDevIsMounted(FDISK_NUM disk)
+     74          {
+     75          	return FDISK_NUM_IS_VALID(disk) && pFileDisks[disk]->isMounted;
+     76          }
+     77          
+     78          void FileDevInfo(FDISK_NUM disk, FDISK_STATS *pDest)
+     79          {
+     80          	if (pDest && FDISK_NUM_IS_VALID(disk))
+     81          	{
+     82          		FDISK *pDisk = pFileDisks[disk];
+     83          		pDest->diskNum = disk;
+     84          		pDest->isMounted = pDisk->isMounted;
+     85          		fsCalls[disk].pfnDiskStats(pDisk, pDest);	//lint !e534
+     86          	}
+     87          }
+     88          
+     89          FFILE FileOpen(char const *pName, FOPEN_MODE openMode)
+     90          {
+     91          	FDISK_NUM disk = FileDiskNumFromStr(pName);
+     92          	FFILE_HANDLE *pFile;
+     93          	FFILE file;
+     94          
+     95          	if (!FDISK_NUM_IS_VALID(disk))
+     96          	{
+     97          		file = (FFILE)FERR_INVALID;
+     98          	}
+     99          #ifdef FS_READONLY
+    100          	else if (openMode != FOPEN_READ)
+    101          	{
+    102          		file = (FFILE)FERR_INVALID;
+    103          	}
+    104          #endif
+    105          	else
+    106          	{
+    107          		FDISK *pDisk = pFileDisks[disk];
+    108          		pFile = FileHandleOpen(pDisk);
+    109          		if (pFile)
+    110          		{
+    111          #ifndef FS_READONLY
+    112          			// Feature: Automatically create directories as required
+    113          			if ((openMode != FOPEN_READ) && (openMode != FOPEN_READ_PLUS))
+    114          			{
+    115          				FileCreatePath(pDisk->diskNum, pName);
+    116          			}
+    117          #endif
+    118          
+    119          			file = (FFILE)fsCalls[disk].pfnOpen(pDisk->pFsData, pName, openMode);
+    120          			if (FILE_IS_ERROR(file))
+    121          			{
+    122          				FileHandleClose(pFile);
+    123          			}
+    124          			else
+    125          			{
+    126          				pFile->fsId = (int)file;
+    127          				file = pFile->userHandle;
+    128          			}
+    129          		}
+    130          		else
+    131          		{
+    132          			file = (FFILE)FERR_TOO_MANY;
+    133          		}
+    134          	}
+    135          	return file;
+    136          }
+    137          
+    138          int FileClose(FFILE file)
+    139          {
+    140          	int retVal;
+    141          	FDISK *pDisk;
+    142          	FILE_ASSERT_VALID_HANDLE(file);
+    143          	pDisk = pFileDisks[FileDiskFromHandle(file)];
+    144           	retVal = fsCalls[pDisk->diskNum].pfnClose(FileIdFromHandle(file));
+    145          	FileHandleClose(FileFromHandle(file));
+    146          	return retVal;
+    147          }
+    148          
+    149          int FileRead(FFILE file, void *pDest, int len)
+    150          {
+    151          	FILE_ASSERT_VALID_HANDLE(file);
+    152          	return fsCalls[FileDiskFromHandle(file)].pfnRead(FileIdFromHandle(file), pDest, len);
+    153          }
+    154          
+    155          // Read until \n (and includes \n in the string)
+    156          char * FileGets(FFILE file, char *pStr, int maxLen)
+    157          {
+    158          	FILE_ASSERT_RET(FileHandleIsValid(file), NULL);
+    159          	PFN_FREAD pfnRead = fsCalls[FileDiskFromHandle(file)].pfnRead;
+    160          	int fsId = FileIdFromHandle(file);
+    161          
+    162          	int readLen = 0;
+    163          	maxLen -= 1;
+    164          	while (readLen < maxLen)
+    165          	{
+    166          		if (fsCalls[FileDiskFromHandle(file)].pfnEof(fsId))
+    167          		{
+    168          			break;
+    169          		}
+    170          		else if (pfnRead(fsId, &pStr[readLen], 1) != 1)
+    171          		{
+    172          			return NULL;
+    173          		}
+    174          		else if (pStr[readLen++] == '\n')
+    175          			break;
+    176          	}
+    177          	if (readLen > 0)
+    178          	{
+    179          		pStr[readLen] = '\0';
+    180          	}
+    181          	return pStr;
+    182          }
+    183          
+    184          long FileSeek(FFILE file, long offset, FSEEK_ORIGIN origin)
+    185          {
+    186          	FILE_ASSERT_VALID_HANDLE(file);
+    187          	return fsCalls[FileDiskFromHandle(file)].pfnSeek(FileIdFromHandle(file), offset, origin);
+    188          }
+    189          
+    190          long FileTell(FFILE file)
+    191          {
+    192          	FILE_ASSERT_VALID_HANDLE(file);
+    193          	return fsCalls[FileDiskFromHandle(file)].pfnTell(FileIdFromHandle(file));
+    194          }
+    195          
+    196          int FileEof(FFILE file)
+    197          {
+    198          	FILE_ASSERT_VALID_HANDLE(file);
+    199          	return fsCalls[FileDiskFromHandle(file)].pfnEof(FileIdFromHandle(file));
+    200          }
+    201          
+    202          int FileFStat(FFILE file, FSTAT *pDest)
+    203          {
+    204          	FILE_ASSERT_VALID_HANDLE(file);
+    205          	return fsCalls[FileDiskFromHandle(file)].pfnFStat(FileIdFromHandle(file), pDest);
+    206          }
+    207          
+    208          int FileStat(char const *pName, FSTAT *pDest)
+    209          {
+    210          	FILE_ASSERT_VALID_DISK(FileDiskNumFromStr(pName));
+    211          	return fsCalls[FileDiskNumFromStr(pName)].pfnStat(pName, pDest);
+    212          }
+    213          
+    214          #ifndef FS_READONLY
+    215          int FileWrite(FFILE file, void const *pSrc, int len)
+    216          {
+    217          	FILE_ASSERT_VALID_HANDLE(file);
+    218          	return fsCalls[FileDiskFromHandle(file)].pfnWrite(FileIdFromHandle(file), pSrc, len);
+    219          }
+    220          
+    221          int FilePutc(FFILE file, char character)
+    222          {
+    223          	return FileWrite(file, &character, 1);
+    224          }
+    225          
+    226          int FilePuts(FFILE file, char const *pString)
+    227          {
+    228          	return FileWrite(file, pString, (int)strlen(pString));
+    229          }
+    230          
+    231          int FilePrintf(FFILE file, const char *pFormat, ...)
+    232          {
+    233          	char buf[F_MAX_PRINTF_LEN];
+    234          	int len;
+    235          	va_list pArg;
+    236          	va_start(pArg, pFormat);
+    237          	len = vsnprintf(buf, sizeof(buf), pFormat, pArg);	//lint !e534
+    238          	va_end(pArg);
+    239          	return FileWrite(file, buf, len);
+    240          }
+    241          
+    242          int FileFlush(FFILE file)
+    243          {
+    244          	FILE_ASSERT_VALID_HANDLE(file);
+    245          	return fsCalls[FileDiskFromHandle(file)].pfnFlush(FileIdFromHandle(file));
+    246          }
+    247          
+    248          int FileRename(char const *pOld, char const *pNew)
+    249          {
+    250          	FILE_ASSERT_VALID_DISK(FileDiskNumFromStr(pOld));
+    251          	return fsCalls[FileDiskNumFromStr(pOld)].pfnRename(pOld, pNew);
+    252          }
+    253          
+    254          int FileRemove(char const *pName)
+    255          {
+    256          	int retVal;
+    257          	FDISK_NUM disk = FileDiskNumFromStr(pName);
+    258          	FILE_ASSERT_VALID_DISK(FileDiskNumFromStr(pName));
+    259          	retVal = fsCalls[disk].pfnRemove(pName);
+    260          #ifndef FS_NO_FIND
+    261          	if ((retVal == FERR_ACCESS) || (retVal == FERR_INVALID))
+    262          	{
+    263          		retVal = FileRemoveMask(pName);
+    264          	}
+    265          #endif
+    266          	return retVal;
+    267          }
+    268          
+    269          int FileMkDir(char const *pName)
+    270          {
+    271          	FILE_ASSERT_VALID_DISK(FileDiskNumFromStr(pName));
+    272          	return fsCalls[FileDiskNumFromStr(pName)].pfnMkDir(pName);
+    273          }
+    274          #endif
+    275          
+    276          #ifndef FS_NO_FIND
+    277          int FileFindFirst(char const *pName, BOOL shouldRecurse, FFIND *pFind)
+    278          {
+    279          	FDISK_NUM disk = FileDiskNumFromStr(pName);
+    280          	FDISK *pDisk = pFileDisks[disk];
+    281          	FFIND_HANDLE *pHandle;
+    282          	char *pPathEnd;
+    283          
+    284          	if (!pFind || !FDISK_NUM_IS_VALID(disk) ||
+    285          		 ((pHandle = FileFindHandleOpen(pDisk)) == NULL))
+    286          	{
+    287          		return 0;
+    288          	}
+    289          	pFind->handle = pHandle->userHandle;
+    290          	strncpy(pHandle->searchName, pName, sizeof(pHandle->searchName)-1);
+    291          	pHandle->searchName[sizeof(pHandle->searchName)-1] = '\0';
+    292          
+    293          	// Set current directory
+    294          	strncpy(pHandle->currentPath, pName, sizeof(pHandle->currentPath)-1);
+    295          	pHandle->currentPath[sizeof(pHandle->currentPath)-1] = '\0';
+    296          	pPathEnd = (char *)FutilsFileName(pHandle->currentPath);
+    297          	if (pPathEnd)
+    298          	{
+    299          		// FAT library has trouble opening directory with trailing '/' - so remove it (except root dir)
+    300          		if (pPathEnd > &pHandle->currentPath[3])
+    301          			pPathEnd--;
+    302          		*pPathEnd = '\0';
+    303          	}
+    304          
+    305          	pHandle->pFsDirHandle = fsCalls[disk].pfnOpenDir(pDisk->pFsData, pHandle->currentPath);
+    306          	if (pPathEnd && (pPathEnd > &pHandle->currentPath[3]))
+    307          	{
+    308          		// return the '/' to the current path
+    309          		*pPathEnd++ = '/';
+    310          		*pPathEnd = '\0';
+    311          	}
+    312          
+    313          	if (pHandle->pFsDirHandle)
+    314          	{
+    315          		pHandle->shouldRecurse = shouldRecurse;
+    316          		return FileFindNext(pFind);
+    317          	}
+    318          	else
+    319          	{
+    320          		FileFindHandleClose(pHandle);
+    321          		return FERR_NO_FILE;
+    322          	}
+    323          }
+    324          
+    325          int FileFindNext(FFIND *pFind)
+    326          {
+    327          	FDISK_NUM disk = FileDiskFromHandle(pFind->handle);
+    328          	FFIND_HANDLE *pHandle;
+    329          	int retVal;
+    330          
+    331          	if (!pFind || !FileHandleIsValid(pFind->handle))
+    332          	{
+    333          		return 0;
+    334          	}
+    335          
+    336          	pHandle = &pFileDisks[disk]->fileFind[FileIndexFromHandle(pFind->handle)];
+    337          	while (pHandle->pFsDirHandle)
+    338          	{
+    339          		strcpy(pFind->fileName, pHandle->currentPath);
+    340          		retVal = fsCalls[disk].pfnReadDir(pFind, pHandle->pFsDirHandle);
+    341          		if (retVal == FERR_NONE)
+    342          		{
+    343          			if ((*pFind->fileName != '.') &&
+    344          				 FutilsWildcardNameIsMatch(FutilsFileName(pHandle->searchName), pFind->fileName))
+    345          			{
+    346          				break; // Found a match!
+    347          			}
+    348          			else if ((pFind->foundType == FFIND_TYPE_DIR) && pHandle->shouldRecurse)
+    349          			{
+    350          				strcpy(pHandle->currentPath, pFind->fileName);
+    351          				fsCalls[disk].pfnCloseDir(pHandle->pFsDirHandle);	//lint !e534
+    352          				pHandle->pFsDirHandle = fsCalls[disk].
+    353          					pfnOpenDir(pFileDisks[disk]->pFsData, pHandle->currentPath);
+    354          				strncat(pHandle->currentPath, "/", F_MAX_NAME);
+    355          			}
+    356          		}
+    357          		else if (pHandle->shouldRecurse && FileUpDir(pHandle, pFind))
+    358          		{
+    359          			// Continue searching from just past where we first recursed into the directory
+    360          		}
+    361          		else
+    362          		{
+    363          			pHandle->pFsDirHandle = NULL;
+    364          		}
+    365          	}
+    366          	if (!pHandle->pFsDirHandle)
+    367          	{
+    368          		return FileFindClose(pFind);
+    369          	}
+    370          	return 0;
+    371          }
+    372          
+    373          int FileFindClose(FFIND *pFind)
+    374          {
+    375          	int retVal;
+    376          	FDISK *pDisk;
+    377          	FFIND_HANDLE *pHandle;
+    378          	if (!FileHandleIsValid(pFind->handle))
+    379          		return 0;
+    380          
+    381          	pDisk = pFileDisks[FileDiskFromHandle(pFind->handle)];
+    382          	pHandle = FileFindFromHandle(pFind->handle);
+    383           	retVal = fsCalls[pDisk->diskNum].pfnCloseDir(pHandle->pFsDirHandle);
+    384          	FileFindHandleClose(pHandle);
+    385          	pFind->foundType = FFIND_TYPE_DONE;
+    386          	return retVal;
+    387          }
+    388          #endif
+    389          
+    390          
+    391          /**************************************************************************
+    392           *                                 "Protected" Disk Functions
+    393           **************************************************************************/
+    394          void FileDiskReg(FDISK *pDisk)
+    395          {
+    396          	if (FDISK_NUM_IS_VALID(pDisk->diskNum) && (pFileDisks[pDisk->diskNum] == NULL))
+    397          	{
+    398          		pFileDisks[pDisk->diskNum] = pDisk;
+    399          		pDisk->isMounted = FALSE;
+    400          	}
+    401          }
+    402          
+    403          FDISK * FileDiskFromNum(FDISK_NUM diskNum)
+    404          {
+    405          	return FDISK_NUM_IS_VALID(diskNum)? pFileDisks[diskNum] : NULL;
+    406          }
+    407          
+    408          BOOL FileDiskMount(FDISK *pDisk)
+    409          {
+    410          	pDisk->isMounted = (fsCalls[pDisk->diskNum].pfnMount(pDisk) == FDISK_OK);
+    411          	return pDisk->isMounted;
+    412          }
+    413          
+    414          BOOL FileDiskUnmount(FDISK *pDisk)
+    415          {
+    416          	pDisk->isMounted = (fsCalls[pDisk->diskNum].pfnUnmount(pDisk) == FDISK_OK);
+    417          	return !pDisk->isMounted;
+    418          }
+    419          
+    420          
+    421          /**************************************************************************
+    422           *                                 Private Functions
+    423           **************************************************************************/
+    424          static FFILE_HANDLE * FileHandleOpen(FDISK *pDisk)
+    425          {
+    426          	FFILE_HANDLE *pFile = pDisk->fileHandles;
+    427          	for (UINT16F i = 0; i < F_MAX_FILES_PER_DISK; i++, pFile++)
+    428          	{
+    429          		if (pFile->userHandle == 0)
+    430          		{
+    431          			pFile->userHandle = FileHandleGetNew(pDisk->diskNum, i, FALSE);
+    432          			return pFile;
+    433          		}
+    434          	}
+    435          	return NULL;
+    436          }
+    437          
+    438          static void FileHandleClose(FFILE_HANDLE *pHandle)
+    439          {
+    440          	pHandle->userHandle = 0;
+    441          }
+    442          
+    443          #ifndef FS_NO_FIND
+    444          static FFIND_HANDLE * FileFindHandleOpen(FDISK *pDisk)
+    445          {
+    446          	FFIND_HANDLE *pFind = pDisk->fileFind;
+    447          	for (UINT16F i = 0; i < F_MAX_FINDS_PER_DISK; i++, pFind++)
+    448          	{
+    449          		if (pFind->userHandle == 0)
+    450          		{
+    451          			pFind->userHandle = FileHandleGetNew(pDisk->diskNum, i, TRUE);
+    452          			return pFind;
+    453          		}
+    454          	}
+    455          	return NULL;
+    456          }
+    457          
+    458          static void FileFindHandleClose(FFIND_HANDLE *pHandle)
+    459          {
+    460          	pHandle->userHandle = 0;
+    461          }
+    462          #endif
+    463          
+    464          // File Handle encoding:
+    465          // [31] = always zero (reserved for negative error codes)
+    466          // [30:16] = rolling counter
+    467          // [15]   = file (0) or find(1) flag
+    468          // [14:4] = file index number
+    469          // [3:0]  = disk number (0-2 reserved for stdin, stdout, stderr)
+    470          static FFILE FileHandleGetNew(FDISK_NUM disk, UINT16F index, BOOL find)
+    471          {
+    472          	FFILE fil = (FFILE)(((UINT32)fileHandleCounter << 16) |
+    473          							  ((index & 0x7FF) << 4) |
+    474          							  ((UINT32)disk + FILE_DISK_OFFSET));
+    475          	if (find)
+    476          		fil |= FFILE_FIND_FLAG;
+    477          	if (++fileHandleCounter > INT16_MAX)
+    478          		fileHandleCounter = 0;
+    479          	return fil;
+    480          }
+    481          
+    482          
+    483          static FDISK_NUM FileDiskFromHandle(FFILE file)
+    484          {
+    485          	return (FDISK_NUM)((file & 0x0F) - FILE_DISK_OFFSET);
+    486          }
+    487          
+    488          static UINT16F FileIndexFromHandle(FFILE file)
+    489          {
+    490          	return (UINT16F)((file & 0x7FF0) >> 4);
+    491          }
+    492          
+    493          static FFILE_HANDLE * FileFromHandle(FFILE file)
+    494          {
+    495          	return &pFileDisks[FileDiskFromHandle(file)]->fileHandles[FileIndexFromHandle(file)];
+    496          }
+    497          
+    498          #ifndef FS_NO_FIND
+    499          static FFIND_HANDLE * FileFindFromHandle(FFILE file)
+    500          {
+    501          	return &pFileDisks[FileDiskFromHandle(file)]->fileFind[FileIndexFromHandle(file)];
+    502          }
+    503          #endif
+    504          
+    505          static int FileIdFromHandle(FFILE file)
+    506          {
+    507          	return FileFromHandle(file)->fsId;
+    508          }
+    509          
+    510          static BOOL FileHandleIsValid(FFILE file)
+    511          {
+    512          	FDISK_NUM disk = FileDiskFromHandle(file);
+    513          	UINT16F num;
+    514          	BOOL valid;
+    515          	if (FDISK_NUM_IS_VALID(disk))
+    516          	{
+    517          		num = FileIndexFromHandle(file);
+    518          #ifndef FS_NO_FIND
+    519          		if (file & FFILE_FIND_FLAG)
+    520          		{
+    521          			valid = ((num < F_MAX_FINDS_PER_DISK) && (pFileDisks[disk]->fileFind[num].userHandle == file));
+    522          		}
+    523          		else
+    524          #endif
+    525          		{
+    526          			valid = ((num < F_MAX_FILES_PER_DISK) && (pFileDisks[disk]->fileHandles[num].userHandle == file));
+    527          		}
+    528          	}
+    529          	else
+    530          	{
+    531          		valid = FALSE;
+    532          	}
+    533          	return valid;
+    534          }
+    535          
+    536          static FDISK_NUM FileDiskNumFromStr(char const *pStr)
+    537          {
+    538          	return (FDISK_NUM)(pStr[0] - '0');
+    539          }
+    540          
+    541          
+    542          #ifndef FS_READONLY
+    543          static void FileCreatePath(FDISK_NUM disk, char const *pName)
+    544          {
+    545          	char path[F_MAX_NAME];
+    546          	char *pCur;
+    547          	char *pNext;
+    548          
+    549          	strncpy(path, pName, sizeof(path));
+    550          	pCur = strchr(path, '\\');	// skip drive letter
+    551          	if (!pCur)
+    552          		pCur = strchr(path, '/');
+    553          	if (pCur)
+    554          	{
+    555          		do
+    556          		{
+    557          			pNext = strchr(pCur+1, '\\');
+    558          			if (!pNext)
+    559          				pNext = strchr(pCur+1, '/');
+    560          
+    561          			if (pNext)
+    562          			{
+    563          				*pNext = '\0';
+    564          				fsCalls[disk].pfnMkDir(path);	//lint !e534 ignore errors if dir exists
+    565          				*pNext = '/';
+    566          				pCur = pNext;
+    567          			}
+    568          		}while (pNext);
+    569          	}
+    570          }
+    571          #endif
+    572          
+    573          #ifndef FS_NO_FIND
+    574          static BOOL FileUpDir(FFIND_HANDLE *pHandle, FFIND *pFind)
+    575          {
+    576          	FDISK_NUM disk;
+    577          	char *pFolder = NULL;
+    578          	int res;
+    579          
+    580          	// Don't go up beyond the starting search path
+    581          	if (strlen(pHandle->currentPath) > (UINT16F)(FutilsFileName(pHandle->searchName) - pHandle->searchName))
+    582          	{
+    583          		pFolder = FutilsUpDir(pHandle->currentPath);
+    584          		if (pFolder)
+    585          		{
+    586          			disk = FileDiskFromHandle(pFind->handle);
+    587          			pHandle->currentPath[strlen(pHandle->currentPath)-1] = '\0';
+    588          			fsCalls[disk].pfnCloseDir(pHandle->pFsDirHandle);	//lint !e534
+    589          			pHandle->pFsDirHandle = fsCalls[disk].
+    590          				pfnOpenDir(pFileDisks[disk]->pFsData, pHandle->currentPath);
+    591          			strncat(pHandle->currentPath, "/", F_MAX_NAME);
+    592          
+    593          			if (pHandle->pFsDirHandle)
+    594          			{
+    595          				// Loop through the current directory until we hit the find dir we recursed on
+    596          				do
+    597          				{
+    598          					pFind->fileName[0] = '\0';
+    599          					res = fsCalls[disk].pfnReadDir(pFind, pHandle->pFsDirHandle);
+    600          				}while (!res && (strcmp(pFind->fileName, pFolder) != STR_CMP_MATCH));
+    601          			}
+    602          		}
+    603          	}
+    604          	return (pFolder != NULL);
+    605          }
+    606          
+    607          #ifndef FS_READONLY
+    608          static int FileRemoveMask(char const *pName)
+    609          {
+    610          	FFIND find;
+    611          	UINT8F dirLevel = 0;
+    612          	FDISK_NUM disk = FileDiskNumFromStr(pName);
+    613          	int retVal = FileFindFirst(pName, FALSE, &find);
+    614          
+    615          	while (retVal == FERR_NONE)
+    616          	{
+    617          		retVal = fsCalls[disk].pfnRemove(find.fileName);
+    618          		if (retVal == FERR_NONE)
+    619          		{
+    620          			retVal = FileFindNext(&find);
+    621          			if (find.foundType == FFIND_TYPE_DONE)
+    622          			{
+    623          				if (dirLevel == 0)
+    624          				{
+    625          					break;
+    626          				}
+    627          				else if (dirLevel == 1)
+    628          				{
+    629          					retVal = FileFindFirst(pName, FALSE, &find);
+    630          				}
+    631          				else if (dirLevel > 1)
+    632          				{
+    633          					FutilsUpDir(find.fileName);
+    634          					strcat(find.fileName, "*");
+    635          					retVal = FileFindFirst(find.fileName, FALSE, &find);
+    636          				}
+    637          				dirLevel--;
+    638          			}
+    639          		}
+    640          		else if ((retVal == FERR_ACCESS) && (find.foundType == FFIND_TYPE_DIR))
+    641          		{
+    642          			// directory not empty. Delete all sub-files, then try again
+    643          			dirLevel++;
+    644          			FileFindClose(&find);	//lint !e534
+    645          			strcat(find.fileName, "/*");
+    646          			retVal = FileFindFirst(find.fileName, FALSE, &find);
+    647          		}
+    648          		else
+    649          		{
+    650          			// error
+    651          			break;
+    652          		}
+    653          	}
+    654          	return retVal;
+    655          }
+    656          #endif
+    657          #endif
+    658          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   FileClose
+        16   -- Indirect call
+        16   -> FileDiskFromHandle
+        16   -> FileFromHandle
+        16   -> FileHandleClose
+        16   -> FileHandleIsValid
+        16   -> FileIdFromHandle
+     280   FileCreatePath
+       280   -- Indirect call
+       280   -> strchr
+       280   -> strncpy
+      16   FileDevInfo
+        16   -- Indirect call
+       0   FileDevIsMounted
+       0   FileDiskFromHandle
+       0   FileDiskFromNum
+       8   FileDiskMount
+         8   -- Indirect call
+       0   FileDiskNumFromStr
+       0   FileDiskReg
+       8   FileDiskUnmount
+         8   -- Indirect call
+      16   FileEof
+        16   -- Indirect call
+        16   -> FileDiskFromHandle
+        16   -> FileHandleIsValid
+        16   -> FileIdFromHandle
+      16   FileFStat
+        16   -- Indirect call
+        16   -> FileDiskFromHandle
+        16   -> FileHandleIsValid
+        16   -> FileIdFromHandle
+      24   FileFindClose
+        24   -- Indirect call
+        24   -> FileDiskFromHandle
+        24   -> FileFindFromHandle
+        24   -> FileFindHandleClose
+        24   -> FileHandleIsValid
+      32   FileFindFirst
+        32   -- Indirect call
+        32   -> FileDiskNumFromStr
+        32   -> FileFindHandleClose
+        32   -> FileFindHandleOpen
+        32   -> FileFindNext
+        32   -> FutilsFileName
+        32   -> strncpy
+      16   FileFindFromHandle
+        16   -> FileDiskFromHandle
+        16   -> FileIndexFromHandle
+       0   FileFindHandleClose
+      16   FileFindHandleOpen
+        16   -> FileHandleGetNew
+      24   FileFindNext
+        24   -- Indirect call
+        24   -> FileDiskFromHandle
+        24   -> FileFindClose
+        24   -> FileHandleIsValid
+        24   -> FileIndexFromHandle
+        24   -> FileUpDir
+        24   -> FutilsFileName
+        24   -> FutilsWildcardNameIsMatch
+        24   -> strcpy
+        24   -> strncat
+      16   FileFlush
+        16   -- Indirect call
+        16   -> FileDiskFromHandle
+        16   -> FileHandleIsValid
+        16   -> FileIdFromHandle
+      16   FileFromHandle
+        16   -> FileDiskFromHandle
+        16   -> FileIndexFromHandle
+      32   FileGets
+        32   -- Indirect call
+        32   -> FileDiskFromHandle
+        32   -> FileHandleIsValid
+        32   -> FileIdFromHandle
+       0   FileHandleClose
+       8   FileHandleGetNew
+      24   FileHandleIsValid
+        24   -> FileDiskFromHandle
+        24   -> FileIndexFromHandle
+      16   FileHandleOpen
+        16   -> FileHandleGetNew
+       8   FileIdFromHandle
+         8   -> FileFromHandle
+       0   FileIndexFromHandle
+       8   FileMkDir
+         8   -- Indirect call
+         8   -> FileDiskNumFromStr
+      32   FileOpen
+        32   -- Indirect call
+        32   -> FileCreatePath
+        32   -> FileDiskNumFromStr
+        32   -> FileHandleClose
+        32   -> FileHandleOpen
+     544   FilePrintf
+       544   -> FileWrite
+       544   -> vsnprintf
+      16   FilePutc
+        16   -> FileWrite
+      16   FilePuts
+        16   -> FileWrite
+        16   -> strlen
+      24   FileRead
+        24   -- Indirect call
+        24   -> FileDiskFromHandle
+        24   -> FileHandleIsValid
+        24   -> FileIdFromHandle
+      16   FileRemove
+        16   -- Indirect call
+        16   -> FileDiskNumFromStr
+        16   -> FileRemoveMask
+     296   FileRemoveMask
+       296   -- Indirect call
+       296   -> FileDiskNumFromStr
+       296   -> FileFindClose
+       296   -> FileFindFirst
+       296   -> FileFindNext
+       296   -> FutilsUpDir
+       296   -> strcat
+      16   FileRename
+        16   -- Indirect call
+        16   -> FileDiskNumFromStr
+      24   FileSeek
+        24   -- Indirect call
+        24   -> FileDiskFromHandle
+        24   -> FileHandleIsValid
+        24   -> FileIdFromHandle
+      16   FileStat
+        16   -- Indirect call
+        16   -> FileDiskNumFromStr
+      16   FileTell
+        16   -- Indirect call
+        16   -> FileDiskFromHandle
+        16   -> FileHandleIsValid
+        16   -> FileIdFromHandle
+      32   FileUpDir
+        32   -- Indirect call
+        32   -> FileDiskFromHandle
+        32   -> FutilsFileName
+        32   -> FutilsUpDir
+        32   -> strcmp
+        32   -> strlen
+        32   -> strncat
+      24   FileWrite
+        24   -- Indirect call
+        24   -> FileDiskFromHandle
+        24   -> FileHandleIsValid
+        24   -> FileIdFromHandle
+      16   strchr
+        16   -> __iar_Strchr
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ?<Constant "*">
+       2  ?<Constant "/">
+       4  ?<Constant "/*">
+       4  ??DataTable27
+       4  ??DataTable29
+       4  ??DataTable29_1
+       4  ??DataTable29_2
+       4  ??DataTable29_3
+       4  ??DataTable29_4
+       4  ??DataTable29_5
+      76  FileClose
+     108  FileCreatePath
+      56  FileDevInfo
+      28  FileDevIsMounted
+      10  FileDiskFromHandle
+      22  FileDiskFromNum
+      44  FileDiskMount
+       8  FileDiskNumFromStr
+      44  FileDiskReg
+      50  FileDiskUnmount
+      56  FileEof
+      60  FileFStat
+      80  FileFindClose
+     222  FileFindFirst
+      38  FileFindFromHandle
+       6  FileFindHandleClose
+      48  FileFindHandleOpen
+     262  FileFindNext
+      56  FileFlush
+      32  FileFromHandle
+     138  FileGets
+       6  FileHandleClose
+      62  FileHandleGetNew
+     104  FileHandleIsValid
+      44  FileHandleOpen
+      14  FileIdFromHandle
+       6  FileIndexFromHandle
+      48  FileMkDir
+     144  FileOpen
+      52  FilePrintf
+      16  FilePutc
+      24  FilePuts
+      64  FileRead
+      72  FileRemove
+     176  FileRemoveMask
+      52  FileRename
+      66  FileSeek
+      52  FileStat
+      56  FileTell
+     204  FileUpDir
+      64  FileWrite
+       2  fileHandleCounter
+       4  pFileDisks
+      16  strchr
+
+ 
+     6 bytes in section .bss
+     8 bytes in section .rodata
+ 2 814 bytes in section .text
+ 
+ 2 798 bytes of CODE  memory (+ 16 bytes shared)
+     8 bytes of CONST memory
+     6 bytes of DATA  memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,181 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      24/Mar/2014  18:33:44 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\src\app\songTwinkleTwinkle.c                     #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\src\app\songTwinkleTwinkle.c" -D __SAM3U2C__     #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\End  #
+#                    Project\project\Debug\List\" -lcN                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\End       #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\List\songTwinkleTwinkle.lst        #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\Obj\songTwinkleTwinkle.o           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\End Project\src\app\songTwinkleTwinkle.c
+      1          /*******************************************************************************************
+      2          Twinkle Twinkle Little Star
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          
+     12          #include "songTwinkleTwinkle.h"
+     13          
+     14          
+     15          /**************************************************************************
+     16           *                                  Constants
+     17           **************************************************************************/
+     18          static const MUSIC_NOTE TwinkleTwinkleNotes[] =
+     19          {
+     20             {NOTE_C7, NOTE_QUARTER},
+     21             {NOTE_C7, NOTE_QUARTER},
+     22             {NOTE_G7, NOTE_QUARTER},
+     23             {NOTE_G7, NOTE_QUARTER},
+     24             {NOTE_A7, NOTE_QUARTER},
+     25             {NOTE_A7, NOTE_QUARTER},
+     26             {NOTE_G7, NOTE_HALF},
+     27          
+     28             {NOTE_F7, NOTE_QUARTER},
+     29             {NOTE_F7, NOTE_QUARTER},
+     30             {NOTE_E7, NOTE_QUARTER},
+     31             {NOTE_E7, NOTE_QUARTER},
+     32             {NOTE_D7, NOTE_QUARTER},
+     33             {NOTE_D7, NOTE_QUARTER},
+     34             {NOTE_C7, NOTE_HALF},
+     35          
+     36             {NOTE_G7, NOTE_QUARTER},
+     37             {NOTE_G7, NOTE_QUARTER},
+     38             {NOTE_F7, NOTE_QUARTER},
+     39             {NOTE_F7, NOTE_QUARTER},
+     40             {NOTE_E7, NOTE_QUARTER},
+     41             {NOTE_E7, NOTE_QUARTER},
+     42             {NOTE_D7, NOTE_HALF},
+     43          
+     44             {NOTE_G7, NOTE_QUARTER},
+     45             {NOTE_G7, NOTE_QUARTER},
+     46             {NOTE_F7, NOTE_QUARTER},
+     47             {NOTE_F7, NOTE_QUARTER},
+     48             {NOTE_E7, NOTE_QUARTER},
+     49             {NOTE_E7, NOTE_QUARTER},
+     50             {NOTE_D7, NOTE_HALF},
+     51          
+     52             {NOTE_C7, NOTE_QUARTER},
+     53             {NOTE_C7, NOTE_QUARTER},
+     54             {NOTE_G7, NOTE_QUARTER},
+     55             {NOTE_G7, NOTE_QUARTER},
+     56             {NOTE_A7, NOTE_QUARTER},
+     57             {NOTE_A7, NOTE_QUARTER},
+     58             {NOTE_G7, NOTE_HALF},
+     59          
+     60             {NOTE_F7, NOTE_QUARTER},
+     61             {NOTE_F7, NOTE_QUARTER},
+     62             {NOTE_E7, NOTE_QUARTER},
+     63             {NOTE_E7, NOTE_QUARTER},
+     64             {NOTE_D7, NOTE_QUARTER},
+     65             {NOTE_D7, NOTE_QUARTER},
+     66             {NOTE_C7, NOTE_WHOLE},
+     67          
+     68          };
+     69          
+     70          const SONG TwinkleTwinkle = NOTES_TO_SONG(TwinkleTwinkleNotes);
+     71          
+     72          
+     73          /**************************************************************************
+     74           *                                  Types
+     75           **************************************************************************/
+     76          /**************************************************************************
+     77           *                                  Variables
+     78           **************************************************************************/
+     79          /**************************************************************************
+     80           *                                  Prototypes
+     81           **************************************************************************/
+     82          /**************************************************************************
+     83           *                                  Global Functions
+     84           **************************************************************************/
+     85          void SongTwinkleTwinkle(void)
+     86          {
+     87              MusicPlaySong(&TwinkleTwinkle, 50, 30);
+     88          }
+     89          
+     90          /**************************************************************************
+     91           *                                 Private Functions
+     92           **************************************************************************/
+     93          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   SongTwinkleTwinkle
+         8   -> MusicPlaySong
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  SongTwinkleTwinkle
+       8  TwinkleTwinkle
+     168  TwinkleTwinkleNotes
+
+ 
+ 176 bytes in section .rodata
+  20 bytes in section .text
+ 
+  20 bytes of CODE  memory
+ 176 bytes of CONST memory
+
+Errors: none
+Warnings: none

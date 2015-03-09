@@ -1,0 +1,145 @@
+/*******************************************************************************//**
+Lint Options for IAR C ARM (EWAVR v5.41) for STM32F103RBT6
+***********************************************************************************/
+
+		// while processing compiler (library) header files ...
+-wlib(1)	// sets the warning level within library headers to 1
+		// (no warnings, just syntax errors).  Comment out if you
+		// are actually linting library headers.  This
+		// option makes obsolete options of the form -elib(axxx) where
+		// xxx >= 400 which may be retained for historical reasons.
+-elib(652)  // suppress message about #define of earlier declared symbols
+-elib(537)  // repeated include files
+-elib(677)  // sizeof used within preprocessor statement
+
+-$              // enable $
+-d_argt$()=0    // for limits.h
++fba            // bit addressability flag
++fcu            // chars are unsigned
++fbo            // activate bool
+
++rw(_bit)                 // activate the _bit datatype
++rw(_to_brackets)
++dinterrupt=_to_brackets  // ignore "interrupt(...)"
+-cwh		// @ symbol
++rw(__weak)
+// Function type attributes affect how the function should be called:
+    +rw(__arm, __fiq, __interwork, __irq, __swi, __task, __thumb, __nounwind)
+// Data type attributes:
+    +rw(__big_endian, __little_endian, __packed )
+// Object attribute keywords:
+    +rw(__absolute, __no_init, __root, __weak)
+// Object attributes that can be used for functions:
+    +rw( __intrinsic, __nested, __noreturn, __ramfunc )
+
++dANSI_main=
++dbanked_func=
++dC_task=
++dfar=
++dfar_func=
++dhuge=
++dhuge_func=
++dnear=
++dnear_func=
++dtiny=
++dtiny_func=
++dversion_2=
++dtrue=(bool)1
++dfalse=(bool)0
++d__intrinsic=
+-d__ATTRIBUTES=
+-d__INTADDR__=(size_t)
+-d_TLS_DATA_DECL=
+-d__constrange=_to_brackets
+-esym(534,printf)
+
+// Convert #warning to #error, but allow #error to continue.
+// This way warnings show up in PC-Lint as well instead of being dropped
+//+ppw(warning)
+-ppw_asgn( warning, error )
++fce		// Don't stop on #error
+
++d"sbit=unsigned char"    // nearest approximation
++d"sfr=_ignore_init unsigned char"     // nearest approximation
++d"sfrp=_ignore_init unsigned short"   // nearest approximation
+
+-d__TID__=0xCF60        // IAR: Cortex-M3
+-d__IAR_SYSTEMS_ICC=7   // identify compiler
++rw(C_task)             // keyword
++rw(_ignore_init)       // needed for sfr and sfrp above
+
+-t3	// Tabe size = 3
++macros
++macros
++macros
+
+// formatting for IAR EWB output window
+//-format="*** LINT: %(%f(%l) %)%t %n: %m"
+//-width(0,1) // Don't break lines
+
+-"format=%(%f %l %)error %n: (%t -- %m)"     //  Messages will contain
+    //  file information (%f), the line number (%l), the
+    //  message number (%n), message type (%t) and message text (%m).
+    //  Notice that all messages are labeled 'error' but are then
+    //  followed by a type (such as Warning, Info, Note, etc.)
+-hF2    //  Make sure we ALWAYS provide file information ('F') and use 2
+	//  lines (line in error plus message).
+-width(0) //  don't break messages at any particular width
+
+-esym(451, *stdlib.h*)
+-esym(534, memcpy, memmove, memset)
+-esym(534, printf, sprintf, snprintf, sscanf, strcat, strcpy, puts)
+-esym(534, strncat, strncpy, strftime)
+-esym(534, f_close, f_write, f_putc, f_puts, f_printf, f_mkdir, f_delete, f_seek, f_chdir, f_rename)
+-esym(534, OSTimeDlyHMSM, *Ioctl, localtime_r)
+-esym(14, atol,atoll,labs,abs,atof,llabs,atoi,strtod,strtof,strtoll,strtold,strtoul,strtoull,strtol,strtof,wcstoll,wcstoull)
+-esym(14, wcschr,wcsstr,ispunct,isupper,wcstof,wcstod,wcstold,wcstoul,sgraph,wmemchr,islower,isspace)
+-esym(14, sxdigit,toupper,salnum,isalpha,sdigit,sblank,btowc,iscntrl,wctob,wcspbrk,sprint,tolower)
+-esym(14, isgraph,isxdigit,isalnum,isdigit,isblank,isprint,wcsrchr)
+-esym(14, memchr, memcpy, memset, strpbrk, strrchr, memmove, strchr, strstr, strerror)
+-esym(14, Mem_Copy, Mem_Set, Str_Char, Str_Str)
+-esym(14, nan*, log2*, nextafter*, remainder*)
+-esym(14, sinf, cosl, log, sinh, sinhf, sinhl, log10, log10f, log10l, cos, sinl, __iar*, logf, sin, cosf, cos, cosh, coshf, coshl, logl, asinf, atanf, acosf)
+-esym(14, _LocaleC*, getc, putc)
+-esym(14, main*, MsgPost*)
+-esym(14, *time)
+-esym({14,578}, remainder*)
+-esym(578, remainder*)
+-efunc(578, remainder*)
+-emacro({10,16,19}, _TLS_DATA_DECL)
+-esym({10,16,19}, _TLS_DATA_DECL)
+-e19
+-esym(718, asinf, acosf, atanf, snprintf, strtof, strtoll)
+-esym(746, asinf, acosf, atanf, snprintf, strtof, strtoll)
+-esym(144, snprintf)
+-esym(515, snprintf)
+-esym(516, snprintf)
+-esym(628, snprintf, atanf, asinf, strtof, strtoll)
+
+-esym(628, __INTADDR__)
+-esym(516, __INTADDR__)
+
+-e655	// Ignore warning about using bit-operation on enumerator
+-esym(715, pArg)	// Ignore unused pArg for OS tasks
+-esym(818, pArg)
+-e641	// Ignore enum/int conversion
+-e788	// Ignore unused enums if default case is present
+-e526 // Ignore undefined symbols for non-linted files
+-e731	// Ignore boolean checks against each other, as in if (x == y)
+-e537 // Ignore repeated include files
+-emacro({413,545}, offsetof)	// NULL pointer is acceptable in this case
+-esym(765, GetEnumString*, GetEnumValue*)
+-esym(714, GetEnumString*, GetEnumValue*)
+-esym(765, sysuptime)
+-esym(714, sysuptime)
+-esym(526, netstatic)
+-e46
+-e835
+-e845
+-e451
+-esym(714, uffs_*)
+-esym(765, uffs_*)
+-esym(750, *_PRINTF)
+-esym(750, *_PRINTS)
+-esym(750, *_PRINT_BUF)
+

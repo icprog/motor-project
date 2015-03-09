@@ -1,0 +1,207 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:05 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\file\disk\fileSystem.c                    #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\file\disk\fileSystem.c" -D                #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\fileSystem.lst             #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\fileSystem.o                #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\file\disk\fileSystem.c
+      1          /*******************************************************************************************
+      2          This provides a single unified API for all different file systems
+      3          Note that the interface is mostly POSIX-compliant, but in order to avoid dynamic memory,
+      4          some routines pass in the file system workspace as an argument
+      5          
+      6          This is free, public domain software and there is NO WARRANTY.
+      7          No restriction on use. You can use, modify and redistribute it for
+      8          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      9          
+     10          Sheldon Patterson
+     11          ********************************************************************************************/
+     12          
+     13          
+     14          #include "fileSystem.h"
+     15          
+     16          #ifndef FS_READONLY
+     17          #define FS_WRITE_EX_FNS(name) \
+     18          extern int          name##FWrite(int fd, const void *pSrc, int len);            \
+     19          extern int          name##FFlush(int fd);                                       \
+     20          extern int          name##Rename(char const *pOld, char const *pNew);           \
+     21          extern int          name##Remove(char const *pName);                            \
+     22          extern int          name##MkDir   (char const *pName);
+     23          #else
+     24          #define FS_WRITE_EX_FNS(name)
+     25          #endif
+     26          #ifndef FS_NO_FIND
+     27          #define FS_FIND_EX_FNS(name) \
+     28          extern void *       name##OpenDir (void *pFs, char const *pName);               \
+     29          extern int          name##ReadDir (FFIND *pDest, void *pDirArg);                \
+     30          extern int          name##CloseDir(void *pDirArg);
+     31          #else
+     32          #define FS_FIND_EX_FNS(name)
+     33          #endif
+     34          
+     35          #define FS_NAME(name)	\
+     36          extern FDISK_RESULT name##Mount(FDISK *pDisk);                                  \
+     37          extern FDISK_RESULT name##Unmount(FDISK *pDisk);                                \
+     38          extern FDISK_RESULT name##GetStats(FDISK const *pDisk, FDISK_STATS *pStats);    \
+     39          extern int          name##FOpen (void *pFs, char const *name, FOPEN_MODE mode); \
+     40          extern int          name##FClose(int fd);                                       \
+     41          extern int          name##FRead (int fd, void *pDest, int len);                 \
+     42          extern long         name##FSeek (int fd, long offset, FSEEK_ORIGIN origin);     \
+     43          extern long         name##FTell (int fd);                                       \
+     44          extern int          name##FEof  (int fd);                                       \
+     45          extern int          name##FStat (int fd, FSTAT *pDest);                         \
+     46          extern int          name##Stat  (char const *pName, FSTAT *pDest);              \
+     47          FS_WRITE_EX_FNS(name) \
+     48          FS_FIND_EX_FNS(name)
+     49          FILE_SYSTEMS
+     50          #undef FS_NAME
+     51          
+     52          
+     53          /**************************************************************************
+     54           *                                  Constants
+     55           **************************************************************************/
+     56          const FS_CALLS fsCalls[] =
+     57          {
+     58          #ifndef FS_READONLY
+     59          #define FS_WRITE_PFNS(name) name##FWrite, name##FFlush, name##Rename, name##Remove, name##MkDir,
+     60          #else
+     61          #define FS_WRITE_PFNS(name)
+     62          #endif
+     63          #ifndef FS_NO_FIND
+     64          #define FS_FIND_PFNS(name)	name##OpenDir, name##ReadDir, name##CloseDir,
+     65          #else
+     66          #define FS_FIND_PFNS(name)
+     67          #endif
+     68          
+     69          #define FS_NAME(name)	\
+     70          	{name##Mount, name##Unmount, name##GetStats, \
+     71          	name##FOpen, name##FClose, name##FRead, name##FSeek, name##FTell, name##FEof, \
+     72          	name##FStat, name##Stat, \
+     73          	FS_WRITE_PFNS(name) \
+     74          	FS_FIND_PFNS(name) \
+     75          	},
+     76          FILE_SYSTEMS
+     77          #undef FS_NAME
+     78          };
+     79          
+     80          
+     81          /**************************************************************************
+     82           *                                  Types
+     83           **************************************************************************/
+     84          /**************************************************************************
+     85           *                                  Variables
+     86           **************************************************************************/
+     87          /**************************************************************************
+     88           *                                  Prototypes
+     89           **************************************************************************/
+     90          /**************************************************************************
+     91           *                                  Global Functions
+     92           **************************************************************************/
+     93          FS_CALLS const * FSByName(char const *pName)
+     94          {
+     95          	static const char * pFsNames[] =
+     96          	{
+     97          		#define FS_NAME(name)	#name,
+     98          		FILE_SYSTEMS
+     99          		#undef FS_NAME
+    100          	};
+    101          
+    102          	for (UINT8F i = 0; i < NELEMENTS(pFsNames); i++)
+    103          	{
+    104          		if (stricmp(pName, pFsNames[i]) == STR_CMP_MATCH)
+    105          		{
+    106          			return &fsCalls[i];
+    107          		}
+    108          	}
+    109          	return NULL;
+    110          }
+    111          
+    112          
+    113          /**************************************************************************
+    114           *                                 Private Functions
+    115           **************************************************************************/
+    116          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      16   FSByName
+        16   -> stricmp
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant "FileFat">
+      52  FSByName
+      76  fsCalls
+       4  pFsNames
+
+ 
+  4 bytes in section .data
+ 84 bytes in section .rodata
+ 52 bytes in section .text
+ 
+ 52 bytes of CODE  memory
+ 84 bytes of CONST memory
+  4 bytes of DATA  memory
+
+Errors: none
+Warnings: none

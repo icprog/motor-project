@@ -1,0 +1,582 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      26/Feb/2015  20:06:29 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\src\bsp\gpio.c                                   #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\src\bsp\gpio.c" -D __SAM3U2C__ --preprocess=c    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\List\" -lcN                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\Motor     #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\project\Debug\List\gpio.lst                      #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\project\Debug\Obj\gpio.o                         #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\Motor Project\src\bsp\gpio.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          #include "gpio.h"
+     10          #include "bsp.h"
+     11          #include "irq.h"
+     12          #include "core_cm3.h"
+     13          
+     14          
+     15          /**************************************************************************
+     16           *                                  Constants
+     17           **************************************************************************/
+     18          //lint -e778 -e747 -e123
+     19          #define GPIOA  AT91C_BASE_PIOA
+     20          #define GPIOB  AT91C_BASE_PIOB
+     21          static AT91S_PIO * const pGpioReg[] = { GPIOA, GPIOB };
+     22          
+     23          #define GPIO_PIN_BIT_SET(pin, val)  ((u32)val << (pin & 31))
+     24          #define GPIO_PIN_IS_VALID(pin)		((UINT8L)pin < (UINT8L)GPIO_PIN_COUNT)
+     25          #define GPIO_PIN_DEBOUNCE_MS        (10)
+     26          #define GPIO_PIN_DEBOUNCE_DIV       (((GPIO_PIN_DEBOUNCE_MS * 32768UL) / 2000) + 1)
+     27          
+     28          
+     29          /* Define all parameters for each pin in a table using X-Macros
+     30             pin        = pin name from the enum in gpio.h
+     31             I/O        = whether the pin is controlled by the GPIO peripheral
+     32             output     = pin is driven by processor (1) or is an input (0)
+     33             level      = default output state
+     34             AB         = peripheral A (0) or peripheral B (1)
+     35             pull-up    = internal pull-up resistor enabled
+     36             open-drain = pin operates in open-drain mode
+     37             debounce   = input pin debounce filter is active (else glitch filter)
+     38          */
+     39          #define AS_PULLUP(    pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, pUp) |
+     40          #define AS_OPEN_DRAIN(pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, odrain) |
+     41          #define AS_LEVEL(     pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, level) |
+     42          #define AS_PERIPH_AB( pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, ab) |
+     43          #define AS_GPIO(      pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, io) |
+     44          #define AS_OUTPUT(    pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, output) |
+     45          #define AS_WRITABLE(  pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, (output & io)) |
+     46          #define AS_DEBOUNCE(  pin,io,output,level,ab,pUp,odrain,dbnc)  GPIO_PIN_BIT_SET(pin, dbnc) |
+     47          
+     48          #define GPIO_PIN_TABLE_A(_)\
+     49          /* _(pin                  ,I/O,output,level, AB,pull-up,open-drain,debounce)*/ \
+     50             _(GPIO_PIN_PA0         , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     51             _(GPIO_PIN_SD_WP       , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     52             _(GPIO_PIN_SD_DETECT   , 1 ,  0   ,  0  , 0 ,   0   ,     0    ,    1) \
+     53             _(GPIO_PIN_HSMCI_MCCK  , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     54             _(GPIO_PIN_HSMCI_MCCDA , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     55             _(GPIO_PIN_HSMCI_MCDA0 , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     56             _(GPIO_PIN_HSMCI_MCDA1 , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     57             _(GPIO_PIN_HSMCI_MCDA2 , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     58             _(GPIO_PIN_SD_CS_MCDA3 , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     59             _(GPIO_PIN_BLADE_SDA   , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     60             _(GPIO_PIN_BLADE_SCL   , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     61             _(GPIO_PIN_BLADE_RX    , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     62             _(GPIO_PIN_BLADE_TX    , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     63             _(GPIO_PIN_BLADE_MISO  , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     64             _(GPIO_PIN_BLADE_MOSI  , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     65             _(GPIO_PIN_BLADE_SCK   , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     66             _(GPIO_PIN_BLADE_CS    , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     67             _(GPIO_PIN_BUTTON0     , 1 ,  0   ,  0  , 0 ,   0   ,     0    ,    1) \
+     68             _(GPIO_PIN_DBG_TX      , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     69             _(GPIO_PIN_DBG_RX      , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     70             _(GPIO_PIN_SD_MOSI     , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     71             _(GPIO_PIN_SD_MISO     , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     72             _(GPIO_PIN_ANT_MISO    , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     73             _(GPIO_PIN_ANT_MOSI    , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     74             _(GPIO_PIN_SD_SCK      , 0 ,  1   ,  0  , 1 ,   0   ,     0    ,    0) \
+     75             _(GPIO_PIN_ANT_SCK     , 0 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     76             _(GPIO_PIN_PA26        , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     77             _(GPIO_PIN_CLK_OUT     , 0 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     78             _(GPIO_PIN_BUZZER1     , 0 ,  1   ,  0  , 1 ,   0   ,     0    ,    0) \
+     79             _(GPIO_PIN_BUZZER2     , 0 ,  1   ,  0  , 1 ,   0   ,     0    ,    0) \
+     80             _(GPIO_PIN_ADC_POT     , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     81             _(GPIO_PIN_HEARTBEAT   , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     82          
+     83          #define GPIO_PIN_TABLE_B(_)\
+     84          /* _(pin                  ,I/O,output,level, AB,pull-up,open-drain,debounce)*/ \
+     85             _(GPIO_PIN_BUTTON1     , 1 ,  0   ,  0  , 0 ,   0   ,     0    ,    1) \
+     86             _(GPIO_PIN_BUTTON2     , 1 ,  0   ,  0  , 0 ,   0   ,     0    ,    1) \
+     87             _(GPIO_PIN_BUTTON3     , 1 ,  0   ,  0  , 0 ,   0   ,     0    ,    1) \
+     88             _(GPIO_PIN_BLADE_ADC0  , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     89             _(GPIO_PIN_BLADE_ADC1  , 0 ,  0   ,  0  , 0 ,   0   ,     0    ,    0) \
+     90             _(GPIO_PIN_PB5         , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     91             _(GPIO_PIN_PB6         , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     92             _(GPIO_PIN_PB7         , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     93             _(GPIO_PIN_PB8         , 1 ,  1   ,  0  , 0 ,   0   ,     0    ,    0) \
+     94             _(GPIO_PIN_LCD_RST     , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     95             _(GPIO_PIN_LCD_BL_RED  , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     96             _(GPIO_PIN_LCD_BL_GREEN, 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     97             _(GPIO_PIN_LCD_BL_BLUE , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     98             _(GPIO_PIN_LED_WHITE   , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+     99             _(GPIO_PIN_LED_PURPLE  , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    100             _(GPIO_PIN_LED_ORANGE  , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    101             _(GPIO_PIN_LED_CYAN    , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    102             _(GPIO_PIN_LED_YELLOW  , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    103             _(GPIO_PIN_LED_BLUE    , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    104             _(GPIO_PIN_LED_GREEN   , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    105             _(GPIO_PIN_LED_RED     , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    106             _(GPIO_PIN_ANT_RST     , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    107             _(GPIO_PIN_ANT_CS      , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    108             _(GPIO_PIN_ANT_MRDY    , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    109             _(GPIO_PIN_ANT_SRDY    , 1 ,  1   ,  1  , 0 ,   0   ,     0    ,    0) \
+    110          
+    111          
+    112          /**************************************************************************
+    113           *                                  Types
+    114           **************************************************************************/
+    115          /**************************************************************************
+    116           *                                  Variables
+    117           **************************************************************************/
+    118          static PFN_GPIO_IRQ pfnGpioIrqs[GPIO_PIN_COUNT];
+    119          
+    120          
+    121          /**************************************************************************
+    122           *                                  Prototypes
+    123           **************************************************************************/
+    124          static void GpioIrqHandler(u32 pins, GPIO_PIN pin);
+    125          
+    126          
+    127          /**************************************************************************
+    128           *                                  Global Functions
+    129           **************************************************************************/
+    130          // interrupt enable/disable (IER/IDR)
+    131          // interrupt mask (IMR)
+    132          // output write enable/disable (OWER/OWDR)
+    133          // additional interrupt modes enable/disable (AIMER/AIMDR, AIMMR)
+    134          // edge vs level interrupt
+    135          void GpioInit(void)
+    136          {
+    137             BspPeriphOn(PERIPH_PIOA);
+    138             BspPeriphOn(PERIPH_PIOB);
+    139          
+    140             // NOTE: Set the pin parameters BEFORE setting to an output (pins default to inputs on startup)
+    141             // Set pull-up resistors
+    142             GPIOA->PIO_PPUER =  (GPIO_PIN_TABLE_A(AS_PULLUP) 0);
+    143             GPIOA->PIO_PPUDR = ~(GPIO_PIN_TABLE_A(AS_PULLUP) 0);
+    144             GPIOB->PIO_PPUER =  (GPIO_PIN_TABLE_B(AS_PULLUP) 0);
+    145             GPIOB->PIO_PPUDR = ~(GPIO_PIN_TABLE_B(AS_PULLUP) 0);
+    146          
+    147             // Set open drain pins
+    148             GPIOA->PIO_MDER =  (GPIO_PIN_TABLE_A(AS_OPEN_DRAIN) 0);
+    149             GPIOA->PIO_MDDR = ~(GPIO_PIN_TABLE_A(AS_OPEN_DRAIN) 0);
+    150             GPIOB->PIO_MDER =  (GPIO_PIN_TABLE_B(AS_OPEN_DRAIN) 0);
+    151             GPIOB->PIO_MDDR = ~(GPIO_PIN_TABLE_B(AS_OPEN_DRAIN) 0);
+    152          
+    153             // Set default pin output state
+    154             GPIOA->PIO_SODR =  (GPIO_PIN_TABLE_A(AS_LEVEL) 0);
+    155             GPIOA->PIO_CODR = ~(GPIO_PIN_TABLE_A(AS_LEVEL) 0);
+    156             GPIOB->PIO_SODR =  (GPIO_PIN_TABLE_B(AS_LEVEL) 0);
+    157             GPIOB->PIO_CODR = ~(GPIO_PIN_TABLE_B(AS_LEVEL) 0);
+    158          
+    159             // Set peripheral A vs B
+    160             GPIOA->PIO_ABSR = (GPIO_PIN_TABLE_A(AS_PERIPH_AB) 0);
+    161             GPIOB->PIO_ABSR = (GPIO_PIN_TABLE_B(AS_PERIPH_AB) 0);
+    162          
+    163             // Set peripheral vs GPIO mode
+    164             GPIOA->PIO_PER =  (GPIO_PIN_TABLE_A(AS_GPIO) 0);
+    165             GPIOA->PIO_PDR = ~(GPIO_PIN_TABLE_A(AS_GPIO) 0);
+    166             GPIOB->PIO_PER =  (GPIO_PIN_TABLE_B(AS_GPIO) 0);
+    167             GPIOB->PIO_PDR = ~(GPIO_PIN_TABLE_B(AS_GPIO) 0);
+    168          
+    169             // set input/output mode
+    170             GPIOA->PIO_OER =  (GPIO_PIN_TABLE_A(AS_OUTPUT) 0);
+    171             GPIOA->PIO_ODR = ~(GPIO_PIN_TABLE_A(AS_OUTPUT) 0);
+    172             GPIOB->PIO_OER =  (GPIO_PIN_TABLE_B(AS_OUTPUT) 0);
+    173             GPIOB->PIO_ODR = ~(GPIO_PIN_TABLE_B(AS_OUTPUT) 0);
+    174          
+    175             // Set pins that can adjust the ouput
+    176             GPIOA->PIO_OWER =  (GPIO_PIN_TABLE_A(AS_WRITABLE) 0);
+    177             GPIOA->PIO_OWDR = ~(GPIO_PIN_TABLE_A(AS_WRITABLE) 0);
+    178             GPIOB->PIO_OWER =  (GPIO_PIN_TABLE_B(AS_WRITABLE) 0);
+    179             GPIOB->PIO_OWDR = ~(GPIO_PIN_TABLE_B(AS_WRITABLE) 0);
+    180          
+    181             // set input debounce vs glitch filter
+    182             GPIOA->PIO_DIFSR  =  (GPIO_PIN_TABLE_A(AS_DEBOUNCE) 0);
+    183             GPIOA->PIO_SCIFSR = ~(GPIO_PIN_TABLE_A(AS_DEBOUNCE) 0);
+    184             GPIOA->PIO_IFER   =  (GPIO_PIN_TABLE_A(AS_DEBOUNCE) 0);
+    185             GPIOA->PIO_IFDR   = ~(GPIO_PIN_TABLE_A(AS_DEBOUNCE) 0);
+    186             GPIOB->PIO_DIFSR  =  (GPIO_PIN_TABLE_B(AS_DEBOUNCE) 0);
+    187             GPIOB->PIO_SCIFSR = ~(GPIO_PIN_TABLE_B(AS_DEBOUNCE) 0);
+    188             GPIOB->PIO_IFER   =  (GPIO_PIN_TABLE_B(AS_DEBOUNCE) 0);
+    189             GPIOB->PIO_IFDR   = ~(GPIO_PIN_TABLE_B(AS_DEBOUNCE) 0);
+    190          
+    191             // set debounce interval
+    192             GPIOA->PIO_SCDR = GPIO_PIN_DEBOUNCE_DIV;
+    193             GPIOB->PIO_SCDR = GPIO_PIN_DEBOUNCE_DIV;
+    194          
+    195             // Set up interrupts
+    196             GPIOA->PIO_IDR = UINT32_MAX;
+    197             GPIOB->PIO_IDR = UINT32_MAX;
+    198             GPIOA->PIO_ISR;
+    199             GPIOB->PIO_ISR;
+    200             memset(pfnGpioIrqs, 0, sizeof(pfnGpioIrqs));
+    201             NVIC_ClearPendingIRQ(IRQn_PIOA);
+    202             NVIC_ClearPendingIRQ(IRQn_PIOB);
+    203             NVIC_EnableIRQ(IRQn_PIOA);
+    204             NVIC_EnableIRQ(IRQn_PIOB);
+    205             NVIC_SetPriority(IRQn_PIOA, IRQ_PRIO_GPIO);
+    206             NVIC_SetPriority(IRQn_PIOB, IRQ_PRIO_GPIO);
+    207          }
+    208          
+    209          void GpioTest(void)
+    210          {
+    211             for (GPIO_PIN pin = (GPIO_PIN)0; pin < GPIO_PIN_COUNT; pin++)
+    212             {
+    213                GpioToggle(pin);
+    214                GpioToggle(pin);
+    215             }
+    216          }
+    217          
+    218          void GpioIrqInstall(GPIO_PIN pin, GPIO_IRQ irq, PFN_GPIO_IRQ pfnGpioIrq)
+    219          {
+    220             if (GPIO_PIN_IS_VALID(pin))
+    221             {
+    222                AT91S_PIO *pGpio = pGpioReg[GPIO_PIN_PORT(pin)];
+    223                u32 pinBit = GPIO_PIN_BIT(pin);
+    224                if (irq == GPIO_IRQ_OFF)
+    225                {
+    226                   pGpio->PIO_IDR = pinBit;
+    227                   pfnGpioIrqs[pin] = pfnGpioIrq;
+    228                }
+    229                else if (irq == GPIO_IRQ_CHANGE)
+    230                {
+    231                   pfnGpioIrqs[pin] = pfnGpioIrq;
+    232                   pGpio->PIO_AIMDR = pinBit;
+    233                   pGpio->PIO_IER = pinBit;
+    234                }
+    235                else
+    236                {
+    237                   pfnGpioIrqs[pin] = pfnGpioIrq;
+    238                   if ((irq == GPIO_IRQ_HIGH_LEVEL) || (irq == GPIO_IRQ_LOW_LEVEL))
+    239                      pGpio->PIO_LSR = pinBit;
+    240                   else
+    241                      pGpio->PIO_ESR = pinBit;
+    242          
+    243                   if ((irq == GPIO_IRQ_HIGH_LEVEL) || (irq == GPIO_IRQ_RISING_EDGE))
+    244                      pGpio->PIO_REHLSR = pinBit;
+    245                   else
+    246                      pGpio->PIO_FELLSR = pinBit;
+    247          
+    248                   pGpio->PIO_AIMER = pinBit;
+    249                   pGpio->PIO_IER = pinBit;
+    250                }
+    251             }
+    252          }
+    253          
+    254          
+    255          void GpioSet(GPIO_PIN pin)
+    256          {
+    257             if (GPIO_PIN_IS_VALID(pin))
+    258             {
+    259                pGpioReg[GPIO_PIN_PORT(pin)]->PIO_SODR = GPIO_PIN_BIT(pin);
+    260             }
+    261          }
+    262          
+    263          void GpioClear(GPIO_PIN pin)
+    264          {
+    265             if (GPIO_PIN_IS_VALID(pin))
+    266             {
+    267                pGpioReg[GPIO_PIN_PORT(pin)]->PIO_CODR = GPIO_PIN_BIT(pin);
+    268             }
+    269          }
+    270          
+    271          void GpioSetState(GPIO_PIN pin, bool pinState)
+    272          {
+    273             if (pinState)
+    274             {
+    275                GpioSet(pin);
+    276             }
+    277             else
+    278             {
+    279                GpioClear(pin);
+    280             }
+    281          }
+    282          
+    283          void GpioToggle(GPIO_PIN pin)
+    284          {
+    285             GpioSetState(pin, !GpioIsSet(pin));
+    286          }
+    287          
+    288          bool GpioIsSet(GPIO_PIN pin)
+    289          {
+    290             return (pGpioReg[GPIO_PIN_PORT(pin)]->PIO_PDSR & GPIO_PIN_BIT(pin))? true : false;
+    291          }
+    292          
+    293          
+    294          void GpioDirSetOutput(GPIO_PIN pin)
+    295          {
+    296             if (GPIO_PIN_IS_VALID(pin))
+    297             {
+    298                pGpioReg[GPIO_PIN_PORT(pin)]->PIO_OER = GPIO_PIN_BIT(pin);
+    299             }
+    300          }
+    301          
+    302          void GpioDirSetInput(GPIO_PIN pin)
+    303          {
+    304             if (GPIO_PIN_IS_VALID(pin))
+    305             {
+    306                pGpioReg[GPIO_PIN_PORT(pin)]->PIO_ODR = GPIO_PIN_BIT(pin);
+    307             }
+    308          }
+    309          
+    310          void GpioDirSetState(GPIO_PIN pin, bool pinState)
+    311          {
+    312             if (pinState)
+    313             {
+    314                GpioDirSetOutput(pin);
+    315             }
+    316             else
+    317             {
+    318                GpioDirSetInput(pin);
+    319             }
+    320          }
+    321          
+    322          void GpioDirToggle(GPIO_PIN pin)
+    323          {
+    324             GpioDirSetState(pin, !GpioDirIsOutput(pin));
+    325          }
+    326          
+    327          bool GpioDirIsOutput(GPIO_PIN pin)
+    328          {
+    329             return (pGpioReg[GPIO_PIN_PORT(pin)]->PIO_OSR & GPIO_PIN_BIT(pin))? true : false;
+    330          }
+    331          
+    332          
+    333          void GpioSetPeriphMode(GPIO_PIN pin)
+    334          {
+    335             pGpioReg[GPIO_PIN_PORT(pin)]->PIO_PDR = GPIO_PIN_BIT(pin);
+    336          }
+    337          
+    338          void GpioSetGpioMode(GPIO_PIN pin)
+    339          {
+    340             pGpioReg[GPIO_PIN_PORT(pin)]->PIO_PER = GPIO_PIN_BIT(pin);
+    341          }
+    342          
+    343          
+    344          void PIOA_IrqHandler(void)
+    345          {
+    346             u32 i = GPIOA->PIO_ISR;
+    347             GpioIrqHandler(i & GPIOA->PIO_IMR, (GPIO_PIN)0);
+    348          }
+    349          
+    350          void PIOB_IrqHandler(void)
+    351          {
+    352             u32 i = GPIOB->PIO_ISR;
+    353             GpioIrqHandler(i & GPIOB->PIO_IMR, (GPIO_PIN)32);
+    354          }
+    355          
+    356          
+    357          /**************************************************************************
+    358           *                                 Private Functions
+    359           **************************************************************************/
+    360          static void GpioIrqHandler(u32 pins, GPIO_PIN pin)
+    361          {
+    362             while (pins != 0)
+    363             {
+    364                if (pins & BIT0)
+    365                {
+    366                   pfnGpioIrqs[pin](pin);
+    367                }
+    368                pin++;
+    369                pins >>= 1;
+    370             }
+    371          }
+    372          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   GpioClear
+       0   GpioDirIsOutput
+       0   GpioDirSetInput
+       0   GpioDirSetOutput
+      16   GpioDirSetState
+        16   -> GpioDirSetInput
+        16   -> GpioDirSetOutput
+       8   GpioDirToggle
+         8   -> GpioDirIsOutput
+         8   -> GpioDirSetState
+      16   GpioInit
+        16   -> BspPeriphOn
+        16   -> NVIC_ClearPendingIRQ
+        16   -> NVIC_EnableIRQ
+        16   -> NVIC_SetPriority
+        16   -> memset
+      16   GpioIrqHandler
+        16   -- Indirect call
+       8   GpioIrqInstall
+       0   GpioIsSet
+       0   GpioSet
+       0   GpioSetGpioMode
+       0   GpioSetPeriphMode
+      16   GpioSetState
+        16   -> GpioClear
+        16   -> GpioSet
+       8   GpioTest
+         8   -> GpioToggle
+       8   GpioToggle
+         8   -> GpioIsSet
+         8   -> GpioSetState
+       4   NVIC_ClearPendingIRQ
+       4   NVIC_EnableIRQ
+       0   NVIC_SetPriority
+       8   PIOA_IrqHandler
+         8   -> GpioIrqHandler
+       8   PIOB_IrqHandler
+         8   -> GpioIrqHandler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable15
+       4  ??DataTable15_1
+       4  ??DataTable15_10
+       4  ??DataTable15_11
+       4  ??DataTable15_12
+       4  ??DataTable15_13
+       4  ??DataTable15_14
+       4  ??DataTable15_15
+       4  ??DataTable15_16
+       4  ??DataTable15_17
+       4  ??DataTable15_18
+       4  ??DataTable15_19
+       4  ??DataTable15_2
+       4  ??DataTable15_20
+       4  ??DataTable15_21
+       4  ??DataTable15_22
+       4  ??DataTable15_23
+       4  ??DataTable15_24
+       4  ??DataTable15_25
+       4  ??DataTable15_26
+       4  ??DataTable15_27
+       4  ??DataTable15_28
+       4  ??DataTable15_29
+       4  ??DataTable15_3
+       4  ??DataTable15_30
+       4  ??DataTable15_31
+       4  ??DataTable15_32
+       4  ??DataTable15_33
+       4  ??DataTable15_34
+       4  ??DataTable15_35
+       4  ??DataTable15_36
+       4  ??DataTable15_37
+       4  ??DataTable15_38
+       4  ??DataTable15_39
+       4  ??DataTable15_4
+       4  ??DataTable15_40
+       4  ??DataTable15_41
+       4  ??DataTable15_42
+       4  ??DataTable15_43
+       4  ??DataTable15_44
+       4  ??DataTable15_45
+       4  ??DataTable15_46
+       4  ??DataTable15_47
+       4  ??DataTable15_48
+       4  ??DataTable15_49
+       4  ??DataTable15_5
+       4  ??DataTable15_50
+       4  ??DataTable15_51
+       4  ??DataTable15_52
+       4  ??DataTable15_53
+       4  ??DataTable15_54
+       4  ??DataTable15_55
+       4  ??DataTable15_56
+       4  ??DataTable15_57
+       4  ??DataTable15_58
+       4  ??DataTable15_59
+       4  ??DataTable15_6
+       4  ??DataTable15_60
+       4  ??DataTable15_61
+       4  ??DataTable15_62
+       4  ??DataTable15_63
+       4  ??DataTable15_7
+       4  ??DataTable15_8
+       4  ??DataTable15_9
+      28  GpioClear
+      28  GpioDirIsOutput
+      28  GpioDirSetInput
+      28  GpioDirSetOutput
+      32  GpioDirSetState
+      28  GpioDirToggle
+     410  GpioInit
+      36  GpioIrqHandler
+     128  GpioIrqInstall
+      28  GpioIsSet
+      28  GpioSet
+      22  GpioSetGpioMode
+      22  GpioSetPeriphMode
+      32  GpioSetState
+      32  GpioTest
+      28  GpioToggle
+      26  NVIC_ClearPendingIRQ
+      26  NVIC_EnableIRQ
+      36  NVIC_SetPriority
+      20  PIOA_IrqHandler
+      20  PIOB_IrqHandler
+       8  pGpioReg
+     228  pfnGpioIrqs
+
+ 
+   228 bytes in section .bss
+     8 bytes in section .rodata
+ 1 322 bytes in section .text
+ 
+ 1 322 bytes of CODE  memory
+     8 bytes of CONST memory
+   228 bytes of DATA  memory
+
+Errors: none
+Warnings: none

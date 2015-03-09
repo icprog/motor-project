@@ -1,0 +1,357 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:06 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\bsp\irq.c                                     #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\bsp\irq.c" -D UNIT_TESTING=1 --preprocess=c   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\irq.lst                    #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\irq.o                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\bsp\irq.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          
+     10          #include "irq.h"
+     11          
+     12          
+     13          /**************************************************************************
+     14           *                                  Constants
+     15           **************************************************************************/
+     16          /**************************************************************************
+     17           *                                  Types
+     18           **************************************************************************/
+     19          /**************************************************************************
+     20           *                                  Variables
+     21           **************************************************************************/
+     22          /**************************************************************************
+     23           *                                  Prototypes
+     24           **************************************************************************/
+     25          /**************************************************************************
+     26           *                                  Global Functions
+     27           **************************************************************************/
+     28          
+     29          
+     30          
+     31          WEAK void NMI_Handler(void)
+     32          {
+     33              for(;;){}
+     34          }
+     35          WEAK void HardFault_Handler(void)
+     36          {
+     37            for(;;){}
+     38          }
+     39          WEAK void MemManage_Handler(void)
+     40          {
+     41              for(;;){}
+     42          }
+     43          WEAK void BusFault_Handler(void)
+     44          {
+     45              for(;;){}
+     46          }
+     47          WEAK void UsageFault_Handler(void)
+     48          {
+     49              for(;;){}
+     50          }
+     51          WEAK void SVC_Handler(void)
+     52          {
+     53              for(;;){}
+     54          }
+     55          WEAK void DebugMon_Handler(void)
+     56          {
+     57              for(;;){}
+     58          }
+     59          WEAK void PendSV_Handler(void)
+     60          {
+     61              for(;;){}
+     62          }
+     63          WEAK void SysTick_Handler(void)
+     64          {
+     65              for(;;){}
+     66          }
+     67          WEAK void SUPC_IrqHandler(void)
+     68          {
+     69              for(;;){}
+     70          }
+     71          WEAK void RSTC_IrqHandler(void)
+     72          {
+     73              for(;;){}
+     74          }
+     75          WEAK void RTC_IrqHandler(void)
+     76          {
+     77              for(;;){}
+     78          }
+     79          WEAK void RTT_IrqHandler(void)
+     80          {
+     81              for(;;){}
+     82          }
+     83          WEAK void WDT_IrqHandler(void)
+     84          {
+     85              for(;;){}
+     86          }
+     87          WEAK void PMC_IrqHandler(void)
+     88          {
+     89              for(;;){}
+     90          }
+     91          WEAK void EFC0_IrqHandler(void)
+     92          {
+     93              for(;;){}
+     94          }
+     95          WEAK void EFC1_IrqHandler(void)
+     96          {
+     97              for(;;){}
+     98          }
+     99          WEAK void DBGU_IrqHandler(void)
+    100          {
+    101              for(;;){}
+    102          }
+    103          WEAK void HSMC4_IrqHandler(void)
+    104          {
+    105              for(;;){}
+    106          }
+    107          WEAK void PIOA_IrqHandler(void)
+    108          {
+    109              for(;;){}
+    110          }
+    111          WEAK void PIOB_IrqHandler(void)
+    112          {
+    113              for(;;){}
+    114          }
+    115          WEAK void PIOC_IrqHandler(void)
+    116          {
+    117              for(;;){}
+    118          }
+    119          WEAK void USART0_IrqHandler(void)
+    120          {
+    121              for(;;){}
+    122          }
+    123          WEAK void USART1_IrqHandler(void)
+    124          {
+    125              for(;;){}
+    126          }
+    127          WEAK void USART2_IrqHandler(void)
+    128          {
+    129              for(;;){}
+    130          }
+    131          WEAK void USART3_IrqHandler(void)
+    132          {
+    133              for(;;){}
+    134          }
+    135          WEAK void MCI0_IrqHandler(void)
+    136          {
+    137              for(;;){}
+    138          }
+    139          WEAK void TWI0_IrqHandler(void)
+    140          {
+    141              for(;;){}
+    142          }
+    143          WEAK void TWI1_IrqHandler(void)
+    144          {
+    145              for(;;){}
+    146          }
+    147          WEAK void SPI0_IrqHandler(void)
+    148          {
+    149              for(;;){}
+    150          }
+    151          WEAK void SSC0_IrqHandler(void)
+    152          {
+    153              for(;;){}
+    154          }
+    155          WEAK void TC0_IrqHandler(void)
+    156          {
+    157              for(;;){}
+    158          }
+    159          WEAK void TC1_IrqHandler(void)
+    160          {
+    161              for(;;){}
+    162          }
+    163          WEAK void TC2_IrqHandler(void)
+    164          {
+    165              for(;;){}
+    166          }
+    167          WEAK void PWM_IrqHandler(void)
+    168          {
+    169              for(;;){}
+    170          }
+    171          WEAK void ADCC0_IrqHandler(void)
+    172          {
+    173              for(;;){}
+    174          }
+    175          WEAK void ADCC1_IrqHandler(void)
+    176          {
+    177              for(;;){}
+    178          }
+    179          WEAK void HDMA_IrqHandler(void)
+    180          {
+    181              for(;;){}
+    182          }
+    183          WEAK void UDPD_IrqHandler(void)
+    184          {
+    185              for(;;){}
+    186          }
+    187          WEAK void IrqHandlerNotUsed(void)
+    188          {
+    189              for(;;){}
+    190          }
+    191          
+    192          
+    193          /**************************************************************************
+    194           *                                 Private Functions
+    195           **************************************************************************/
+    196          
+    197          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   ADCC0_IrqHandler
+       0   ADCC1_IrqHandler
+       0   BusFault_Handler
+       0   DBGU_IrqHandler
+       0   DebugMon_Handler
+       0   EFC0_IrqHandler
+       0   EFC1_IrqHandler
+       0   HDMA_IrqHandler
+       0   HSMC4_IrqHandler
+       0   HardFault_Handler
+       0   IrqHandlerNotUsed
+       0   MCI0_IrqHandler
+       0   MemManage_Handler
+       0   NMI_Handler
+       0   PIOA_IrqHandler
+       0   PIOB_IrqHandler
+       0   PIOC_IrqHandler
+       0   PMC_IrqHandler
+       0   PWM_IrqHandler
+       0   PendSV_Handler
+       0   RSTC_IrqHandler
+       0   RTC_IrqHandler
+       0   RTT_IrqHandler
+       0   SPI0_IrqHandler
+       0   SSC0_IrqHandler
+       0   SUPC_IrqHandler
+       0   SVC_Handler
+       0   SysTick_Handler
+       0   TC0_IrqHandler
+       0   TC1_IrqHandler
+       0   TC2_IrqHandler
+       0   TWI0_IrqHandler
+       0   TWI1_IrqHandler
+       0   UDPD_IrqHandler
+       0   USART0_IrqHandler
+       0   USART1_IrqHandler
+       0   USART2_IrqHandler
+       0   USART3_IrqHandler
+       0   UsageFault_Handler
+       0   WDT_IrqHandler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ADCC0_IrqHandler
+       2  ADCC1_IrqHandler
+       2  BusFault_Handler
+       2  DBGU_IrqHandler
+       2  DebugMon_Handler
+       2  EFC0_IrqHandler
+       2  EFC1_IrqHandler
+       2  HDMA_IrqHandler
+       2  HSMC4_IrqHandler
+       2  HardFault_Handler
+       2  IrqHandlerNotUsed
+       2  MCI0_IrqHandler
+       2  MemManage_Handler
+       2  NMI_Handler
+       2  PIOA_IrqHandler
+       2  PIOB_IrqHandler
+       2  PIOC_IrqHandler
+       2  PMC_IrqHandler
+       2  PWM_IrqHandler
+       2  PendSV_Handler
+       2  RSTC_IrqHandler
+       2  RTC_IrqHandler
+       2  RTT_IrqHandler
+       2  SPI0_IrqHandler
+       2  SSC0_IrqHandler
+       2  SUPC_IrqHandler
+       2  SVC_Handler
+       2  SysTick_Handler
+       2  TC0_IrqHandler
+       2  TC1_IrqHandler
+       2  TC2_IrqHandler
+       2  TWI0_IrqHandler
+       2  TWI1_IrqHandler
+       2  UDPD_IrqHandler
+       2  USART0_IrqHandler
+       2  USART1_IrqHandler
+       2  USART2_IrqHandler
+       2  USART3_IrqHandler
+       2  UsageFault_Handler
+       2  WDT_IrqHandler
+
+ 
+ 80 bytes in section .text
+ 
+ 80 bytes of CODE memory
+
+Errors: none
+Warnings: none

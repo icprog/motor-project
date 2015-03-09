@@ -1,0 +1,356 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:02 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\structures\src\circularBuffer.c           #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\structures\src\circularBuffer.c" -D       #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\circularBuffer.lst         #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\circularBuffer.o            #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\structures\src\circularBuffer.c
+      1          /*******************************************************************************************
+      2           Circular Buffer
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "circularBuffer.h"
+     12          #include "includes.h"
+     13          
+     14          
+     15          /**************************************************************************
+     16           *                                  Constants
+     17           **************************************************************************/
+     18          /**************************************************************************
+     19           *                                  Types
+     20           **************************************************************************/
+     21          /**************************************************************************
+     22           *                                  Variables
+     23           **************************************************************************/
+     24          /**************************************************************************
+     25           *                                  Prototypes
+     26           **************************************************************************/
+     27          /**************************************************************************
+     28           *                                  Global Functions
+     29           **************************************************************************/
+     30          CIRCULAR_BUF const * CBufInit(CIRCULAR_BUF *pBuf, UINT8 *pStart, UINT32 len, UINT8 optionFlags)
+     31          {
+     32          	pBuf->flags = optionFlags & CIRCULAR_BUF_OPTION_MASK;
+     33          	pBuf->len = len;
+     34          	pBuf->pStart = pStart;
+     35          	pBuf->rdOffset = pBuf->wrOffset = 0;
+     36          	return pBuf;
+     37          }
+     38          
+     39          UINT32 CBufFree(CIRCULAR_BUF const *pBuf)
+     40          {
+     41          	return (UINT32)(pBuf->len - CBufUsed(pBuf));
+     42          }
+     43          
+     44          UINT32 CBufUsed(CIRCULAR_BUF const *pBuf)
+     45          {
+     46          	UINT32 len;
+     47          	if (pBuf->flags & CIRCULAR_BUF_IS_FULL)
+     48          	{
+     49          		len = pBuf->len;
+     50          	}
+     51          	else if (pBuf->wrOffset >= pBuf->rdOffset)
+     52          	{
+     53          		len = (UINT32)(pBuf->wrOffset - pBuf->rdOffset);
+     54          	}
+     55          	else
+     56          	{
+     57          		len = (UINT32)(pBuf->len - pBuf->rdOffset) + pBuf->wrOffset;
+     58          	}
+     59          	return len;
+     60          }
+     61          
+     62          BOOL CBufIsEmpty(CIRCULAR_BUF const *pBuf)
+     63          {
+     64          	return (BOOL)((pBuf->rdOffset == pBuf->wrOffset) && !(pBuf->flags & CIRCULAR_BUF_IS_FULL));
+     65          }
+     66          
+     67          BOOL CBufIsFull(CIRCULAR_BUF const *pBuf)
+     68          {
+     69          	return (pBuf->flags & CIRCULAR_BUF_IS_FULL)? TRUE : FALSE;
+     70          }
+     71          
+     72          
+     73          char * CBufGets(char *pDest, UINT32 len, CIRCULAR_BUF *pBuf)
+     74          {
+     75          	char *pStr = pDest;
+     76          	INT32 ch;
+     77          	while ((len-- > 1) && ((ch = CBufGetc(pBuf)) >= 0) && (ch != '\n'))
+     78          	{
+     79          		*pDest++ = (char)ch;
+     80          	}
+     81          	*pDest = '\0';
+     82          
+     83          	if (pStr == pDest)
+     84          		pStr = NULL;
+     85          	return pStr;
+     86          }
+     87          
+     88          INT32 CBufGetc(CIRCULAR_BUF *pBuf)
+     89          {
+     90          	UINT8 ch;
+     91          	if (CBufRead(&ch, sizeof(ch), pBuf) != sizeof(ch))
+     92          	{
+     93          		return -1;
+     94          	}
+     95          	return (INT32)ch;
+     96          }
+     97          
+     98          UINT32 CBufRead(void *pDest, UINT32 len, CIRCULAR_BUF *pBuf)
+     99          {
+    100          	UINT32 rdLen = 0;
+    101          	UINT32 blockLen;
+    102          
+    103          	if ((len == 0) || CBufIsEmpty(pBuf))
+    104          		return rdLen;
+    105          
+    106          	if (pBuf->rdOffset >= pBuf->wrOffset)
+    107          	{
+    108          		rdLen = (UINT32)(pBuf->len - pBuf->rdOffset) + pBuf->wrOffset;
+    109          		if (rdLen > len)
+    110          			rdLen = len;
+    111          		memcpy(pDest, &pBuf->pStart[pBuf->rdOffset], rdLen);
+    112          
+    113          		pBuf->rdOffset += rdLen;
+    114          		if (pBuf->rdOffset >= pBuf->len)
+    115          		{
+    116          			pBuf->rdOffset = 0;
+    117          		}
+    118          		pBuf->flags &= ~CIRCULAR_BUF_IS_FULL;
+    119          		pDest = (UINT8 *)pDest + rdLen;	//lint !e826
+    120          		len -= rdLen;
+    121          	}
+    122          	blockLen = MIN(pBuf->wrOffset - pBuf->rdOffset, len);
+    123          	memcpy(pDest, &pBuf->pStart[pBuf->rdOffset], blockLen);
+    124          	pBuf->rdOffset += blockLen;
+    125          	rdLen += blockLen;
+    126          	return rdLen;
+    127          }
+    128          
+    129          UINT32 CBufPeek(void *pDest, UINT32 len, CIRCULAR_BUF *pBuf)
+    130          {
+    131          	UINT8 flagBkp = pBuf->flags;
+    132          	UINT32 rdBkp = pBuf->rdOffset;
+    133          	UINT32 rdLen = CBufRead(pDest, len, pBuf);
+    134          	pBuf->flags = flagBkp;
+    135          	pBuf->rdOffset = rdBkp;
+    136          	return rdLen;
+    137          }
+    138          
+    139          void CBufSeek(CIRCULAR_BUF *pBuf, INT32 offset)
+    140          {
+    141          	INT32 max;
+    142          	if (offset > 0)
+    143          	{
+    144          		if ((pBuf->flags & CIRCULAR_BUF_IS_FULL) &&
+    145          			 ((pBuf->rdOffset + (UINT32)offset) >= pBuf->len))
+    146          		{
+    147          			offset -= (INT32)(pBuf->len - pBuf->rdOffset);
+    148          			pBuf->rdOffset = 0;
+    149          			pBuf->flags &= ~CIRCULAR_BUF_IS_FULL;
+    150          		}
+    151          		max = (INT32)((pBuf->flags & CIRCULAR_BUF_IS_FULL)? pBuf->len : (pBuf->wrOffset - pBuf->rdOffset));
+    152          		pBuf->rdOffset += (UINT32)MIN(offset, max);
+    153          		pBuf->flags &= ~CIRCULAR_BUF_IS_FULL;
+    154          	}
+    155          	else if (!(pBuf->flags & CIRCULAR_BUF_IS_FULL))
+    156          	{
+    157          		offset = (offset == INT32_MIN)? INT32_MAX : -offset;
+    158          		if (pBuf->rdOffset >= pBuf->wrOffset)
+    159          		{
+    160          			max = (INT32)(pBuf->rdOffset - pBuf->wrOffset);
+    161          		}
+    162          		else if ((UINT32)offset > pBuf->rdOffset)
+    163          		{
+    164          			max = (INT32)(pBuf->len - pBuf->wrOffset);
+    165          			offset -= (INT32)pBuf->rdOffset;
+    166          			pBuf->rdOffset = pBuf->len;
+    167          		}
+    168          		else
+    169          		{
+    170          			max = offset;
+    171          		}
+    172          		pBuf->rdOffset -= (UINT32)MIN(offset, max);
+    173          		if (pBuf->rdOffset == pBuf->wrOffset)
+    174          			pBuf->flags |= CIRCULAR_BUF_IS_FULL;
+    175          	}
+    176          }
+    177          
+    178          void CBufFlush(CIRCULAR_BUF *pBuf)
+    179          {
+    180          	pBuf->rdOffset = pBuf->wrOffset;
+    181          	pBuf->flags &= ~CIRCULAR_BUF_IS_FULL;
+    182          }
+    183          
+    184          
+    185          UINT32 CBufPuts(CIRCULAR_BUF *pBuf, char const *pSrc)
+    186          {
+    187          	return CBufWrite(pBuf, pSrc, strlen(pSrc)) + CBufPutc(pBuf, '\n');
+    188          }
+    189          
+    190          UINT32 CBufPutc(CIRCULAR_BUF *pBuf, char ch)
+    191          {
+    192          	return CBufWrite(pBuf, &ch, sizeof(ch));
+    193          }
+    194          
+    195          UINT32 CBufWrite(CIRCULAR_BUF *pBuf, void const *pSrc, UINT32 len)
+    196          {
+    197          	UINT32 wrLen = 0;
+    198          	UINT32 blockLen;
+    199          
+    200          	if ((len > pBuf->len) && !(pBuf->flags & CIRCULAR_BUF_WRITE_UNTIL_FULL))
+    201          	{
+    202          		wrLen = (UINT32)(len - pBuf->len);
+    203          		pSrc = (UINT8 const *)pSrc + wrLen;	//lint !e826
+    204          		len = pBuf->len;
+    205          	}
+    206          
+    207          	while (len > 0)
+    208          	{
+    209          		if ((pBuf->flags & (CIRCULAR_BUF_IS_FULL | CIRCULAR_BUF_WRITE_UNTIL_FULL)) ==
+    210          			  (CIRCULAR_BUF_IS_FULL | CIRCULAR_BUF_WRITE_UNTIL_FULL))
+    211          		{
+    212          			break;
+    213          		}
+    214          
+    215          		blockLen = (pBuf->rdOffset > pBuf->wrOffset)? pBuf->rdOffset : pBuf->len;
+    216          		blockLen -= pBuf->wrOffset;
+    217          		blockLen = MIN(len, blockLen);
+    218          		memcpy(&pBuf->pStart[pBuf->wrOffset], pSrc, blockLen);
+    219          
+    220          		wrLen += blockLen;
+    221          		len -= blockLen;
+    222          		pSrc = (UINT8 const *)pSrc + blockLen;	//lint !e826
+    223          		pBuf->wrOffset += blockLen;
+    224          		if (pBuf->wrOffset == pBuf->len)
+    225          			pBuf->wrOffset = 0;
+    226          		if (pBuf->wrOffset == pBuf->rdOffset)
+    227          			pBuf->flags |= CIRCULAR_BUF_IS_FULL;
+    228          	}
+    229          	return wrLen;
+    230          }
+    231          
+    232          
+    233          /**************************************************************************
+    234           *                                 Private Functions
+    235           **************************************************************************/
+    236          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   CBufFlush
+      16   CBufFree
+        16   -> CBufUsed
+      16   CBufGetc
+        16   -> CBufRead
+      24   CBufGets
+        24   -> CBufGetc
+       4   CBufInit
+       0   CBufIsEmpty
+       0   CBufIsFull
+      24   CBufPeek
+        24   -> CBufRead
+      16   CBufPutc
+        16   -> CBufWrite
+      16   CBufPuts
+        16   -> CBufPutc
+        16   -> CBufWrite
+        16   -> strlen
+      24   CBufRead
+        24   -> CBufIsEmpty
+        24   -> memcpy
+       4   CBufSeek
+       0   CBufUsed
+      24   CBufWrite
+        24   -> memcpy
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      14  CBufFlush
+      16  CBufFree
+      32  CBufGetc
+      64  CBufGets
+      22  CBufInit
+      30  CBufIsEmpty
+      12  CBufIsFull
+      36  CBufPeek
+      16  CBufPutc
+      36  CBufPuts
+     158  CBufRead
+     184  CBufSeek
+      46  CBufUsed
+     152  CBufWrite
+
+ 
+ 818 bytes in section .text
+ 
+ 818 bytes of CODE memory
+
+Errors: none
+Warnings: none

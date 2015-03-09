@@ -1,0 +1,278 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      23/Mar/2014  15:11:52 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\src\app\menu.c                                   #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\src\app\menu.c" -D __SAM3U2C__ --preprocess=c    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\List\" -lcN                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\End       #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\List\menu.lst                      #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\Obj\menu.o                         #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\End Project\src\app\menu.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          
+     10          #include "menu.h"
+     11          
+     12          
+     13          /**************************************************************************
+     14           *                                  Constants
+     15           **************************************************************************/
+     16          /**************************************************************************
+     17           *                                  Types
+     18           **************************************************************************/
+     19          struct menu menu[3] =
+     20          {
+     21            // Main menu menuId = 0
+     22            {
+     23              {0},{6},{1,2,3,4,5,6},
+     24              {"Led Show\n","Music Player\n","Option 3\n","Option 4\n","Option 5\n","Option 6\n"}
+     25            },
+     26            
+     27            // LED show menuId = 1
+     28            {
+     29              {0},{3},{255,255,255,255,255,255},
+     30              {"Show 1\n","Show 2\n","Show 3\n"}
+     31            }
+     32          };
+     33               
+     34          /**************************************************************************
+     35           *                                  Variables
+     36           **************************************************************************/
+     37          static u8 selector = 0;         // Selector position
+     38          static u8 topLink = 0;          // Link on top row of LCD
+     39          static u8 botLink = 1;          // Link on bottom row of LCD
+     40          static u8 lastScroll = 0;       // Last scroll direction (0 down, 1 up)
+     41          
+     42          static u8 menuId = 0;         // Current Menu ID
+     43          
+     44          /**************************************************************************
+     45           *                                  Prototypes
+     46           **************************************************************************/
+     47          static void scrollDown(u8* linkA, u8* linkB, u8* lastScroll);
+     48          static void scrollUp(u8* linkA, u8* linkB, u8* lastScroll);
+     49          static void nextMenu(u8 linkA, u8 selector, u8* id);
+     50          static void prevMenu(u8* id);
+     51          /**************************************************************************
+     52           *                                  Global Functions
+     53           **************************************************************************/
+     54          void MenuInit()
+     55          {
+     56            //LedSequence(100);
+     57            //LedRgbCycleSet(5000, UINT8_MAX, UINT8_MAX);
+     58          }
+     59          
+     60          void MenuUpdate()
+     61          {
+     62            // Check for button presses
+     63            if (ButtonWasPressed(BTN_RM))         // Scroll Down
+     64            {
+     65              ButtonPressAck(BTN_RM);
+     66              scrollDown(&topLink, &botLink, &lastScroll);
+     67            }
+     68            
+     69            if (ButtonWasPressed(BTN_LM))         // Scroll Up
+     70            {
+     71              ButtonPressAck(BTN_LM);
+     72              scrollUp(&topLink, &botLink, &lastScroll);
+     73            }
+     74            
+     75            if (ButtonWasPressed(BTN_R))
+     76            {
+     77              ButtonPressAck(BTN_R);
+     78              nextMenu(topLink, selector, &menuId);
+     79              topLink = 0;
+     80              botLink = 1;
+     81              selector = 0;
+     82            }
+     83            
+     84            if (ButtonWasPressed(BTN_L))
+     85            {
+     86              ButtonPressAck(BTN_L);
+     87              prevMenu(&menuId);
+     88              topLink = 0;
+     89              botLink = 1;
+     90              selector = 0;
+     91            }
+     92            
+     93            // Screen update
+     94            LcdClear();
+     95            
+     96            if(selector == 0)
+     97            {
+     98              LcdPutc('*');
+     99              LcdPuts(menu[menuId].menuLink[topLink]);
+    100              LcdPuts(menu[menuId].menuLink[botLink]);
+    101            }
+    102            else
+    103            {
+    104              LcdPuts(menu[menuId].menuLink[topLink]);
+    105              LcdPutc('*');
+    106              LcdPuts(menu[menuId].menuLink[botLink]);
+    107            }
+    108          }
+    109          
+    110          /**************************************************************************
+    111           *                                 Private Functions
+    112           **************************************************************************/
+    113          static void scrollDown(u8* linkA, u8* linkB, u8* lastScroll)
+    114          {
+    115            u8 temp = *linkB;
+    116            
+    117            // Adjusting pointer
+    118            if (selector == 1)
+    119              selector = 0;
+    120            
+    121            if (*linkB == (menu[menuId].numLinks - 1))
+    122              selector = 1;
+    123            
+    124            // Translating links
+    125            if (*linkB < (menu[menuId].numLinks - 1))
+    126            {
+    127              *linkB = temp + 1;
+    128              *linkA = temp;
+    129              *lastScroll = 0;
+    130            }
+    131          }
+    132          
+    133          static void scrollUp(u8* linkA, u8* linkB,u8* lastScroll)
+    134          {
+    135            u8 temp = *linkA;
+    136            
+    137            // Adjusting pointer
+    138            if (selector == 0)
+    139              selector = 1;
+    140            
+    141            if (*linkA == 0)
+    142              selector = 0;
+    143            
+    144            // Translating links
+    145            if (*linkA > 0)
+    146            {
+    147              *linkA = temp - 1;
+    148              *linkB = temp;
+    149              *lastScroll = 1;
+    150            }
+    151          }
+    152          
+    153          static void nextMenu(u8 linkA, u8 selector, u8* id)
+    154          {
+    155            *id = menu[menuId].nextMenu[(linkA + selector)];
+    156          }
+    157          
+    158          static void prevMenu(u8* id)
+    159          {
+    160            *id = menu[menuId].prevMenu;
+    161          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   MenuInit
+       8   MenuUpdate
+         8   -> ButtonPressAck
+         8   -> ButtonWasPressed
+         8   -> LcdClear
+         8   -> LcdPutc
+         8   -> LcdPuts
+         8   -> nextMenu
+         8   -> prevMenu
+         8   -> scrollDown
+         8   -> scrollUp
+      12   nextMenu
+       0   prevMenu
+      16   scrollDown
+       8   scrollUp
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable4
+       4  ??DataTable4_1
+       4  ??DataTable4_2
+       4  ??DataTable4_3
+       4  ??DataTable4_4
+       4  ??DataTable4_5
+       2  MenuInit
+     282  MenuUpdate
+       1  botLink
+       1  lastScroll
+     384  menu
+       1  menuId
+      30  nextMenu
+      18  prevMenu
+      82  scrollDown
+      50  scrollUp
+       1  selector
+       1  topLink
+
+ 
+   4 bytes in section .bss
+ 385 bytes in section .data
+ 488 bytes in section .text
+ 
+ 488 bytes of CODE memory
+ 389 bytes of DATA memory
+
+Errors: none
+Warnings: none

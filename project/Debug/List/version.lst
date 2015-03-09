@@ -1,0 +1,208 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:40 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\version\version.c                         #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\version\version.c" -D __SAM3U2C__         #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\version.lst                    #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\version.o                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\version\version.c
+      1          /*******************************************************************************************
+      2          Versioning information
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "version.h"
+     12          
+     13          
+     14          /**************************************************************************
+     15           *                                  Constants
+     16           **************************************************************************/
+     17          __root const PROGRAM_ID programId VERSION_LOCATION =
+     18          {
+     19             .marker     =  "_FwMk_",         //lint !e784 Upgrade Image marker -- always "_FwMk_"
+     20             .product    =  PRODUCT_STR,      // Product string
+     21             .productId  =  PRODUCT_ID,       // Product ID from 0 to 255
+     22             .hwVersion  =  HW_VERSION,       // Current hardware version (1 to 255)
+     23             .fwVersion  =  FW_VERSION,       // Current firmware version in Major.Minor.Rev
+     24             .fwMinimum  =  FW_MINIMUM,       // Minimum firmware version to upgrade to this version
+     25             .fwDownMin  =  FW_DOWN_MINIMUM,  // Minimum firmware version to allow downgrades to
+     26             .buildDate  =  __DATE__,         // Build date inserted by compiler
+     27             .buildTime  =  __TIME__,         // Build time inserted by compiler
+     28             .programCRC =  0                 // Program CRC (filled in by linker)
+     29          };
+     30          
+     31          
+     32          /**************************************************************************
+     33           *                                  Types
+     34           **************************************************************************/
+     35          /**************************************************************************
+     36           *                                  Variables
+     37           **************************************************************************/
+     38          static time_t versionBuildTime = 0;
+     39          
+     40          
+     41          /**************************************************************************
+     42           *                                  Prototypes
+     43           **************************************************************************/
+     44          static time_t	VersionBuildTime(void);
+     45          
+     46          
+     47          /**************************************************************************
+     48           *                                  Global Functions
+     49           **************************************************************************/
+     50          time_t VersionGetBuildTime(void)
+     51          {
+     52          	if (versionBuildTime == 0)
+     53          	{
+     54          		versionBuildTime = VersionBuildTime();
+     55          	}
+     56          	return versionBuildTime;
+     57          }
+     58          
+     59          
+     60          /**************************************************************************
+     61           *                                 Private Functions
+     62           **************************************************************************/
+     63          // Converts the ASCII buildDate and buildTime into a time_t type (# seconds sinc Jan 1, 1970)
+     64          static time_t VersionBuildTime(void)
+     65          {
+     66          	const char *months [] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+     67          	struct tm rtc;
+     68          	int i;
+     69          
+     70          	memset(&rtc, 0, sizeof(rtc));
+     71          
+     72          	// buildDate in "MMM dd yyy" format
+     73          	for (i = 0; i < 12; i++)
+     74          	{
+     75          		if (strncmp(programId.buildDate, months[i], 3) == 0)
+     76          		{
+     77          			rtc.tm_mon = i;
+     78          			break;
+     79          		}
+     80          	}
+     81          	rtc.tm_mday = (programId.buildDate[4] & 0x0F)*10 + (programId.buildDate[5] & 0x0F);
+     82          	rtc.tm_year = atoi(&programId.buildDate[7]) - 1900;
+     83          
+     84          	// Build time in "hh:mm:ss" format
+     85          	rtc.tm_hour = atoi(&programId.buildTime[0]);
+     86          	rtc.tm_min = atoi(&programId.buildTime[3]);
+     87          	rtc.tm_sec = atoi(&programId.buildTime[6]);
+     88          
+     89          	return mktime(&rtc);
+     90          }
+     91          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+     104   VersionBuildTime
+       104   -> __aeabi_memcpy4
+       104   -> __mktime32
+       104   -> atoi
+       104   -> memset
+       104   -> strncmp
+       8   VersionGetBuildTime
+         8   -> VersionBuildTime
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ?<Constant "Apr">
+       4  ?<Constant "Aug">
+       4  ?<Constant "Dec">
+       4  ?<Constant "Feb">
+       4  ?<Constant "Jan">
+       4  ?<Constant "Jul">
+       4  ?<Constant "Jun">
+       4  ?<Constant "Mar">
+       4  ?<Constant "May">
+       4  ?<Constant "Nov">
+       4  ?<Constant "Oct">
+       4  ?<Constant "Sep">
+      48  ?<Constant {&"Jan", &"Feb", &"Mar", &"Apr", &"
+       4  ??DataTable1
+       4  ??DataTable1_1
+       4  ??DataTable1_2
+       4  ??DataTable1_3
+       4  ??DataTable1_4
+       4  ??DataTable1_5
+       4  ??DataTable1_6
+       4  ??DataTable1_7
+     134  VersionBuildTime
+      24  VersionGetBuildTime
+      64  programId
+       4  versionBuildTime
+
+ 
+   4 bytes in section .bss
+ 160 bytes in section .rodata
+ 190 bytes in section .text
+ 
+ 190 bytes of CODE  memory
+ 160 bytes of CONST memory
+   4 bytes of DATA  memory
+
+Errors: none
+Warnings: none

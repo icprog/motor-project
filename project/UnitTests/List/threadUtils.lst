@@ -1,0 +1,181 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:10 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\utils\threadUtils.c                       #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\utils\threadUtils.c" -D UNIT_TESTING=1    #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\threadUtils.lst            #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\threadUtils.o               #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\utils\threadUtils.c
+      1          /*******************************************************************************************
+      2           Generic Threading Utilities
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "threadUtils.h"
+     12          
+     13          
+     14          /**************************************************************************
+     15           *                                  Constants
+     16           **************************************************************************/
+     17          /**************************************************************************
+     18           *                                  Types
+     19           **************************************************************************/
+     20          /**************************************************************************
+     21           *                                  Variables
+     22           **************************************************************************/
+     23          /**************************************************************************
+     24           *                                  Prototypes
+     25           **************************************************************************/
+     26          /**************************************************************************
+     27           *                                  Global Functions
+     28           **************************************************************************/
+     29          char *asctime_r(const struct tm *pTime, char *pDest)
+     30          {
+     31          	if (pDest)
+     32          	{
+     33          		PREPARE_CRITICAL();
+     34          		ENTER_CRITICAL();
+     35          		char *pAscTim = asctime(pTime);
+     36          		strcpy(pDest, pAscTim);
+     37          		EXIT_CRITICAL();
+     38          	}
+     39          	return pDest;
+     40          }
+     41          
+     42          char *ctime_r(const time_t *pTime, char *pDest)
+     43          {
+     44          	if (pDest)
+     45          	{
+     46          		PREPARE_CRITICAL();
+     47          		ENTER_CRITICAL();
+     48          		char *pTm = ctime(pTime);
+     49          		strcpy(pDest, pTm);
+     50          		EXIT_CRITICAL();
+     51          	}
+     52          	return pDest;
+     53          }
+     54          
+     55          struct tm *gmtime_r(const time_t *pTime, struct tm *pDest)
+     56          {
+     57          	if (pDest)
+     58          	{
+     59          		PREPARE_CRITICAL();
+     60          		ENTER_CRITICAL();
+     61          		struct tm *pTm = gmtime(pTime);
+     62          		memcpy(pDest, pTm, sizeof(struct tm));
+     63          		EXIT_CRITICAL();
+     64          	}
+     65          	return pDest;
+     66          }
+     67          
+     68          struct tm *localtime_r(const time_t *pTime, struct tm *pDest)
+     69          {
+     70          	if (pDest)
+     71          	{
+     72          		PREPARE_CRITICAL();
+     73          		ENTER_CRITICAL();
+     74          		struct tm *pTm = localtime(pTime);
+     75          		memcpy(pDest, pTm, sizeof(struct tm));
+     76          		EXIT_CRITICAL();
+     77          	}
+     78          	return pDest;
+     79          }
+     80          
+     81          
+     82          /**************************************************************************
+     83           *                                 Private Functions
+     84           **************************************************************************/
+     85          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      24   asctime_r
+        24   -> asctime
+        24   -> strcpy
+      24   ctime_r
+        24   -> __ctime32
+        24   -> strcpy
+      24   gmtime_r
+        24   -> __gmtime32
+        24   -> memcpy
+      24   localtime_r
+        24   -> __localtime32
+        24   -> memcpy
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      42  asctime_r
+      42  ctime_r
+      44  gmtime_r
+      44  localtime_r
+
+ 
+ 172 bytes in section .text
+ 
+ 172 bytes of CODE memory
+
+Errors: none
+Warnings: none

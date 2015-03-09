@@ -1,0 +1,252 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:00 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\embUnit\embUnit\AssertImpl.c              #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\embUnit\embUnit\AssertImpl.c" -D          #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\AssertImpl.lst             #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\AssertImpl.o                #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\embUnit\embUnit\AssertImpl.c
+      1          /*
+      2           * COPYRIGHT AND PERMISSION NOTICE
+      3           *
+      4           * Copyright (c) 2003 Embedded Unit Project
+      5           *
+      6           * All rights reserved.
+      7           *
+      8           * Permission is hereby granted, free of charge, to any person obtaining
+      9           * a copy of this software and associated documentation files (the
+     10           * "Software"), to deal in the Software without restriction, including
+     11           * without limitation the rights to use, copy, modify, merge, publish,
+     12           * distribute, and/or sell copies of the Software, and to permit persons
+     13           * to whom the Software is furnished to do so, provided that the above
+     14           * copyright notice(s) and this permission notice appear in all copies
+     15           * of the Software and that both the above copyright notice(s) and this
+     16           * permission notice appear in supporting documentation.
+     17           *
+     18           * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+     19           * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+     20           * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+     21           * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+     22           * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY
+     23           * SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER
+     24           * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+     25           * CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+     26           * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+     27           *
+     28           * Except as contained in this notice, the name of a copyright holder
+     29           * shall not be used in advertising or otherwise to promote the sale,
+     30           * use or other dealings in this Software without prior written
+     31           * authorization of the copyright holder.
+     32           *
+     33           * $Id: AssertImpl.c,v 1.5 2004/02/10 16:15:25 arms22 Exp $
+     34           */
+     35          #include "config.h"
+     36          #include "stdImpl.h"
+     37          #include "AssertImpl.h"
+     38          
+     39          void assertImplementationInt(int expected,int actual, long line, const char *file)
+     40          {
+     41          	char buffer[32];	/*"exp -2147483647 was -2147483647"*/
+     42          	char numbuf[12];	/*32bit int decimal maximum column is 11 (-2147483647~2147483647)*/
+     43          
+     44          	stdimpl_strcpy(buffer, "exp ");
+     45          
+     46          	{	stdimpl_itoa(expected, numbuf, 10);
+     47          		stdimpl_strncat(buffer, numbuf, 11);	}
+     48          
+     49          	stdimpl_strcat(buffer, " was ");
+     50          
+     51          	{	stdimpl_itoa(actual, numbuf, 10);
+     52          		stdimpl_strncat(buffer, numbuf, 11);	}
+     53          
+     54          	addFailure(buffer, line, file);
+     55          }
+     56          
+     57          void assertImplementationCStr(const char *expected,const char *actual, long line, const char *file)
+     58          {
+     59          	char buffer[ASSERT_STRING_BUFFER_MAX];
+     60          	#define exp_act_limit ((ASSERT_STRING_BUFFER_MAX-11-1)/2)/*	"exp'' was''" = 11 byte	*/
+     61          	int el;
+     62          	int al;
+     63          
+     64          	if (expected) {
+     65          		el = stdimpl_strlen(expected);
+     66          	} else {
+     67          		el = 4;
+     68          		expected = "null";
+     69          	}
+     70          
+     71          	if (actual) {
+     72          		al = stdimpl_strlen(actual);
+     73          	} else {
+     74          		al = 4;
+     75          		actual = "null";
+     76          	}
+     77          	if (el > exp_act_limit) {
+     78          		if (al > exp_act_limit) {
+     79          			al = exp_act_limit;
+     80          			el = exp_act_limit;
+     81          		} else {
+     82          			int w = exp_act_limit + (exp_act_limit - al);
+     83          			if (el > w) {
+     84          				el = w;
+     85          			}
+     86          		}
+     87          	} else {
+     88          		int w = exp_act_limit + (exp_act_limit - el);
+     89          		if (al > w) {
+     90          			al = w;
+     91          		}
+     92          	}
+     93          	stdimpl_strcpy(buffer, "exp \"");
+     94          	stdimpl_strncat(buffer, expected, el);
+     95          	stdimpl_strcat(buffer, "\" was \"");
+     96          	stdimpl_strncat(buffer, actual, al);
+     97          	stdimpl_strcat(buffer, "\"");
+     98          
+     99          	addFailure(buffer, line, file);
+    100          }
+    101          
+    102          
+    103          void assertImplementationCBuf(const void *expected,const void *actual, unsigned int count, long line, const char *file)
+    104          {
+    105          	char buffer[32];	/*"exp[2147483648]=256 was 256"*/
+    106          	char numbuf[12];	/*32bit int decimal maximum column is 11 (-2147483647~2147483647)*/
+    107          	unsigned char *exp = (unsigned char *)expected;
+    108          	unsigned char *act = (unsigned char *)actual;
+    109          	int v = 0;
+    110          	while ((count-- > 0) && (v == 0))
+    111          	{
+    112          		v = *(exp++) - *(act++);
+    113          	}
+    114          	count++;
+    115          	exp--;
+    116          	act--;
+    117          
+    118          	stdimpl_strcpy(buffer, "exp[");
+    119          	{	stdimpl_itoa(count, numbuf, 10);
+    120          		stdimpl_strncat(buffer, numbuf, 11);	}
+    121          	stdimpl_strcat(buffer, "]=");
+    122          
+    123          	{	stdimpl_itoa((int)*exp, numbuf, 10);
+    124          		stdimpl_strncat(buffer, numbuf, 11);	}
+    125          
+    126          	stdimpl_strcat(buffer, " was ");
+    127          	{	stdimpl_itoa((int)*act, numbuf, 10);
+    128          		stdimpl_strncat(buffer, numbuf, 11);	}
+    129          
+    130          	addFailure(buffer, line, file);
+    131          }
+    132          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      80   assertImplementationCBuf
+        80   -> addFailure
+        80   -> stdimpl_itoa
+        80   -> stdimpl_strcat
+        80   -> stdimpl_strcpy
+        80   -> stdimpl_strncat
+      96   assertImplementationCStr
+        96   -> addFailure
+        96   -> stdimpl_strcat
+        96   -> stdimpl_strcpy
+        96   -> stdimpl_strlen
+        96   -> stdimpl_strncat
+      64   assertImplementationInt
+        64   -> addFailure
+        64   -> stdimpl_itoa
+        64   -> stdimpl_strcat
+        64   -> stdimpl_strcpy
+        64   -> stdimpl_strncat
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant " was ">
+       8  ?<Constant "\" was \"">
+       2  ?<Constant "\"">
+       4  ?<Constant "]=">
+       8  ?<Constant "exp ">
+       8  ?<Constant "exp \"">
+       8  ?<Constant "exp[">
+       8  ?<Constant "null">
+       4  ??DataTable2
+       4  ??DataTable2_1
+       4  ??DataTable2_2
+       4  ??DataTable2_3
+       4  ??DataTable2_4
+       4  ??DataTable2_5
+       4  ??DataTable2_6
+       4  ??DataTable2_7
+     178  assertImplementationCBuf
+     162  assertImplementationCStr
+      82  assertImplementationInt
+
+ 
+  54 bytes in section .rodata
+ 454 bytes in section .text
+ 
+ 454 bytes of CODE  memory
+  54 bytes of CONST memory
+
+Errors: none
+Warnings: none

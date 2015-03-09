@@ -1,0 +1,250 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:01 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\beeper.c                              #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\beeper.c" -D UNIT_TESTING=1           #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\beeper.lst                 #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\beeper.o                    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\beeper.c
+      1          /*******************************************************************************************
+      2          Beeper Driver
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "beeper.h"
+     12          #include "bsp.h"
+     13          #include "gpio.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          typedef struct
+     20          {
+     21             AT91PS_PWMC_CH pChan;
+     22             u8             chanBit;
+     23             GPIO_PIN       pin;
+     24          }BEEPER_CHAN;
+     25          static const BEEPER_CHAN Beepers[BEEPER_COUNT] =
+     26          {
+     27             // Beepers are on PA28 (PWMH0) and PA29 (PWMH1)
+     28             [BEEPER_RIGHT] = { .pChan = &AT91C_BASE_PWMC->PWMC_CH[0], .chanBit = BIT0, .pin = GPIO_PIN_BUZZER1 },
+     29             [BEEPER_LEFT] =  { .pChan = &AT91C_BASE_PWMC->PWMC_CH[1], .chanBit = BIT1, .pin = GPIO_PIN_BUZZER2 }, //lint !e485
+     30          };
+     31          
+     32          
+     33          /**************************************************************************
+     34           *                                  Types
+     35           **************************************************************************/
+     36          typedef struct
+     37          {
+     38             u32 pwmClk;
+     39          }BEEPER;
+     40          
+     41          
+     42          /**************************************************************************
+     43           *                                  Variables
+     44           **************************************************************************/
+     45          static BEEPER beeper;
+     46          
+     47          
+     48          /**************************************************************************
+     49           *                                  Prototypes
+     50           **************************************************************************/
+     51          static void BeeperChannelSetup(AT91S_PWMC_CH *pChan);
+     52          
+     53          
+     54          /**************************************************************************
+     55           *                                  Global Functions
+     56           **************************************************************************/
+     57          void BeeperInit(void)
+     58          {
+     59             BspPeriphOn(PERIPH_PWMC);
+     60             AT91C_BASE_PWMC->PWMC_DIS = (Beepers[BEEPER_RIGHT].chanBit | Beepers[BEEPER_LEFT].chanBit);
+     61          
+     62             BeeperChannelSetup(Beepers[BEEPER_RIGHT].pChan);
+     63             BeeperChannelSetup(Beepers[BEEPER_LEFT].pChan);
+     64             BspPeriphOff(PERIPH_PWMC);
+     65          }
+     66          
+     67          void BeeperOn(u16f freqHz, BEEPER_NUM beeperNum)
+     68          {
+     69             u32 periodTicks = beeper.pwmClk / freqHz;
+     70             AT91S_PWMC_CH *pChan = Beepers[beeperNum].pChan;
+     71             if (AT91C_BASE_PWMC->PWMC_SR & Beepers[beeperNum].chanBit)
+     72             {
+     73                // Channel is currently running
+     74                pChan->PWMC_CPRDUPDR = periodTicks;
+     75                pChan->PWMC_CDTYUPDR = periodTicks/2;
+     76             }
+     77             else
+     78             {
+     79                // Channel is currently disabled
+     80                BspPeriphOn(PERIPH_PWMC);
+     81                pChan->PWMC_CPRDR = periodTicks;
+     82                pChan->PWMC_CDTYR = periodTicks/2;
+     83                GpioSetPeriphMode(Beepers[beeperNum].pin);
+     84                AT91C_BASE_PWMC->PWMC_ENA = Beepers[beeperNum].chanBit;
+     85             }
+     86          }
+     87          
+     88          void Beeper1On(u16f freqHz)
+     89          {
+     90             BeeperOn(freqHz, BEEPER_RIGHT);
+     91          }
+     92          
+     93          void Beeper2On(u16f freqHz)
+     94          {
+     95             BeeperOn(freqHz, BEEPER_LEFT);
+     96          }
+     97          
+     98          void BeeperOff(BEEPER_NUM beeperNum)
+     99          {
+    100             GpioSetGpioMode(Beepers[beeperNum].pin);
+    101             AT91C_BASE_PWMC->PWMC_DIS = Beepers[beeperNum].chanBit;
+    102             if (!(AT91C_BASE_PWMC->PWMC_SR & 0x0FUL))
+    103             {
+    104                BspPeriphOff(PERIPH_PWMC);
+    105             }
+    106          }
+    107          
+    108          void Beeper1Off(void)
+    109          {
+    110             BeeperOff(BEEPER_RIGHT);
+    111          }
+    112          
+    113          void Beeper2Off(void)
+    114          {
+    115             BeeperOff(BEEPER_LEFT);
+    116          }
+    117          
+    118          
+    119          /**************************************************************************
+    120           *                                 Private Functions
+    121           **************************************************************************/
+    122          static void BeeperChannelSetup(AT91S_PWMC_CH *pChan)
+    123          {
+    124             beeper.pwmClk = BspGetCpuClkFreq();
+    125             pChan->PWMC_CMR = AT91C_PWMC_CPRE_MCK;   // all other options left off
+    126             pChan->PWMC_CPRDR = 0;
+    127             pChan->PWMC_CPRDUPDR = 0;
+    128             pChan->PWMC_CDTYR = 0;
+    129             pChan->PWMC_CDTYUPDR = 0;
+    130          }
+    131          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   Beeper1Off
+         8   -> BeeperOff
+       8   Beeper1On
+         8   -> BeeperOn
+       8   Beeper2Off
+         8   -> BeeperOff
+       8   Beeper2On
+         8   -> BeeperOn
+       8   BeeperChannelSetup
+         8   -> BspGetCpuClkFreq
+       8   BeeperInit
+         8   -> BeeperChannelSetup
+         8   -> BspPeriphOff
+         8   -> BspPeriphOn
+       8   BeeperOff
+         8   -> BspPeriphOff
+         8   -> GpioSetGpioMode
+      24   BeeperOn
+        24   -> BspPeriphOn
+        24   -> GpioSetPeriphMode
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable3
+       4  ??DataTable3_1
+       4  ??DataTable3_2
+       4  ??DataTable3_3
+       4  ??DataTable3_4
+      10  Beeper1Off
+      14  Beeper1On
+      10  Beeper2Off
+      14  Beeper2On
+      34  BeeperChannelSetup
+      46  BeeperInit
+      50  BeeperOff
+      90  BeeperOn
+      16  Beepers
+       4  beeper
+
+ 
+   4 bytes in section .bss
+  16 bytes in section .rodata
+ 288 bytes in section .text
+ 
+ 288 bytes of CODE  memory
+  16 bytes of CONST memory
+   4 bytes of DATA  memory
+
+Errors: none
+Warnings: none

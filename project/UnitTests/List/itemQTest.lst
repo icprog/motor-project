@@ -1,0 +1,638 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:07 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\structures\unitTests\itemQTest.c          #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\structures\unitTests\itemQTest.c" -D      #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\itemQTest.lst              #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\itemQTest.o                 #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\structures\unitTests\itemQTest.c
+      1          /*******************************************************************************************
+      2          Tests the Circular Buffer code
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          
+     12          #include "embUnit/embUnit.h"
+     13          #include "includes.h"
+     14          #include "itemQ.h"
+     15          
+     16          
+     17          /**************************************************************************
+     18           *                                  Constants
+     19           **************************************************************************/
+     20          /**************************************************************************
+     21           *                                  Types
+     22           **************************************************************************/
+     23          /**************************************************************************
+     24           *                                  Variables
+     25           **************************************************************************/
+     26          static ITEM_Q itemQ;
+     27          static u8 qMem[32];
+     28          static u8 wrVals[64];
+     29          static u8 rdVals[64];
+     30          
+     31          
+     32          /**************************************************************************
+     33           *                                  Setup/Teardown
+     34           **************************************************************************/
+     35          static void ItemQTestSetup(ITEM_Q_ORDER order, u8 itemLenBytes)
+     36          {
+     37             memset(&itemQ, 0xAA, sizeof(itemQ));
+     38             for (u8f i = 0; i < sizeof(wrVals); i++)
+     39             {
+     40                wrVals[i] = (u8)i;
+     41             }
+     42             memset(rdVals, 0xFF, sizeof(rdVals));
+     43             ItemQInit(&itemQ, qMem, sizeof(qMem), order, itemLenBytes);
+     44          }
+     45          
+     46          static void ItemQFifoLen1TestSetup(void)     {ItemQTestSetup(ITEM_Q_FIFO, 1);}
+     47          static void ItemQFifoLen2TestSetup(void)     {ItemQTestSetup(ITEM_Q_FIFO, 2);}
+     48          static void ItemQFifoLen3TestSetup(void)     {ItemQTestSetup(ITEM_Q_FIFO, 3);}
+     49          static void ItemQFifoLen4TestSetup(void)     {ItemQTestSetup(ITEM_Q_FIFO, 4);}
+     50          static void ItemQLifoLen1TestSetup(void)     {ItemQTestSetup(ITEM_Q_LIFO, 1);}
+     51          static void ItemQLifoLen2TestSetup(void)     {ItemQTestSetup(ITEM_Q_LIFO, 2);}
+     52          static void ItemQLifoLen3TestSetup(void)     {ItemQTestSetup(ITEM_Q_LIFO, 3);}
+     53          static void ItemQLifoLen4TestSetup(void)     {ItemQTestSetup(ITEM_Q_LIFO, 4);}
+     54          static void ItemQFifoLen1TestTeardown(void)  {}
+     55          static void ItemQFifoLen2TestTeardown(void)  {}
+     56          static void ItemQFifoLen3TestTeardown(void)  {}
+     57          static void ItemQFifoLen4TestTeardown(void)  {}
+     58          static void ItemQLifoLen1TestTeardown(void)  {}
+     59          static void ItemQLifoLen2TestTeardown(void)  {}
+     60          static void ItemQLifoLen3TestTeardown(void)  {}
+     61          static void ItemQLifoLen4TestTeardown(void)  {}
+     62          
+     63          
+     64          /**************************************************************************
+     65           *                                  Test Functions
+     66           **************************************************************************/
+     67          static void ItemQTestInit(void)
+     68          {
+     69          	TEST_ASSERT_EQUAL_INT(sizeof(qMem), itemQ.memSize);
+     70          	TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+     71          	TEST_ASSERT_EQUAL_INT(sizeof(qMem) - itemQ.itemLenBytes, ItemQBytesFree(&itemQ));
+     72          }
+     73          
+     74          static void ItemQTestOnePushPop(void)
+     75          {
+     76             ItemQPush(&itemQ, wrVals, 10);
+     77             TEST_ASSERT_EQUAL_INT(10+itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+     78             TEST_ASSERT_EQUAL_INT(itemQ.memSize - 10 - (2*itemQ.itemLenBytes), ItemQBytesFree(&itemQ));
+     79             u32 itemLen = ItemQPop(rdVals, 10, &itemQ);
+     80             TEST_ASSERT_EQUAL_INT(10, itemLen);
+     81             TEST_ASSERT_EQUAL_BUF(wrVals, rdVals, 10);
+     82             for (u8 i = 0; i < sizeof(rdVals); i++)
+     83             {
+     84                TEST_ASSERT_EQUAL_INT(i, wrVals[i]);
+     85                if (i < 10)
+     86                {
+     87                   TEST_ASSERT_EQUAL_INT(i, rdVals[i]);
+     88                }
+     89                else
+     90                {
+     91                   TEST_ASSERT_EQUAL_INT(0xFF, rdVals[i]);
+     92                }
+     93             }
+     94          }
+     95          
+     96          static void ItemQTestExactlyFull(void)
+     97          {
+     98             ItemQPush(&itemQ, wrVals, itemQ.memSize - itemQ.itemLenBytes);
+     99             TEST_ASSERT_EQUAL_INT(0, ItemQBytesFree(&itemQ));
+    100             TEST_ASSERT_EQUAL_INT(itemQ.memSize, ItemQBytesUsed(&itemQ));
+    101          
+    102             ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    103             ItemQPush(&itemQ, wrVals, itemQ.memSize - (2*itemQ.itemLenBytes));
+    104             TEST_ASSERT_EQUAL_INT(0, ItemQBytesFree(&itemQ));
+    105             TEST_ASSERT_EQUAL_INT(true, ItemQIsFull(&itemQ));
+    106          }
+    107          
+    108          static void ItemQTestPushLeavesDataAlone(void)
+    109          {
+    110             ItemQPush(&itemQ, wrVals, 10);
+    111             TEST_ASSERT_EQUAL_INT(10+itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    112          
+    113             ItemQPush(&itemQ, wrVals, itemQ.memSize);
+    114             TEST_ASSERT_EQUAL_INT(10+itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    115          
+    116             u32 len = ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    117             TEST_ASSERT_EQUAL_INT(10, len);
+    118             TEST_ASSERT_EQUAL_BUF(wrVals, rdVals, 10);
+    119          }
+    120          
+    121          static void ItemQTestPushTooBig(void)
+    122          {
+    123             ItemQPush(&itemQ, wrVals, itemQ.memSize);
+    124             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    125          }
+    126          
+    127          static void ItemQTestPushEmpty(void)
+    128          {
+    129             ItemQPush(&itemQ, wrVals, 0);
+    130             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    131          }
+    132          
+    133          static void ItemQTestPopTooBig(void)
+    134          {
+    135             ItemQPush(&itemQ, wrVals, 10);
+    136             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    137          
+    138             u32 len = ItemQPop(rdVals, 0, &itemQ);
+    139             TEST_ASSERT_EQUAL_INT(0, len);
+    140             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    141          
+    142             len = ItemQPop(rdVals, 1, &itemQ);
+    143             TEST_ASSERT_EQUAL_INT(0, len);
+    144             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    145          
+    146             len = ItemQPop(rdVals, 9, &itemQ);
+    147             TEST_ASSERT_EQUAL_INT(0, len);
+    148             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    149          }
+    150          
+    151          static void ItemQTestPopsLeaveDataAlone(void)
+    152          {
+    153             ItemQPush(&itemQ, wrVals, 10);
+    154             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    155          
+    156             u32 len = ItemQPop(rdVals, 5, &itemQ);
+    157             TEST_ASSERT_EQUAL_INT(0, len);
+    158             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    159             for (u8 i = 0; i < sizeof(rdVals); i++)
+    160             {
+    161                TEST_ASSERT_EQUAL_INT(0xFF, rdVals[i]);
+    162             }
+    163          
+    164             len = ItemQPop(rdVals, 5, &itemQ);
+    165             TEST_ASSERT_EQUAL_INT(0, len);
+    166             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    167             len = ItemQPop(rdVals, 5, &itemQ);
+    168             TEST_ASSERT_EQUAL_INT(0, len);
+    169             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    170          
+    171             len = ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    172             TEST_ASSERT_EQUAL_INT(10, len);
+    173             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    174             TEST_ASSERT_EQUAL_BUF(wrVals, rdVals, 10);
+    175          }
+    176          
+    177          static void ItemQTestPopEmpty(void)
+    178          {
+    179             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    180             u32 len = ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    181             TEST_ASSERT_EQUAL_INT(0, len);
+    182             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    183          }
+    184          
+    185          static void ItemQTestOverwrite(void)
+    186          {
+    187             ItemQPush(&itemQ, wrVals, 10);
+    188             TEST_ASSERT_EQUAL_INT(10 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    189          
+    190             ItemQPush(&itemQ, &wrVals[10], itemQ.memSize - itemQ.itemLenBytes);
+    191             TEST_ASSERT_EQUAL_INT(0, ItemQBytesFree(&itemQ));
+    192             TEST_ASSERT_EQUAL_INT(itemQ.memSize, ItemQBytesUsed(&itemQ));
+    193          
+    194             u32 len = ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    195             TEST_ASSERT_EQUAL_INT(len, itemQ.memSize - itemQ.itemLenBytes);
+    196             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    197             TEST_ASSERT_EQUAL_INT(itemQ.memSize - itemQ.itemLenBytes, ItemQBytesFree(&itemQ));
+    198          }
+    199          
+    200          static void ItemQTestItemCountAndOrder(void)
+    201          {
+    202             // fill with items
+    203             u32 bytesUsed = 0;
+    204             for (u8 i = 0; i < (itemQ.memSize - itemQ.itemLenBytes); i += (1 + itemQ.itemLenBytes))
+    205             {
+    206                ItemQPush(&itemQ, &wrVals[i], 1);
+    207                bytesUsed += itemQ.itemLenBytes + 1;
+    208                TEST_ASSERT_EQUAL_INT(bytesUsed, ItemQBytesUsed(&itemQ));
+    209             }
+    210          
+    211             // Read back
+    212             for (u8 i = 0; i < (itemQ.memSize - itemQ.itemLenBytes); i += (1 + itemQ.itemLenBytes))
+    213             {
+    214                u32 len = ItemQPop(rdVals, 1, &itemQ);
+    215                bytesUsed -= (len + itemQ.itemLenBytes);
+    216                TEST_ASSERT_EQUAL_INT(1, len);
+    217                TEST_ASSERT_EQUAL_INT(bytesUsed, ItemQBytesUsed(&itemQ));
+    218                for (u8 i = 1; i < sizeof(rdVals); i++)
+    219                {
+    220                   TEST_ASSERT_EQUAL_INT(0xFF, rdVals[i]);
+    221                }
+    222                if (itemQ.order == ITEM_Q_FIFO)
+    223                {
+    224                   TEST_ASSERT_EQUAL_INT(wrVals[i], rdVals[0]);
+    225                }
+    226                else
+    227                {
+    228                   TEST_ASSERT_EQUAL_INT(wrVals[bytesUsed], rdVals[0]);
+    229                }
+    230             }
+    231          }
+    232          
+    233          static void ItemQTestFlush(void)
+    234          {
+    235             ItemQPush(&itemQ, wrVals, 2);
+    236             TEST_ASSERT_EQUAL_INT(2 + itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    237             TEST_ASSERT_EQUAL_INT(itemQ.memSize - 2 - (2*itemQ.itemLenBytes), ItemQBytesFree(&itemQ));
+    238          
+    239             ItemQFlush(&itemQ);
+    240             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    241             TEST_ASSERT_EQUAL_INT(itemQ.memSize - itemQ.itemLenBytes, ItemQBytesFree(&itemQ));
+    242          }
+    243          
+    244          static void ItemQTestPushPullWrapAround(void)
+    245          {
+    246             for (u8 wrSize = 1; wrSize < 5; wrSize++)
+    247             {
+    248                for (u8 i = 0; i < sizeof(wrVals) - wrSize; i++)
+    249                {
+    250                   ItemQPush(&itemQ, &wrVals[i], wrSize);
+    251                   u32 len = ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    252                   TEST_ASSERT_EQUAL_INT(wrSize, len);
+    253                   TEST_ASSERT_EQUAL_BUF(&wrVals[i], rdVals, len);
+    254                }
+    255             }
+    256          }
+    257          
+    258          static void ItemQTestEmptyFull(void)
+    259          {
+    260             TEST_ASSERT_EQUAL_INT(true, ItemQIsEmpty(&itemQ));
+    261             TEST_ASSERT_EQUAL_INT(false, ItemQIsFull(&itemQ));
+    262          
+    263             ItemQPush(&itemQ, wrVals, 2);
+    264             TEST_ASSERT_EQUAL_INT(false, ItemQIsEmpty(&itemQ));
+    265             TEST_ASSERT_EQUAL_INT(false, ItemQIsFull(&itemQ));
+    266          
+    267             ItemQPop(rdVals, 2, &itemQ);
+    268             TEST_ASSERT_EQUAL_INT(true, ItemQIsEmpty(&itemQ));
+    269             TEST_ASSERT_EQUAL_INT(false, ItemQIsFull(&itemQ));
+    270          
+    271             ItemQPush(&itemQ, wrVals, itemQ.memSize - itemQ.itemLenBytes);
+    272             TEST_ASSERT_EQUAL_INT(false, ItemQIsEmpty(&itemQ));
+    273             TEST_ASSERT_EQUAL_INT(true, ItemQIsFull(&itemQ));
+    274          
+    275             ItemQPop(rdVals, sizeof(rdVals), &itemQ);
+    276             TEST_ASSERT_EQUAL_INT(true, ItemQIsEmpty(&itemQ));
+    277          
+    278             ItemQPush(&itemQ, wrVals, itemQ.memSize - (2*itemQ.itemLenBytes));
+    279             u32 len = ItemQBytesFree(&itemQ);
+    280             TEST_ASSERT_EQUAL_INT(false, ItemQIsEmpty(&itemQ));
+    281             TEST_ASSERT_EQUAL_INT(true, ItemQIsFull(&itemQ));
+    282          }
+    283          
+    284          static void ItemQTestPeek(void)
+    285          {
+    286             ItemQPush(&itemQ, wrVals, 2);
+    287             TEST_ASSERT_EQUAL_INT(2+itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    288             u32 itemLen = ItemQPeek(rdVals, 2, &itemQ);
+    289             TEST_ASSERT_EQUAL_INT(2, itemLen);
+    290             TEST_ASSERT_EQUAL_BUF(wrVals, rdVals, 2);
+    291             TEST_ASSERT_EQUAL_INT(2+itemQ.itemLenBytes, ItemQBytesUsed(&itemQ));
+    292             TEST_ASSERT_EQUAL_INT(false, ItemQIsEmpty(&itemQ));
+    293          
+    294             memset(rdVals, 0, sizeof(rdVals));
+    295             itemLen = ItemQPop(rdVals, 2, &itemQ);
+    296             TEST_ASSERT_EQUAL_INT(2, itemLen);
+    297             TEST_ASSERT_EQUAL_BUF(wrVals, rdVals, 2);
+    298             TEST_ASSERT_EQUAL_INT(0, ItemQBytesUsed(&itemQ));
+    299             TEST_ASSERT_EQUAL_INT(true, ItemQIsEmpty(&itemQ));
+    300          }
+    301          
+    302          
+    303          /**************************************************************************
+    304           *                                  Global Functions
+    305           **************************************************************************/
+    306          static const TestFixture fixtures[] =
+    307          {
+    308             new_TestFixtureFn(ItemQTestInit),
+    309             new_TestFixtureFn(ItemQTestOnePushPop),
+    310             new_TestFixtureFn(ItemQTestExactlyFull),
+    311             new_TestFixtureFn(ItemQTestPushLeavesDataAlone),
+    312             new_TestFixtureFn(ItemQTestPushTooBig),
+    313             new_TestFixtureFn(ItemQTestPushEmpty),
+    314             new_TestFixtureFn(ItemQTestPopsLeaveDataAlone),
+    315             new_TestFixtureFn(ItemQTestPopTooBig),
+    316             new_TestFixtureFn(ItemQTestPopEmpty),
+    317             new_TestFixtureFn(ItemQTestOverwrite),
+    318             new_TestFixtureFn(ItemQTestItemCountAndOrder),
+    319             new_TestFixtureFn(ItemQTestFlush),
+    320             new_TestFixtureFn(ItemQTestPushPullWrapAround),
+    321             new_TestFixtureFn(ItemQTestEmptyFull),
+    322             new_TestFixtureFn(ItemQTestPeek),
+    323          };
+    324          
+    325          TestRef ItemQFifoTestsLen1(void) { EMB_UNIT_TEST_CALLER(ItemQFifoLen1Test); }
+    326          TestRef ItemQFifoTestsLen2(void) { EMB_UNIT_TEST_CALLER(ItemQFifoLen2Test); }
+    327          TestRef ItemQFifoTestsLen3(void) { EMB_UNIT_TEST_CALLER(ItemQFifoLen3Test); }
+    328          TestRef ItemQFifoTestsLen4(void) { EMB_UNIT_TEST_CALLER(ItemQFifoLen4Test); }
+    329          TestRef ItemQLifoTestsLen1(void) { EMB_UNIT_TEST_CALLER(ItemQLifoLen1Test); }
+    330          TestRef ItemQLifoTestsLen2(void) { EMB_UNIT_TEST_CALLER(ItemQLifoLen2Test); }
+    331          TestRef ItemQLifoTestsLen3(void) { EMB_UNIT_TEST_CALLER(ItemQLifoLen3Test); }
+    332          TestRef ItemQLifoTestsLen4(void) { EMB_UNIT_TEST_CALLER(ItemQLifoLen4Test); }
+    333          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   ItemQFifoLen1TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQFifoLen1TestTeardown
+       8   ItemQFifoLen2TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQFifoLen2TestTeardown
+       8   ItemQFifoLen3TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQFifoLen3TestTeardown
+       8   ItemQFifoLen4TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQFifoLen4TestTeardown
+       0   ItemQFifoTestsLen1
+       0   ItemQFifoTestsLen2
+       0   ItemQFifoTestsLen3
+       0   ItemQFifoTestsLen4
+       8   ItemQLifoLen1TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQLifoLen1TestTeardown
+       8   ItemQLifoLen2TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQLifoLen2TestTeardown
+       8   ItemQLifoLen3TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQLifoLen3TestTeardown
+       8   ItemQLifoLen4TestSetup
+         8   -> ItemQTestSetup
+       0   ItemQLifoLen4TestTeardown
+       0   ItemQLifoTestsLen1
+       0   ItemQLifoTestsLen2
+       0   ItemQLifoTestsLen3
+       0   ItemQLifoTestsLen4
+       8   ItemQTestEmptyFull
+         8   -> ItemQBytesFree
+         8   -> ItemQIsEmpty
+         8   -> ItemQIsFull
+         8   -> ItemQPop
+         8   -> ItemQPush
+         8   -> assertImplementationInt
+       8   ItemQTestExactlyFull
+         8   -> ItemQBytesFree
+         8   -> ItemQBytesUsed
+         8   -> ItemQIsFull
+         8   -> ItemQPop
+         8   -> ItemQPush
+         8   -> assertImplementationInt
+       8   ItemQTestFlush
+         8   -> ItemQBytesFree
+         8   -> ItemQBytesUsed
+         8   -> ItemQFlush
+         8   -> ItemQPush
+         8   -> assertImplementationInt
+       8   ItemQTestInit
+         8   -> ItemQBytesFree
+         8   -> ItemQBytesUsed
+         8   -> assertImplementationInt
+      16   ItemQTestItemCountAndOrder
+        16   -> ItemQBytesUsed
+        16   -> ItemQPop
+        16   -> ItemQPush
+        16   -> assertImplementationInt
+      16   ItemQTestOnePushPop
+        16   -> ItemQBytesFree
+        16   -> ItemQBytesUsed
+        16   -> ItemQPop
+        16   -> ItemQPush
+        16   -> assertImplementationCBuf
+        16   -> assertImplementationInt
+        16   -> stdimpl_memcmp
+      16   ItemQTestOverwrite
+        16   -> ItemQBytesFree
+        16   -> ItemQBytesUsed
+        16   -> ItemQPop
+        16   -> ItemQPush
+        16   -> assertImplementationInt
+      16   ItemQTestPeek
+        16   -> ItemQBytesUsed
+        16   -> ItemQIsEmpty
+        16   -> ItemQPeek
+        16   -> ItemQPop
+        16   -> ItemQPush
+        16   -> assertImplementationCBuf
+        16   -> assertImplementationInt
+        16   -> memset
+        16   -> stdimpl_memcmp
+       8   ItemQTestPopEmpty
+         8   -> ItemQBytesUsed
+         8   -> ItemQPop
+         8   -> assertImplementationInt
+       8   ItemQTestPopTooBig
+         8   -> ItemQBytesUsed
+         8   -> ItemQPop
+         8   -> ItemQPush
+         8   -> assertImplementationInt
+      16   ItemQTestPopsLeaveDataAlone
+        16   -> ItemQBytesUsed
+        16   -> ItemQPop
+        16   -> ItemQPush
+        16   -> assertImplementationCBuf
+        16   -> assertImplementationInt
+        16   -> stdimpl_memcmp
+       8   ItemQTestPushEmpty
+         8   -> ItemQBytesUsed
+         8   -> ItemQPush
+         8   -> assertImplementationInt
+      16   ItemQTestPushLeavesDataAlone
+        16   -> ItemQBytesUsed
+        16   -> ItemQPop
+        16   -> ItemQPush
+        16   -> assertImplementationCBuf
+        16   -> assertImplementationInt
+        16   -> stdimpl_memcmp
+      24   ItemQTestPushPullWrapAround
+        24   -> ItemQPop
+        24   -> ItemQPush
+        24   -> assertImplementationCBuf
+        24   -> assertImplementationInt
+        24   -> stdimpl_memcmp
+       8   ItemQTestPushTooBig
+         8   -> ItemQBytesUsed
+         8   -> ItemQPush
+         8   -> assertImplementationInt
+      16   ItemQTestSetup
+        16   -> ItemQInit
+        16   -> memset
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      88  ?<Constant "C:\\Users\\Quinn\\Docume...">
+      20  ?<Constant "ItemQFifoLen1Tests">
+      20  ?<Constant "ItemQFifoLen2Tests">
+      20  ?<Constant "ItemQFifoLen3Tests">
+      20  ?<Constant "ItemQFifoLen4Tests">
+      20  ?<Constant "ItemQLifoLen1Tests">
+      20  ?<Constant "ItemQLifoLen2Tests">
+      20  ?<Constant "ItemQLifoLen3Tests">
+      20  ?<Constant "ItemQLifoLen4Tests">
+      20  ?<Constant "ItemQTestEmptyFull">
+      24  ?<Constant "ItemQTestExactlyFull">
+      16  ?<Constant "ItemQTestFlush">
+      16  ?<Constant "ItemQTestInit">
+      28  ?<Constant "ItemQTestItemCountAnd...">
+      20  ?<Constant "ItemQTestOnePushPop">
+      20  ?<Constant "ItemQTestOverwrite">
+      16  ?<Constant "ItemQTestPeek">
+      20  ?<Constant "ItemQTestPopEmpty">
+      20  ?<Constant "ItemQTestPopTooBig">
+      28  ?<Constant "ItemQTestPopsLeaveDat...">
+      20  ?<Constant "ItemQTestPushEmpty">
+      32  ?<Constant "ItemQTestPushLeavesDa...">
+      28  ?<Constant "ItemQTestPushPullWrap...">
+      20  ?<Constant "ItemQTestPushTooBig">
+       4  ??DataTable12
+       4  ??DataTable12_1
+       4  ??DataTable13
+       4  ??DataTable13_1
+       4  ??DataTable13_2
+       4  ??DataTable23
+       4  ??DataTable23_1
+       4  ??DataTable23_10
+       4  ??DataTable23_11
+       4  ??DataTable23_12
+       4  ??DataTable23_2
+       4  ??DataTable23_3
+       4  ??DataTable23_4
+       4  ??DataTable23_5
+       4  ??DataTable23_6
+       4  ??DataTable23_7
+       4  ??DataTable23_8
+       4  ??DataTable23_9
+      12  ItemQFifoLen1TestSetup
+       2  ItemQFifoLen1TestTeardown
+      12  ItemQFifoLen2TestSetup
+       2  ItemQFifoLen2TestTeardown
+      12  ItemQFifoLen3TestSetup
+       2  ItemQFifoLen3TestTeardown
+      12  ItemQFifoLen4TestSetup
+       2  ItemQFifoLen4TestTeardown
+       4  ItemQFifoTestsLen1
+       4  ItemQFifoTestsLen2
+       4  ItemQFifoTestsLen3
+       4  ItemQFifoTestsLen4
+      12  ItemQLifoLen1TestSetup
+       2  ItemQLifoLen1TestTeardown
+      12  ItemQLifoLen2TestSetup
+       2  ItemQLifoLen2TestTeardown
+      12  ItemQLifoLen3TestSetup
+       2  ItemQLifoLen3TestTeardown
+      12  ItemQLifoLen4TestSetup
+       2  ItemQLifoLen4TestTeardown
+       4  ItemQLifoTestsLen1
+       4  ItemQLifoTestsLen2
+       4  ItemQLifoTestsLen3
+       4  ItemQLifoTestsLen4
+     474  ItemQTestEmptyFull
+     228  ItemQTestExactlyFull
+     234  ItemQTestFlush
+     124  ItemQTestInit
+     324  ItemQTestItemCountAndOrder
+     342  ItemQTestOnePushPop
+     328  ItemQTestOverwrite
+     342  ItemQTestPeek
+     112  ItemQTestPopEmpty
+     326  ItemQTestPopTooBig
+     488  ItemQTestPopsLeaveDataAlone
+      54  ItemQTestPushEmpty
+     216  ItemQTestPushLeavesDataAlone
+     138  ItemQTestPushPullWrapAround
+      58  ItemQTestPushTooBig
+      70  ItemQTestSetup
+     120  fixtures
+      20  itemQ
+      32  qMem
+      64  rdVals
+      24  res
+      24  res
+      24  res
+      24  res
+      24  res
+      24  res
+      24  res
+      24  res
+      64  wrVals
+
+ 
+   180 bytes in section .bss
+   888 bytes in section .rodata
+ 4 074 bytes in section .text
+ 
+ 4 074 bytes of CODE  memory
+   888 bytes of CONST memory
+   180 bytes of DATA  memory
+
+Errors: none
+Warnings: none

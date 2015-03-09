@@ -1,0 +1,203 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      24/Mar/2014  18:33:43 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\src\app\music.c                                  #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\src\app\music.c" -D __SAM3U2C__ --preprocess=c   #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\List\" -lcN                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\End       #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\List\music.lst                     #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\Obj\music.o                        #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\End Project\src\app\music.c
+      1          /*******************************************************************************************
+      2          Simple music player
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "music.h"
+     12          #include "timer.h"
+     13          #include "beeper.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          /**************************************************************************
+     20           *                                  Types
+     21           **************************************************************************/
+     22          typedef struct
+     23          {
+     24             SONG song;
+     25             u32 sixteenthNoteDurationMs;
+     26             u32 pauseBetweenNotesMs;
+     27             u32 noteIndex;
+     28             TIMER_ID timer;
+     29          }MUSIC;
+     30          
+     31          
+     32          /**************************************************************************
+     33           *                                  Variables
+     34           **************************************************************************/
+     35          static MUSIC music;
+     36          
+     37          
+     38          /**************************************************************************
+     39           *                                  Prototypes
+     40           **************************************************************************/
+     41          static void MusicNoteOn(void);
+     42          static void MusicNoteOff(void);
+     43          
+     44          
+     45          /**************************************************************************
+     46           *                                  Global Functions
+     47           **************************************************************************/
+     48          void MusicPlaySong(SONG const *pSong, u32 sixteenthNoteMs, u32 pauseBtwNotesMs)
+     49          {
+     50             if (music.song.pNotes != pSong->pNotes)
+     51             {
+     52                MusicStop();
+     53                memcpy(&music.song, pSong, sizeof(SONG));
+     54                music.sixteenthNoteDurationMs = sixteenthNoteMs;
+     55                music.pauseBetweenNotesMs = pauseBtwNotesMs;
+     56                music.noteIndex = 0;
+     57                MusicNoteOn();
+     58             }
+     59          }
+     60          
+     61          void MusicStop(void)
+     62          {
+     63             TimerTimeXMsCancel(music.timer);
+     64          	Beeper1Off();
+     65          }
+     66          
+     67          
+     68          
+     69          /**************************************************************************
+     70           *                                 Private Functions
+     71           **************************************************************************/
+     72          static void MusicNoteOn(void)
+     73          {
+     74             MUSIC_NOTE const *pNote = &music.song.pNotes[music.noteIndex];
+     75             Beeper1On((u16)pNote->note);
+     76             music.timer = TimerTimeXMs(pNote->duration * music.sixteenthNoteDurationMs, MusicNoteOff);
+     77          }
+     78          
+     79          static void MusicNoteOff(void)
+     80          {
+     81             if (++music.noteIndex >= music.song.numNotes)
+     82             {
+     83                Beeper1Off();
+     84                music.song.pNotes = NULL;
+     85             }
+     86             else
+     87             {
+     88                if (music.pauseBetweenNotesMs == 0)
+     89                {
+     90                   MusicNoteOn();
+     91                }
+     92                else
+     93                {
+     94                   Beeper1Off();
+     95                   music.timer = TimerTimeXMs(music.pauseBetweenNotesMs, MusicNoteOn);
+     96                }
+     97             }
+     98          }
+     99          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   MusicNoteOff
+         8   -> Beeper1Off
+         8   -> MusicNoteOn
+         8   -> TimerTimeXMs
+       8   MusicNoteOn
+         8   -> Beeper1On
+         8   -> TimerTimeXMs
+      16   MusicPlaySong
+        16   -> MusicNoteOn
+        16   -> MusicStop
+        16   -> memcpy
+       8   MusicStop
+         8   -> Beeper1Off
+         8   -> TimerTimeXMsCancel
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable3
+       4  ??DataTable3_1
+      66  MusicNoteOff
+      46  MusicNoteOn
+      52  MusicPlaySong
+      16  MusicStop
+      24  music
+
+ 
+  24 bytes in section .bss
+ 188 bytes in section .text
+ 
+ 188 bytes of CODE memory
+  24 bytes of DATA memory
+
+Errors: none
+Warnings: none

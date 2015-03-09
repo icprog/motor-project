@@ -1,0 +1,128 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      23/Mar/2014  15:04:38 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\src\app\musicPlayer.c                            #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\src\app\musicPlayer.c" -D __SAM3U2C__            #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\End  #
+#                    Project\project\Debug\List\" -lcN                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\End       #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\List\musicPlayer.lst               #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
+#                    Project\project\Debug\Obj\musicPlayer.o                  #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\End Project\src\app\musicPlayer.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          
+     10          #include "musicPlayer.h"
+     11          
+     12          
+     13          /**************************************************************************
+     14           *                                  Constants
+     15           **************************************************************************/
+     16          /**************************************************************************
+     17           *                                  Types
+     18           **************************************************************************/
+     19          /**************************************************************************
+     20           *                                  Variables
+     21           **************************************************************************/
+     22          /**************************************************************************
+     23           *                                  Prototypes
+     24           **************************************************************************/
+     25          /**************************************************************************
+     26           *                                  Global Functions
+     27           **************************************************************************/
+     28          void MusicPlayerInit()
+     29          {
+     30            
+     31          }
+     32          
+     33          void MusicPlayerUpdate()
+     34          {
+     35            
+     36          }
+     37          
+     38          /**************************************************************************
+     39           *                                 Private Functions
+     40           **************************************************************************/
+     41          
+     42          
+     43          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   MusicPlayerInit
+       0   MusicPlayerUpdate
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  MusicPlayerInit
+       2  MusicPlayerUpdate
+
+ 
+ 4 bytes in section .text
+ 
+ 4 bytes of CODE memory
+
+Errors: none
+Warnings: none

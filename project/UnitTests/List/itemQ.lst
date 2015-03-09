@@ -1,0 +1,359 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:06 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\structures\src\itemQ.c                    #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\structures\src\itemQ.c" -D                #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\itemQ.lst                  #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\itemQ.o                     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\structures\src\itemQ.c
+      1          /*******************************************************************************************
+      2          Item Queue for storing variable-sized items (FIFO or LIFO) in a circular queue
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "itemQ.h"
+     12          
+     13          
+     14          /**************************************************************************
+     15           *                                  Constants
+     16           **************************************************************************/
+     17          #define QIsFifo(pQ)    ((pQ)->order == ITEM_Q_FIFO)
+     18          
+     19          
+     20          /**************************************************************************
+     21           *                                  Types
+     22           **************************************************************************/
+     23          /**************************************************************************
+     24           *                                  Variables
+     25           **************************************************************************/
+     26          /**************************************************************************
+     27           *                                  Prototypes
+     28           **************************************************************************/
+     29          static void ItemQPushBytes(ITEM_Q *pQ, void const *pSrc, u32 len);
+     30          static void ItemQIndexUpdateFromWrite(ITEM_Q *pQ, u32 wrLen);
+     31          static void ItemQPopBytes(void *pDest, u32 len, ITEM_Q *pQ);
+     32          
+     33          
+     34          /**************************************************************************
+     35           *                                  Global Functions
+     36           **************************************************************************/
+     37          void ItemQInit(ITEM_Q *pQ, void *pMem, u32 memSize, ITEM_Q_ORDER order, u8 itemLenBytes)
+     38          {
+     39             pQ->pMem = pMem;
+     40             pQ->memSize = memSize;
+     41             pQ->order = order;
+     42             pQ->itemLenBytes = itemLenBytes;
+     43             ItemQFlush(pQ);
+     44          }
+     45          
+     46          void ItemQFlush(ITEM_Q *pQ)
+     47          {
+     48             pQ->headIndex = 0;
+     49             pQ->tailIndex = 0;
+     50             pQ->isFull = false;
+     51          }
+     52          
+     53          u32 ItemQBytesUsed(ITEM_Q const *pQ)
+     54          {
+     55             u32 bytesUsed;
+     56             if (pQ->isFull)
+     57             {
+     58                bytesUsed = pQ->memSize;
+     59             }
+     60             else if (pQ->headIndex >= pQ->tailIndex)
+     61             {
+     62                bytesUsed = (u32)(pQ->headIndex - pQ->tailIndex);
+     63             }
+     64             else
+     65             {
+     66                bytesUsed = (u32)(pQ->memSize - pQ->tailIndex) + pQ->headIndex;
+     67             }
+     68             return bytesUsed;
+     69          }
+     70          
+     71          u32 ItemQBytesFree(ITEM_Q const *pQ)
+     72          {
+     73             u32 bytesFree;
+     74             if (pQ->isFull)
+     75             {
+     76                bytesFree = 0;
+     77             }
+     78             else if (pQ->headIndex >= pQ->tailIndex)
+     79             {
+     80                bytesFree = (u32)(pQ->memSize - pQ->headIndex) + pQ->tailIndex;
+     81             }
+     82             else
+     83             {
+     84                bytesFree = (u32)(pQ->tailIndex - pQ->headIndex);
+     85             }
+     86          
+     87             if (bytesFree >= pQ->itemLenBytes)
+     88                bytesFree -= pQ->itemLenBytes;
+     89          
+     90             return bytesFree;
+     91          }
+     92          
+     93          bool ItemQIsEmpty(ITEM_Q const *pQ)
+     94          {
+     95             return (ItemQBytesFree(pQ) >= (u32)(pQ->memSize - pQ->itemLenBytes));
+     96          }
+     97          
+     98          bool ItemQIsFull(ITEM_Q const *pQ)
+     99          {
+    100             return (ItemQBytesFree(pQ) == 0);
+    101          }
+    102          
+    103          void ItemQPush(ITEM_Q *pQ, void const *pSrc, u32 len)
+    104          {
+    105             if ((len == 0) || (len > (pQ->memSize - pQ->itemLenBytes)))
+    106                return;
+    107          
+    108             // Make room first (lock-free queue)
+    109             while (ItemQBytesFree(pQ) < len)
+    110             {
+    111                ItemQPop(NULL, UINT32_MAX, pQ);  //lint !e534
+    112             }
+    113          
+    114             if (QIsFifo(pQ))
+    115             {
+    116                // [len][data]
+    117                ItemQPushBytes(pQ, &len, pQ->itemLenBytes);
+    118                ItemQPushBytes(pQ, pSrc, len);
+    119             }
+    120             else
+    121             {
+    122                // [data][len]
+    123                ItemQPushBytes(pQ, pSrc, len);
+    124                ItemQPushBytes(pQ, &len, pQ->itemLenBytes);
+    125             }
+    126          }
+    127          
+    128          u32 ItemQPop(void *pDest, u32 maxLen, ITEM_Q *pQ)
+    129          {
+    130             if ((maxLen == 0) || (ItemQBytesUsed(pQ) == 0))
+    131                return 0;
+    132          
+    133             u32 oldHead = pQ->headIndex;
+    134             u32 oldTail = pQ->tailIndex;
+    135             bool oldFull = pQ->isFull;
+    136             u32 len = 0;
+    137             ItemQPopBytes(&len, pQ->itemLenBytes, pQ);
+    138             if (len > maxLen)
+    139             {
+    140                pQ->headIndex = oldHead;
+    141                pQ->tailIndex = oldTail;
+    142                pQ->isFull = oldFull;
+    143                len = 0;
+    144             }
+    145             else
+    146             {
+    147                ItemQPopBytes(pDest, len, pQ);
+    148                pQ->isFull = false;
+    149             }
+    150          
+    151             return len;
+    152          }
+    153          
+    154          u32 ItemQPeek(void *pDest, u32 maxLen, ITEM_Q *pQ)
+    155          {
+    156             u32  headIndex = pQ->headIndex;
+    157             u32  tailIndex = pQ->tailIndex;
+    158             bool isFull = pQ->isFull;
+    159          
+    160             u32 len = ItemQPop(pDest, maxLen, pQ);
+    161          
+    162             pQ->headIndex = headIndex;
+    163             pQ->tailIndex = tailIndex;
+    164             pQ->isFull = isFull;
+    165          
+    166             return len;
+    167          }
+    168          
+    169          
+    170          /**************************************************************************
+    171           *                                 Private Functions
+    172           **************************************************************************/
+    173          static void ItemQPushBytes(ITEM_Q *pQ, void const *pSrc, u32 len)
+    174          {
+    175             u32 wrLen = (u32)(pQ->memSize - pQ->headIndex);
+    176             wrLen = MIN(wrLen, len);
+    177             memcpy((u8 *)pQ->pMem + pQ->headIndex, pSrc, wrLen);
+    178             ItemQIndexUpdateFromWrite(pQ, wrLen);
+    179          
+    180             if (wrLen != len)
+    181             {
+    182                pSrc = (u8 const *)pSrc + wrLen;
+    183                wrLen = (u32)(len - wrLen);
+    184                memcpy(pQ->pMem, pSrc, wrLen);
+    185                ItemQIndexUpdateFromWrite(pQ, wrLen);
+    186             }
+    187          }
+    188          
+    189          static void ItemQIndexUpdateFromWrite(ITEM_Q *pQ, u32 wrLen)
+    190          {
+    191             pQ->headIndex += wrLen;
+    192             if (pQ->headIndex == pQ->memSize)
+    193             {
+    194                pQ->headIndex = 0;
+    195             }
+    196             if (pQ->headIndex == pQ->tailIndex)
+    197             {
+    198                pQ->isFull = true;
+    199             }
+    200          }
+    201          
+    202          static void ItemQPopBytes(void *pDest, u32 len, ITEM_Q *pQ)
+    203          {
+    204             if (QIsFifo(pQ))
+    205             {
+    206                u32 rdLen = (u32)(pQ->memSize - pQ->tailIndex);
+    207                rdLen = MIN(rdLen, len);
+    208                if (pDest)
+    209                   memcpy(pDest, (u8 *)pQ->pMem + pQ->tailIndex, rdLen);
+    210                pQ->tailIndex += rdLen;
+    211                if (pQ->tailIndex == pQ->memSize)
+    212                   pQ->tailIndex = 0;
+    213          
+    214                if (rdLen != len)
+    215                {
+    216                   if (pDest)
+    217                      pDest = (u8 *)pDest + rdLen;
+    218                   rdLen = (u32)(len - rdLen);
+    219                   if (pDest)
+    220                      memcpy(pDest, pQ->pMem, rdLen);
+    221                   pQ->tailIndex = rdLen;
+    222                }
+    223             }
+    224             else
+    225             {
+    226                u32 rdLen = MIN(pQ->headIndex, len);
+    227                pQ->headIndex -= rdLen;
+    228                if (pDest)
+    229                   memcpy(pDest, (u8 *)pQ->pMem + pQ->headIndex, rdLen);
+    230          
+    231                if (rdLen != len)
+    232                {
+    233                   if (pDest)
+    234                      pDest = (u8 *)pDest + rdLen;
+    235                   rdLen = (u32)(len - rdLen);
+    236                   pQ->headIndex = pQ->memSize - rdLen;
+    237                   if (pDest)
+    238                      memcpy(pDest, (u8 *)pQ->pMem + pQ->headIndex, rdLen);
+    239                }
+    240             }
+    241          }
+    242          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   ItemQBytesFree
+       0   ItemQBytesUsed
+       0   ItemQFlush
+       0   ItemQIndexUpdateFromWrite
+      24   ItemQInit
+        24   -> ItemQFlush
+       8   ItemQIsEmpty
+         8   -> ItemQBytesFree
+       8   ItemQIsFull
+         8   -> ItemQBytesFree
+      32   ItemQPeek
+        32   -> ItemQPop
+      32   ItemQPop
+        32   -> ItemQBytesUsed
+        32   -> ItemQPopBytes
+      24   ItemQPopBytes
+        24   -> memcpy
+      16   ItemQPush
+        16   -> ItemQBytesFree
+        16   -> ItemQPop
+        16   -> ItemQPushBytes
+      24   ItemQPushBytes
+        24   -> ItemQIndexUpdateFromWrite
+        24   -> memcpy
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      56  ItemQBytesFree
+      46  ItemQBytesUsed
+      14  ItemQFlush
+      32  ItemQIndexUpdateFromWrite
+      34  ItemQInit
+      30  ItemQIsEmpty
+      24  ItemQIsFull
+      44  ItemQPeek
+      94  ItemQPop
+     166  ItemQPopBytes
+     102  ItemQPush
+      70  ItemQPushBytes
+
+ 
+ 712 bytes in section .text
+ 
+ 712 bytes of CODE memory
+
+Errors: none
+Warnings: none

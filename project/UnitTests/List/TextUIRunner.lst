@@ -1,0 +1,222 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:10 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\embUnit\textui\TextUIRunner.c             #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\embUnit\textui\TextUIRunner.c" -D         #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\TextUIRunner.lst           #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\TextUIRunner.o              #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\embUnit\textui\TextUIRunner.c
+      1          /*
+      2           * COPYRIGHT AND PERMISSION NOTICE
+      3           *
+      4           * Copyright (c) 2003 Embedded Unit Project
+      5           *
+      6           * All rights reserved.
+      7           *
+      8           * Permission is hereby granted, free of charge, to any person obtaining
+      9           * a copy of this software and associated documentation files (the
+     10           * "Software"), to deal in the Software without restriction, including
+     11           * without limitation the rights to use, copy, modify, merge, publish,
+     12           * distribute, and/or sell copies of the Software, and to permit persons
+     13           * to whom the Software is furnished to do so, provided that the above
+     14           * copyright notice(s) and this permission notice appear in all copies
+     15           * of the Software and that both the above copyright notice(s) and this
+     16           * permission notice appear in supporting documentation.
+     17           *
+     18           * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+     19           * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+     20           * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+     21           * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+     22           * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY
+     23           * SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER
+     24           * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+     25           * CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+     26           * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+     27           *
+     28           * Except as contained in this notice, the name of a copyright holder
+     29           * shall not be used in advertising or otherwise to promote the sale,
+     30           * use or other dealings in this Software without prior written
+     31           * authorization of the copyright holder.
+     32           *
+     33           * $Id: TextUIRunner.c,v 1.4 2004/02/10 16:20:43 arms22 Exp $
+     34           */
+     35          #include "TextOutputter.h"
+     36          #include "TextUIRunner.h"
+     37          
+     38          /*	Private
+     39           */
+     40          static TestResult result_;
+     41          static OutputterRef outputterRef_ = 0;
+     42          static int wasfailure_ = 0;
+     43          
+     44          static void TextUIRunner_startTest(TestListnerRef self,TestRef test)
+     45          {
+     46          	wasfailure_ = 0;
+     47          }
+     48          
+     49          static void TextUIRunner_endTest(TestListnerRef self,TestRef test)
+     50          {
+     51          	if (!wasfailure_)
+     52          		Outputter_printSuccessful(outputterRef_,test,result_.runCount);
+     53          }
+     54          
+     55          static void TextUIRunner_addFailure(TestListnerRef self,TestRef test,char *msg,int line,char *file)
+     56          {
+     57          	wasfailure_ = 1;
+     58          	Outputter_printFailure(outputterRef_,test,msg,line,file,result_.runCount);
+     59          }
+     60          
+     61          static const TestListnerImplement TextUIRunnerImplement = {
+     62          	(TestListnerStartTestCallBack)	TextUIRunner_startTest,
+     63          	(TestListnerEndTestCallBack)	TextUIRunner_endTest,
+     64          	(TestListnerAddFailureCallBack)	TextUIRunner_addFailure,
+     65          };
+     66          
+     67          static const TestListner testuirunner_ = {
+     68          	(TestListnerImplement*)&TextUIRunnerImplement,
+     69          };
+     70          
+     71          /*	Public
+     72           */
+     73          void TextUIRunner_setOutputter(OutputterRef outputter)
+     74          {
+     75          	outputterRef_ = outputter;
+     76          }
+     77          
+     78          void TextUIRunner_startWithOutputter(OutputterRef outputter)
+     79          {
+     80          	TestResult_init(&result_, (TestListnerRef)&testuirunner_);
+     81          	TextUIRunner_setOutputter(outputter);
+     82          	Outputter_printHeader(outputter);
+     83          
+     84          }
+     85          
+     86          void TextUIRunner_start(void)
+     87          {
+     88          	if (!outputterRef_)
+     89          		outputterRef_ = TextOutputter_outputter();
+     90          	TextUIRunner_startWithOutputter(outputterRef_);
+     91          }
+     92          
+     93          void TextUIRunner_runTest(TestRef test)
+     94          {
+     95          	Outputter_printStartTest(outputterRef_,test);
+     96          	Test_run(test, &result_);
+     97          	Outputter_printEndTest(outputterRef_,test);
+     98          }
+     99          
+    100          void TextUIRunner_end(void)
+    101          {
+    102          	Outputter_printStatistics(outputterRef_,&result_);
+    103          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      32   TextUIRunner_addFailure
+        32   -- Indirect call
+       8   TextUIRunner_end
+         8   -- Indirect call
+      16   TextUIRunner_endTest
+        16   -- Indirect call
+       8   TextUIRunner_runTest
+         8   -- Indirect call
+       0   TextUIRunner_setOutputter
+       8   TextUIRunner_start
+         8   -> TextOutputter_outputter
+         8   -> TextUIRunner_startWithOutputter
+       0   TextUIRunner_startTest
+       8   TextUIRunner_startWithOutputter
+         8   -- Indirect call
+         8   -> TestResult_init
+         8   -> TextUIRunner_setOutputter
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable7
+       4  ??DataTable7_1
+       4  ??DataTable7_2
+       4  ??DataTable7_3
+      12  TextUIRunnerImplement
+      64  TextUIRunner_addFailure
+      20  TextUIRunner_end
+      36  TextUIRunner_endTest
+      48  TextUIRunner_runTest
+       6  TextUIRunner_setOutputter
+      28  TextUIRunner_start
+       8  TextUIRunner_startTest
+      28  TextUIRunner_startWithOutputter
+       4  outputterRef_
+       8  result_
+       4  testuirunner_
+       4  wasfailure_
+
+ 
+  16 bytes in section .bss
+  16 bytes in section .rodata
+ 254 bytes in section .text
+ 
+ 254 bytes of CODE  memory
+  16 bytes of CONST memory
+  16 bytes of DATA  memory
+
+Errors: none
+Warnings: none

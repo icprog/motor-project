@@ -1,0 +1,189 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      26/Feb/2015  20:50:15 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\src\main.c                                       #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\src\main.c" -D __SAM3U2C__ --preprocess=c        #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\List\" -lcN                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\Motor     #
+#                    Project\project\..\src\" -I                              #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\app\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\utils\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\structures\src\" -I           #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\file\disk\" -I                #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\version\" -I                  #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\lib\FatFs\" -I                    #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\bsp\" -I                          #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\config\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\drivers\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\utils\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
+#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\project\Debug\List\main.lst                      #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
+#                    Project\project\Debug\Obj\main.o                         #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\Motor Project\src\main.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          #include "includes.h"
+     10          #include "bsp.h"
+     11          #include "gpio.h"
+     12          #include "sysTick.h"
+     13          #include "timer.h"
+     14          #include "wdt.h"
+     15          #include "beeper.h"
+     16          #include "lcd.h"
+     17          #include "version.h"
+     18          #include "led.h"
+     19          #include "button.h"
+     20          #include "rtc.h"
+     21          #include "demo.h"
+     22          #include "music.h"
+     23          #include "songTwinkleTwinkle.h"
+     24          #include "motorDemo.h"
+     25          
+     26          
+     27          /**************************************************************************
+     28           *                                  Constants
+     29           **************************************************************************/
+     30          /**************************************************************************
+     31           *                                  Types
+     32           **************************************************************************/
+     33          /**************************************************************************
+     34           *                                  Variables
+     35           **************************************************************************/
+     36          /**************************************************************************
+     37           *                                  Prototypes
+     38           **************************************************************************/
+     39          static void MainInit(void);
+     40          
+     41          /**************************************************************************
+     42           *                                  Global Functions
+     43           **************************************************************************/
+     44          void main(void)
+     45          {
+     46             MainInit();
+     47             //DemoInit();
+     48             MotorDemoInit();
+     49          
+     50             for (;;)
+     51             {
+     52                // Drivers
+     53                LedUpdate();
+     54                ButtonUpdate();
+     55                LcdUpdate();
+     56          
+     57                // Application
+     58                // DemoUpdate();
+     59                MotorDemoUpdate();
+     60          
+     61                // Heartbeat
+     62                GpioSet(GPIO_PIN_HEARTBEAT);   // active low
+     63                TimerWaitXMs(SYS_TICK_RATE_MS);
+     64                //SysTickWait();
+     65                GpioClear(GPIO_PIN_HEARTBEAT);
+     66                
+     67             }
+     68          }
+     69          
+     70          
+     71          /**************************************************************************
+     72           *                                 Private Functions
+     73           **************************************************************************/
+     74          static void MainInit(void)
+     75          {
+     76             BspInit();
+     77             SysTickInitMs(SYS_TICK_RATE_MS);
+     78             TimerInit();
+     79             RtcInit();
+     80             BeeperInit();
+     81             ButtonInit();
+     82             LedInit();
+     83             LcdInit();
+     84             WdtInit();
+     85          }
+     86          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   MainInit
+         8   -> BeeperInit
+         8   -> BspInit
+         8   -> ButtonInit
+         8   -> LcdInit
+         8   -> LedInit
+         8   -> RtcInit
+         8   -> SysTickInitMs
+         8   -> TimerInit
+         8   -> WdtInit
+       8   main
+         8   -> ButtonUpdate
+         8   -> GpioClear
+         8   -> GpioSet
+         8   -> LcdUpdate
+         8   -> LedUpdate
+         8   -> MainInit
+         8   -> MotorDemoInit
+         8   -> MotorDemoUpdate
+         8   -> TimerWaitXMs
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      42  MainInit
+      46  main
+
+ 
+ 88 bytes in section .text
+ 
+ 88 bytes of CODE memory
+
+Errors: none
+Warnings: none

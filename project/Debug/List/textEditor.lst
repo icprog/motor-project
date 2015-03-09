@@ -1,0 +1,714 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:38 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\app\textEditor.c                              #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\app\textEditor.c" -D __SAM3U2C__              #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\textEditor.lst                 #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\textEditor.o                    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\app\textEditor.c
+      1          /*******************************************************************************************
+      2          Character display, 4-button text editor
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          
+     12          #include "textEditor.h"
+     13          #include "lcd.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          static char TeNextFull        (char, s8);
+     20          static char TeNextAlpha       (char, s8);
+     21          static char TeNextAlphaUpper  (char, s8);
+     22          static char TeNextAlphaLower  (char, s8);
+     23          static char TeNextNumeric     (char, s8);
+     24          static char TeNextAlphaNumeric(char, s8);
+     25          
+     26          static const PFN_NEXT_CHAR TeModeNextCharPfns[TE_MODE_COUNT-1] =
+     27          {
+     28             [TE_MODE_FULL]          = TeNextFull,
+     29             [TE_MODE_ALPHA]         = TeNextAlpha,
+     30             [TE_MODE_ALPHA_UPPER]   = TeNextAlphaUpper,
+     31             [TE_MODE_ALPHA_LOWER]   = TeNextAlphaLower,
+     32             [TE_MODE_NUMERIC]       = TeNextNumeric,
+     33             [TE_MODE_ALPHA_NUMERIC] = TeNextAlphaNumeric,
+     34          // [TE_MODE_CUSTOM]        = NULL,
+     35          };
+     36          
+     37          
+     38          /**************************************************************************
+     39           *                                  Types
+     40           **************************************************************************/
+     41          typedef struct
+     42          {
+     43             u16 row;
+     44             u16 col;
+     45          }TE_POSN;
+     46          
+     47          typedef struct
+     48          {
+     49             TE_CFG cfg;
+     50             TE_STATUS status;
+     51          }TE;
+     52          
+     53          
+     54          /**************************************************************************
+     55           *                                  Variables
+     56           **************************************************************************/
+     57          static TE te;
+     58          
+     59          
+     60          /**************************************************************************
+     61           *                                  Prototypes
+     62           **************************************************************************/
+     63          static char TeNextRange(char c, s8 dir, char low, char high);
+     64          static void TeProcessKey(TE_KEY key);
+     65          static bool TeIsReadOnly(void);
+     66          static bool TeHasReadOnly(void);
+     67          static char * TeCharPtr(void);
+     68          static void TeFinished(void);
+     69          static void TeCharDown(void);
+     70          static void TeCharUp(void);
+     71          static void TeInsert(char c);
+     72          static void TeBackSpace(void);
+     73          static void TeCursorLeft(void);
+     74          static void TeCursorRight(void);
+     75          static void TeCursorDown(void);
+     76          static void TeCursorUp(void);
+     77          static TE_POSN TePtFromStrIndex(u16 index);
+     78          static u16 TeStrIndexFromPt(u16 row, u16 col);
+     79          static u16 TeStrLenForLine(u16 strIndex);
+     80          static void TeDisplayIndexUpdate(void);
+     81          static u16 TeIndexPreviousLine(u16 strIndex);
+     82          static void TeDraw(void);
+     83          
+     84          
+     85          /**************************************************************************
+     86           *                                  Global Functions
+     87           **************************************************************************/
+     88          void TextEditorInit(TE_CFG const *pTe, u16 cursorIndex)
+     89          {
+     90             memcpy(&te.cfg, pTe, sizeof(TE_CFG));
+     91             te.status.finished = false;
+     92             te.status.cursorIndex = (cursorIndex < te.cfg.editStartIndex)? te.cfg.editStartIndex : cursorIndex;
+     93             te.status.strLen = (u16)strlen((char *)te.cfg.pStrBuf);
+     94             te.status.displayIndex = 0;
+     95             te.status.anchorCol = TePtFromStrIndex(cursorIndex).col;
+     96             if ((te.cfg.mode == TE_MODE_CUSTOM) && !te.cfg.pfnNextChar)
+     97                te.cfg.mode = TE_MODE_FULL;
+     98          
+     99             if (te.cfg.editEndIndex >= te.cfg.strBufSize)
+    100                te.cfg.editEndIndex = (u16)(te.cfg.strBufSize-1);
+    101             char *pCh = (char *)te.cfg.pStrBuf + (te.cfg.strBufSize-1);
+    102             *pCh = '\0';
+    103             TeDraw();
+    104          }
+    105          
+    106          void TextEditorUpdate(TE_KEY key)
+    107          {
+    108             if (te.status.finished)
+    109                return;
+    110          
+    111             TeProcessKey(key);
+    112          }
+    113          
+    114          TE_STATUS const * TextEditorStatus(void)
+    115          {
+    116             return &te.status;
+    117          }
+    118          
+    119          TE_CFG const * TextEditorCfg(void)
+    120          {
+    121             return &te.cfg;
+    122          }
+    123          
+    124          
+    125          /**************************************************************************
+    126           *                                 Private Functions
+    127           **************************************************************************/
+    128          static char TeNextFull(char c, s8 dir)
+    129          {
+    130             return TeNextRange(c, dir, 0x20, 0x7E);
+    131          }
+    132          
+    133          static char TeNextAlpha(char c, s8 dir)
+    134          {
+    135             do
+    136             {
+    137                c = (char)(c + dir);
+    138             }while (!isalpha(c));
+    139             return c;
+    140          }
+    141          
+    142          static char TeNextAlphaUpper  (char c, s8 dir)
+    143          {
+    144             return TeNextRange(c, dir, 'A', 'Z');
+    145          }
+    146          
+    147          static char TeNextAlphaLower  (char c, s8 dir)
+    148          {
+    149             return TeNextRange(c, dir, 'a', 'z');
+    150          }
+    151          
+    152          static char TeNextNumeric     (char c, s8 dir)
+    153          {
+    154             return TeNextRange(c, dir, '0', '9');
+    155          }
+    156          
+    157          static char TeNextAlphaNumeric(char c, s8 dir)
+    158          {
+    159             do
+    160             {
+    161                c = (char)(c + dir);
+    162             }while (!isalnum(c));
+    163             return c;
+    164          }
+    165          
+    166          static char TeNextRange(char c, s8 dir, char low, char high)
+    167          {
+    168             c = (char)(c + dir);
+    169             if (c > high)
+    170                c = low;
+    171             else if (c < low)
+    172                c = high;
+    173             return c;
+    174          }
+    175          
+    176          static char TeNextChar(char c, s8 dir)
+    177          {
+    178             if (te.cfg.mode >= TE_MODE_CUSTOM)
+    179             {
+    180                return te.cfg.pfnNextChar(c, dir);
+    181             }
+    182             else
+    183             {
+    184                return TeModeNextCharPfns[te.cfg.mode](c, dir);
+    185             }
+    186          }
+    187          
+    188          static void TeProcessKey(TE_KEY key)
+    189          {
+    190             switch (key)
+    191             {
+    192             case TE_KEY_DOWN:    TeIsReadOnly()? TeCursorDown() : TeCharDown();  break;
+    193             case TE_KEY_UP:      TeIsReadOnly()? TeCursorUp()   : TeCharUp();    break;
+    194             case TE_KEY_LEFT:    TeCursorLeft();                                 break;
+    195             case TE_KEY_RIGHT:   TeCursorRight();                                break;
+    196             case TE_KEY_ENTER:   TeFinished();                                   break;
+    197             case TE_KEY_BKSPACE: TeBackSpace();                                  break;
+    198             default:             return;
+    199             }
+    200             TeDraw();
+    201          }
+    202          
+    203          static bool TeIsReadOnly(void)
+    204          {
+    205             return ((te.cfg.editStartIndex > te.cfg.editEndIndex) || (te.cfg.editStartIndex >= te.cfg.strBufSize));
+    206          }
+    207          
+    208          static bool TeHasReadOnly(void)
+    209          {
+    210             return ((te.cfg.editStartIndex != 0) || (te.cfg.editEndIndex < te.cfg.strBufSize));
+    211          }
+    212          
+    213          static char * TeCharPtr(void)
+    214          {
+    215             return (char *)te.cfg.pStrBuf + te.status.cursorIndex;
+    216          }
+    217          
+    218          static void TeFinished(void)
+    219          {
+    220             if (TeIsReadOnly() || ((te.status.cursorIndex + 1) >= te.status.strLen))
+    221             {
+    222                te.status.finished = true;
+    223             }
+    224             else
+    225             {
+    226                TeInsert(TeNextChar(*TeCharPtr() - 1, 1));
+    227             }
+    228          }
+    229          
+    230          static void TeCharDown(void)
+    231          {
+    232             char *pCh = TeCharPtr();
+    233             if (*pCh == '\0')
+    234             {
+    235                pCh[0] = TeNextChar(0, -1);
+    236                pCh[1] = '\0';
+    237             }
+    238             else
+    239             {
+    240                *pCh = TeNextChar(*pCh, -1);
+    241             }
+    242          }
+    243          
+    244          static void TeCharUp(void)
+    245          {
+    246             char *pCh = TeCharPtr();
+    247             if (*pCh == '\0')
+    248             {
+    249                pCh[0] = TeNextChar(0, 1);
+    250                if (pCh[0] == ' ')
+    251                   pCh[0] = pCh[0] + 1;
+    252                pCh[1] = '\0';
+    253             }
+    254             else
+    255             {
+    256                *pCh = TeNextChar(*pCh, 1);
+    257             }
+    258          }
+    259          
+    260          static void TeInsert(char c)
+    261          {
+    262             if ((te.status.cursorIndex + 1) < te.cfg.editEndIndex)
+    263             {
+    264                char *pCh = TeCharPtr();
+    265                memmove(pCh + 1, pCh, te.cfg.strBufSize - te.status.cursorIndex);
+    266                te.status.strLen++;
+    267                *pCh = c;
+    268                TeDisplayIndexUpdate();
+    269             }
+    270          }
+    271          
+    272          static void TeBackSpace(void)
+    273          {
+    274             if (!TeIsReadOnly() && (te.status.cursorIndex > te.cfg.editStartIndex))
+    275             {
+    276                te.status.cursorIndex--;
+    277                char *pCh = TeCharPtr();
+    278                memmove(pCh, pCh+1, te.cfg.editEndIndex - te.status.cursorIndex);
+    279                te.status.strLen--;
+    280          		te.status.displayIndex = 0;
+    281                TeDisplayIndexUpdate();
+    282             }
+    283          }
+    284          
+    285          static void TeCursorLeft(void)
+    286          {
+    287             while (te.status.cursorIndex > (TeHasReadOnly()? te.cfg.editStartIndex : 0))
+    288             {
+    289                te.status.cursorIndex--;
+    290                if (isprint(*TeCharPtr()))
+    291                   break;
+    292             }
+    293             te.status.anchorCol = TePtFromStrIndex(te.status.cursorIndex).col;
+    294             TeDisplayIndexUpdate();
+    295          }
+    296          
+    297          static void TeCursorRight(void)
+    298          {
+    299             while (te.status.cursorIndex < (TeHasReadOnly()? te.cfg.editEndIndex : te.cfg.strBufSize))
+    300             {
+    301                char *pCh = TeCharPtr();
+    302                if ((pCh[0] == '\0') || (pCh[1] == '\0'))
+    303                {
+    304                   if (!TeIsReadOnly())
+    305                   {
+    306                      if (pCh[0] != '\0')
+    307                         te.status.cursorIndex++;
+    308                      TeInsert(TeNextChar(*pCh - 1, 1));
+    309                   }
+    310                   break;
+    311                }
+    312                else
+    313                {
+    314                   pCh++;
+    315                   te.status.cursorIndex++;
+    316                   if (isprint(*pCh))
+    317                      break;
+    318                }
+    319             }
+    320             te.status.anchorCol = TePtFromStrIndex(te.status.cursorIndex).col;
+    321             TeDisplayIndexUpdate();
+    322          }
+    323          
+    324          static void TeCursorDown(void)
+    325          {
+    326             if (te.status.cursorIndex < te.cfg.strBufSize)
+    327             {
+    328                TE_POSN posn = TePtFromStrIndex(te.status.cursorIndex);
+    329                te.status.cursorIndex = TeStrIndexFromPt(posn.row+1, te.status.anchorCol);
+    330                TeDisplayIndexUpdate();
+    331             }
+    332          }
+    333          
+    334          static void TeCursorUp(void)
+    335          {
+    336             if ((te.status.cursorIndex > 0) && (te.cfg.numLcdRows > 1))
+    337             {
+    338                TE_POSN posn = TePtFromStrIndex(te.status.cursorIndex);
+    339                if (posn.row > 0)
+    340                {
+    341                   te.status.cursorIndex = TeStrIndexFromPt((u16)(posn.row-1), te.status.anchorCol);
+    342                }
+    343                else if (te.status.displayIndex > 0)
+    344                {
+    345                   te.status.displayIndex = TeIndexPreviousLine(te.status.displayIndex);
+    346                   te.status.cursorIndex = TeStrIndexFromPt(0, te.status.anchorCol);
+    347                }
+    348             }
+    349          }
+    350          
+    351          static TE_POSN TePtFromStrIndex(u16 index)
+    352          {
+    353          	TE_POSN posn = {0,0};
+    354             u16 strIndex = te.status.displayIndex;
+    355             char const *pCh = (char const *)te.cfg.pStrBuf + strIndex;
+    356             while (*pCh != '\0' && (strIndex < index))
+    357             {
+    358                u16 lineLen = TeStrLenForLine(strIndex);
+    359                if (((lineLen + strIndex) <= index) &&
+    360                    ((lineLen + strIndex) < te.status.strLen))
+    361                {
+    362                   posn.row++;
+    363                }
+    364                else
+    365                {
+    366                   posn.col = (u16)(index - strIndex);
+    367                }
+    368                strIndex += lineLen;
+    369                pCh += lineLen;
+    370             }
+    371             return posn;
+    372          }
+    373          
+    374          static u16 TeStrIndexFromPt(u16 row, u16 col)
+    375          {
+    376             u16 strIndex = te.status.displayIndex;
+    377             while (row-- > 0)
+    378             {
+    379                strIndex += TeStrLenForLine(strIndex);
+    380             }
+    381          
+    382             u16 lastLineLen = TeStrLenForLine(strIndex);
+    383             if (*((char *)te.cfg.pStrBuf + strIndex + (u16)(lastLineLen-1)) == '\n')
+    384                lastLineLen--;
+    385             strIndex += MIN(col, lastLineLen);
+    386             if ((strIndex > 0) && (strIndex >= te.status.strLen))
+    387                strIndex = te.status.strLen - 1;
+    388             return strIndex;
+    389          }
+    390          
+    391          static u16 TeStrLenForLine(u16 strIndex)
+    392          {
+    393             s16 colAtWordBreak = -1;
+    394             u16 col = 0;
+    395             char const *pCh = (char const *)te.cfg.pStrBuf + strIndex;
+    396             while ((*pCh != '\0') && (col < te.cfg.numLcdCols))
+    397             {
+    398                if (*pCh == '\n')
+    399                {
+    400                   col++;
+    401                   colAtWordBreak = (s16)col;
+    402                   break;
+    403                }
+    404                else if (!isgraph(*pCh))
+    405                {
+    406                   colAtWordBreak = (s16)col + 1;
+    407                }
+    408          
+    409                pCh++;
+    410                col++;
+    411             }
+    412             return ((*pCh != '\0') && (colAtWordBreak >= 0))? (u16)colAtWordBreak : col;
+    413          }
+    414          
+    415          static void TeDisplayIndexUpdate(void)
+    416          {
+    417             while ((te.status.displayIndex > 0) && (te.status.cursorIndex < te.status.displayIndex))
+    418             {
+    419                te.status.displayIndex = (te.cfg.numLcdRows == 1)
+    420                   ? te.status.displayIndex-1
+    421                   : TeIndexPreviousLine(te.status.displayIndex);
+    422             }
+    423             while (TePtFromStrIndex(te.status.cursorIndex).row >= te.cfg.numLcdRows)
+    424             {
+    425                te.status.displayIndex += (te.cfg.numLcdRows == 1)
+    426                   ? 1
+    427                   : TeStrLenForLine(te.status.displayIndex);
+    428             }
+    429          }
+    430          
+    431          static u16 TeIndexPreviousLine(u16 strIndex)
+    432          {
+    433             u16 index = 0;
+    434             u16 lineLen = 0;
+    435             do
+    436             {
+    437                index += lineLen;
+    438                lineLen = TeStrLenForLine(index);
+    439             } while (index + lineLen < strIndex);
+    440             return index;
+    441          }
+    442          
+    443          static void TeDraw(void)
+    444          {
+    445             LcdClear();
+    446             u16 index = te.status.displayIndex;
+    447             for (u16 row = 0; row < te.cfg.numLcdRows; row++)
+    448             {
+    449                LcdSetPos((u8)row, 0);
+    450                for (u16 lineLen = TeStrLenForLine(index); lineLen > 0; lineLen--)
+    451                {
+    452                   char ch = *((char const *)te.cfg.pStrBuf + index);
+    453                   index++;
+    454                   if (isprint(ch))
+    455                   {
+    456                      LcdPutc(ch);
+    457                   }
+    458                }
+    459             }
+    460             TE_POSN posn = TePtFromStrIndex(te.status.cursorIndex);
+    461             LcdSetPos((u8)posn.row, (u8)posn.col);
+    462          }
+    463          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   TeBackSpace
+         8   -> TeCharPtr
+         8   -> TeDisplayIndexUpdate
+         8   -> TeIsReadOnly
+         8   -> memmove
+       8   TeCharDown
+         8   -> TeCharPtr
+         8   -> TeNextChar
+       0   TeCharPtr
+       8   TeCharUp
+         8   -> TeCharPtr
+         8   -> TeNextChar
+       8   TeCursorDown
+         8   -> TeDisplayIndexUpdate
+         8   -> TePtFromStrIndex
+         8   -> TeStrIndexFromPt
+       8   TeCursorLeft
+         8   -> TeCharPtr
+         8   -> TeDisplayIndexUpdate
+         8   -> TeHasReadOnly
+         8   -> TePtFromStrIndex
+         8   -> isprint
+      16   TeCursorRight
+        16   -> TeCharPtr
+        16   -> TeDisplayIndexUpdate
+        16   -> TeHasReadOnly
+        16   -> TeInsert
+        16   -> TeIsReadOnly
+        16   -> TeNextChar
+        16   -> TePtFromStrIndex
+        16   -> isprint
+       8   TeCursorUp
+         8   -> TeIndexPreviousLine
+         8   -> TePtFromStrIndex
+         8   -> TeStrIndexFromPt
+       8   TeDisplayIndexUpdate
+         8   -> TeIndexPreviousLine
+         8   -> TePtFromStrIndex
+         8   -> TeStrLenForLine
+      24   TeDraw
+        24   -> LcdClear
+        24   -> LcdPutc
+        24   -> LcdSetPos
+        24   -> TePtFromStrIndex
+        24   -> TeStrLenForLine
+        24   -> isprint
+       8   TeFinished
+         8   -> TeCharPtr
+         8   -> TeInsert
+         8   -> TeIsReadOnly
+         8   -> TeNextChar
+       0   TeHasReadOnly
+      16   TeIndexPreviousLine
+        16   -> TeStrLenForLine
+      16   TeInsert
+        16   -> TeCharPtr
+        16   -> TeDisplayIndexUpdate
+        16   -> memmove
+       0   TeIsReadOnly
+      16   TeNextAlpha
+        16   -> isalpha
+      16   TeNextAlphaLower
+        16   -> TeNextRange
+      16   TeNextAlphaNumeric
+        16   -> isalnum
+      16   TeNextAlphaUpper
+        16   -> TeNextRange
+      16   TeNextChar
+        16   -- Indirect call
+      16   TeNextFull
+        16   -> TeNextRange
+      16   TeNextNumeric
+        16   -> TeNextRange
+       0   TeNextRange
+       8   TeProcessKey
+         8   -> TeBackSpace
+         8   -> TeCharDown
+         8   -> TeCharUp
+         8   -> TeCursorDown
+         8   -> TeCursorLeft
+         8   -> TeCursorRight
+         8   -> TeCursorUp
+         8   -> TeDraw
+         8   -> TeFinished
+         8   -> TeIsReadOnly
+      24   TePtFromStrIndex
+        24   -> TeStrLenForLine
+      16   TeStrIndexFromPt
+        16   -> TeStrLenForLine
+      24   TeStrLenForLine
+        24   -> isgraph
+       0   TextEditorCfg
+      24   TextEditorInit
+        24   -> TeDraw
+        24   -> TePtFromStrIndex
+        24   -> memcpy
+        24   -> strlen
+       0   TextEditorStatus
+       8   TextEditorUpdate
+         8   -> TeProcessKey
+       8   _LocaleC_isalpha
+         8   -> _LocaleC_islower
+         8   -> _LocaleC_isupper
+       0   _LocaleC_islower
+       0   _LocaleC_ispunct
+       0   _LocaleC_isupper
+       8   isalnum
+         8   -> isalpha
+         8   -> isdigit
+       8   isalpha
+         8   -> _LocaleC_isalpha
+       0   isdigit
+       8   isgraph
+         8   -> isprint
+       8   isprint
+         8   -> isalpha
+         8   -> ispunct
+       8   ispunct
+         8   -> _LocaleC_ispunct
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ?<Constant {0, 0}>
+       4  ??DataTable19
+       4  ??DataTable19_1
+       4  ??DataTable19_2
+       4  ??DataTable19_3
+      96  TeBackSpace
+      46  TeCharDown
+      16  TeCharPtr
+      54  TeCharUp
+      50  TeCursorDown
+      86  TeCursorLeft
+     144  TeCursorRight
+      94  TeCursorUp
+     108  TeDisplayIndexUpdate
+     114  TeDraw
+      62  TeFinished
+      36  TeHasReadOnly
+      38  TeIndexPreviousLine
+      72  TeInsert
+      42  TeIsReadOnly
+      24  TeModeNextCharPfns
+      26  TeNextAlpha
+      24  TeNextAlphaLower
+      26  TeNextAlphaNumeric
+      24  TeNextAlphaUpper
+      60  TeNextChar
+      24  TeNextFull
+      24  TeNextNumeric
+      28  TeNextRange
+     100  TeProcessKey
+     102  TePtFromStrIndex
+     114  TeStrIndexFromPt
+      86  TeStrLenForLine
+       6  TextEditorCfg
+     184  TextEditorInit
+       6  TextEditorStatus
+      24  TextEditorUpdate
+      34  _LocaleC_isalpha
+      18  _LocaleC_islower
+      42  _LocaleC_ispunct
+      18  _LocaleC_isupper
+      34  isalnum
+      12  isalpha
+      18  isdigit
+      28  isgraph
+      42  isprint
+      12  ispunct
+      36  te
+
+ 
+    36 bytes in section .bss
+    28 bytes in section .rodata
+ 2 190 bytes in section .text
+ 
+ 1 932 bytes of CODE  memory (+ 258 bytes shared)
+    28 bytes of CONST memory
+    36 bytes of DATA  memory
+
+Errors: none
+Warnings: none

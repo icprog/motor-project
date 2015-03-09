@@ -1,0 +1,243 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:09 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\embUnit\embUnit\TestRunner.c              #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\embUnit\embUnit\TestRunner.c" -D          #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\TestRunner.lst             #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\TestRunner.o                #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\embUnit\embUnit\TestRunner.c
+      1          /*
+      2           * COPYRIGHT AND PERMISSION NOTICE
+      3           *
+      4           * Copyright (c) 2003 Embedded Unit Project
+      5           *
+      6           * All rights reserved.
+      7           *
+      8           * Permission is hereby granted, free of charge, to any person obtaining
+      9           * a copy of this software and associated documentation files (the
+     10           * "Software"), to deal in the Software without restriction, including
+     11           * without limitation the rights to use, copy, modify, merge, publish,
+     12           * distribute, and/or sell copies of the Software, and to permit persons
+     13           * to whom the Software is furnished to do so, provided that the above
+     14           * copyright notice(s) and this permission notice appear in all copies
+     15           * of the Software and that both the above copyright notice(s) and this
+     16           * permission notice appear in supporting documentation.
+     17           *
+     18           * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+     19           * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+     20           * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+     21           * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+     22           * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY
+     23           * SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER
+     24           * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+     25           * CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+     26           * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+     27           *
+     28           * Except as contained in this notice, the name of a copyright holder
+     29           * shall not be used in advertising or otherwise to promote the sale,
+     30           * use or other dealings in this Software without prior written
+     31           * authorization of the copyright holder.
+     32           *
+     33           * $Id: TestRunner.c,v 1.6 2004/02/10 16:19:29 arms22 Exp $
+     34           */
+     35          #include "config.h"
+     36          #include "stdImpl.h"
+     37          #include "Test.h"
+     38          #include "TestListener.h"
+     39          #include "TestResult.h"
+     40          #include "TestRunner.h"
+     41          
+     42          static TestResult result_;
+     43          static Test* root_;
+     44          
+     45          static void TestRunner_startTest(TestListner* self,Test* test)
+     46          {
+     47          	stdimpl_print(".");
+     48          }
+     49          
+     50          static void TestRunner_endTest(TestListner* self,Test* test)
+     51          {
+     52          }
+     53          
+     54          static void TestRunner_addFailure(TestListner* self,Test* test,char* msg,int line,char* file)
+     55          {
+     56          	stdimpl_print("\n");
+     57          	stdimpl_print(Test_name(root_));
+     58          	stdimpl_print(".");
+     59          	stdimpl_print(Test_name(test));
+     60          	{
+     61          		char buf[16];
+     62          		stdimpl_print(" (");
+     63          		stdimpl_print(file);
+     64          		stdimpl_print(" ");
+     65          		stdimpl_itoa(line, buf, 10);
+     66          		stdimpl_print(buf);
+     67          		stdimpl_print(") ");
+     68          	}
+     69          	stdimpl_print(msg);
+     70          	stdimpl_print("\n");
+     71          }
+     72          
+     73          static const TestListnerImplement TestRunnerImplement = {
+     74          	(TestListnerStartTestCallBack)	TestRunner_startTest,
+     75          	(TestListnerEndTestCallBack)	TestRunner_endTest,
+     76          	(TestListnerAddFailureCallBack)	TestRunner_addFailure,
+     77          };
+     78          
+     79          static const TestListner testrunner_ = {
+     80          	(TestListnerImplement*)&TestRunnerImplement,
+     81          };
+     82          
+     83          void TestRunner_start(void)
+     84          {
+     85          	TestResult_init(&result_, (TestListner*)&testrunner_);
+     86          }
+     87          
+     88          void TestRunner_runTest(Test* test)
+     89          {
+     90          	root_ = test;
+     91          	Test_run(test, &result_);
+     92          }
+     93          
+     94          int TestRunner_end(void)
+     95          {
+     96          	char buf[16];
+     97          	if (result_.failureCount) {
+     98          		stdimpl_print("\nrun ");
+     99          		stdimpl_itoa(result_.runCount, buf, 10);
+    100          		stdimpl_print(buf);
+    101          		stdimpl_print(" failures ");
+    102          		stdimpl_itoa(result_.failureCount, buf, 10);
+    103          		stdimpl_print(buf);
+    104          		stdimpl_print("\n");
+    105          		return -1;
+    106          	} else {
+    107          		stdimpl_print("\nOK (");
+    108          		stdimpl_itoa(result_.runCount, buf, 10);
+    109          		stdimpl_print(buf);
+    110          		stdimpl_print(" tests)\n");
+    111          		return 0;
+    112          	}
+    113          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+      40   TestRunner_addFailure
+        40   -- Indirect call
+        40   -> printf
+        40   -> stdimpl_itoa
+      24   TestRunner_end
+        24   -> printf
+        24   -> stdimpl_itoa
+       0   TestRunner_endTest
+       8   TestRunner_runTest
+         8   -- Indirect call
+       8   TestRunner_start
+         8   -> TestResult_init
+      16   TestRunner_startTest
+        16   -> printf
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ?<Constant " ">
+       4  ?<Constant " (">
+      12  ?<Constant " failures ">
+      12  ?<Constant " tests)\n">
+       4  ?<Constant ") ">
+       2  ?<Constant ".">
+       2  ?<Constant "\n">
+       8  ?<Constant "\nOK (">
+       8  ?<Constant "\nrun ">
+       4  ??DataTable4
+       4  ??DataTable4_1
+       4  ??DataTable4_10
+       4  ??DataTable4_11
+       4  ??DataTable4_2
+       4  ??DataTable4_3
+       4  ??DataTable4_4
+       4  ??DataTable4_5
+       4  ??DataTable4_6
+       4  ??DataTable4_7
+       4  ??DataTable4_8
+       4  ??DataTable4_9
+      12  TestRunnerImplement
+     114  TestRunner_addFailure
+     108  TestRunner_end
+       2  TestRunner_endTest
+      20  TestRunner_runTest
+      12  TestRunner_start
+      14  TestRunner_startTest
+       8  result_
+       4  root_
+       4  testrunner_
+
+ 
+  12 bytes in section .bss
+  70 bytes in section .rodata
+ 318 bytes in section .text
+ 
+ 318 bytes of CODE  memory
+  70 bytes of CONST memory
+  12 bytes of DATA  memory
+
+Errors: none
+Warnings: none

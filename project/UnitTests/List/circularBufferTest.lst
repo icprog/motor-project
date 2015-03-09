@@ -1,0 +1,470 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:02 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\structures\unitTests\circularBufferTest.c #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\structures\unitTests\circularBufferTest.c #
+#                    " -D UNIT_TESTING=1 --preprocess=c                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\circularBufferTest.lst     #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\circularBufferTest.o        #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\structures\unitTests\circularBufferTest.c
+      1          /*******************************************************************************************
+      2          Tests the Circular Buffer code
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          
+     12          #include "embUnit/embUnit.h"
+     13          #include "includes.h"
+     14          #include "circularBuffer.h"
+     15          
+     16          
+     17          /**************************************************************************
+     18           *                                  Constants
+     19           **************************************************************************/
+     20          /**************************************************************************
+     21           *                                  Types
+     22           **************************************************************************/
+     23          /**************************************************************************
+     24           *                                  Variables
+     25           **************************************************************************/
+     26          static CIRCULAR_BUF cbuf;
+     27          static UINT8 ctestArr[10];
+     28          
+     29          
+     30          /**************************************************************************
+     31           *                                  Setup/Teardown
+     32           **************************************************************************/
+     33          static void CBufTestSetup(void)
+     34          {
+     35          	memset(&cbuf, 0xAA, sizeof(cbuf));
+     36          	CBufInit(&cbuf, ctestArr, sizeof(ctestArr), 0);
+     37          }
+     38          
+     39          static void CBufTestTeardown(void)
+     40          {
+     41          }
+     42          
+     43          
+     44          /**************************************************************************
+     45           *                                  Test Functions
+     46           **************************************************************************/
+     47          static void CBufTestInit(void)
+     48          {
+     49          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), cbuf.len);
+     50          	TEST_ASSERT_EQUAL_INT(0, cbuf.flags);
+     51          	TEST_ASSERT_EQUAL_INT(0, cbuf.rdOffset);
+     52          	TEST_ASSERT_EQUAL_INT(0, cbuf.wrOffset);
+     53          	TEST_ASSERT(ctestArr == cbuf.pStart);
+     54          }
+     55          
+     56          static void CBufTestUsedFreeEmpty(void)
+     57          {
+     58          	UINT32 ret;
+     59          	ret = CBufFree(&cbuf);
+     60          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+     61          	ret = CBufUsed(&cbuf);
+     62          	TEST_ASSERT_EQUAL_INT(0, ret);
+     63          }
+     64          
+     65          static void CBufTestWriteUntilFull(void)
+     66          {
+     67          	UINT8 wr[sizeof(ctestArr)+1];
+     68          	UINT8 rd[sizeof(ctestArr)];
+     69          	UINT32 ret;
+     70          	CBufInit(&cbuf, ctestArr, sizeof(ctestArr), CIRCULAR_BUF_WRITE_UNTIL_FULL);
+     71          	for (UINT8 i = 0; i < sizeof(wr); i++)
+     72          		wr[i] = i;
+     73          	ret = CBufWrite(&cbuf, wr, sizeof(wr));
+     74          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+     75          	TEST_ASSERT(CBufIsFull(&cbuf));
+     76          	ret = CBufFree(&cbuf);
+     77          	TEST_ASSERT_EQUAL_INT(0, ret);
+     78          	ret = CBufUsed(&cbuf);
+     79          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+     80          
+     81          	// Now ensure that it doesn't keep writing
+     82          	memset(wr, 0x11, sizeof(wr));
+     83          	ret = CBufWrite(&cbuf, wr, sizeof(wr));
+     84          	TEST_ASSERT_EQUAL_INT(0, ret);
+     85          	TEST_ASSERT(CBufIsFull(&cbuf));
+     86          	ret = CBufFree(&cbuf);
+     87          	TEST_ASSERT_EQUAL_INT(0, ret);
+     88          	ret = CBufUsed(&cbuf);
+     89          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+     90          
+     91          	// Now verify that we read out the first bytes
+     92          	memset(rd, 0x22, sizeof(rd));
+     93          	ret = CBufRead(rd, sizeof(rd), &cbuf);
+     94          	TEST_ASSERT_EQUAL_INT(sizeof(rd), ret);
+     95          	for (UINT8 i = 0; i < sizeof(wr); i++)
+     96          		wr[i] = i;
+     97          	TEST_ASSERT_EQUAL_BUF(wr, rd, sizeof(ctestArr));
+     98          	TEST_ASSERT(!CBufIsFull(&cbuf));
+     99          	ret = CBufFree(&cbuf);
+    100          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+    101          	ret = CBufUsed(&cbuf);
+    102          	TEST_ASSERT_EQUAL_INT(0, ret);
+    103          }
+    104          
+    105          static void CBufTestWritePastFull(void)
+    106          {
+    107          	UINT8 wr[sizeof(ctestArr) + 4];
+    108          	UINT8 rd[sizeof(ctestArr)];
+    109          	UINT32 ret;
+    110          	for (UINT8 i = 0; i < sizeof(wr); i++)
+    111          		wr[i] = i;
+    112          	ret = CBufWrite(&cbuf, wr, sizeof(wr));
+    113          	TEST_ASSERT_EQUAL_INT(sizeof(wr), ret);
+    114          	TEST_ASSERT(CBufIsFull(&cbuf));
+    115          	ret = CBufFree(&cbuf);
+    116          	TEST_ASSERT_EQUAL_INT(0, ret);
+    117          	ret = CBufUsed(&cbuf);
+    118          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+    119          
+    120          	memset(rd, 0xAA, sizeof(rd));
+    121          	ret = CBufRead(rd, sizeof(rd), &cbuf);
+    122          	TEST_ASSERT_EQUAL_INT(sizeof(rd), ret);
+    123          	TEST_ASSERT_EQUAL_BUF(&wr[sizeof(wr)-sizeof(rd)], rd, sizeof(rd));
+    124          	TEST_ASSERT(!CBufIsFull(&cbuf));
+    125          	ret = CBufFree(&cbuf);
+    126          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+    127          	ret = CBufUsed(&cbuf);
+    128          	TEST_ASSERT_EQUAL_INT(0, ret);
+    129          }
+    130          
+    131          static void CBufTestPeek(void)
+    132          {
+    133          	UINT8 wr[sizeof(ctestArr)];
+    134          	UINT8 rd[sizeof(ctestArr)];
+    135          	UINT32 ret;
+    136          	for (UINT8 i = 0; i < sizeof(wr); i++)
+    137          		wr[i] = i;
+    138          	ret = CBufWrite(&cbuf, wr, sizeof(wr));
+    139          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+    140          	ret = CBufPeek(rd, 3, &cbuf);
+    141          	TEST_ASSERT_EQUAL_INT(3, ret);
+    142          	TEST_ASSERT_EQUAL_BUF(wr, rd, 3);
+    143          	TEST_ASSERT_EQUAL_INT(0, cbuf.rdOffset);
+    144          	TEST_ASSERT(CBufIsFull(&cbuf));
+    145          	ret = CBufRead(rd, 3, &cbuf);
+    146          	TEST_ASSERT_EQUAL_INT(3, ret);
+    147          	TEST_ASSERT_EQUAL_BUF(wr, rd, 3);
+    148          }
+    149          
+    150          static void CBufTestSeekPos(void)
+    151          {
+    152          	UINT8 wr[sizeof(ctestArr)];
+    153          	UINT8 rd[sizeof(ctestArr)];
+    154          	UINT32 ret;
+    155          	for (UINT8 i = 0; i < sizeof(wr); i++)
+    156          		wr[i] = i;
+    157          	ret = CBufWrite(&cbuf, wr, sizeof(wr));
+    158          	TEST_ASSERT(CBufIsFull(&cbuf));
+    159          	ret = CBufFree(&cbuf);
+    160          	TEST_ASSERT_EQUAL_INT(0, ret);
+    161          	ret = CBufUsed(&cbuf);
+    162          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+    163          
+    164          	CBufSeek(&cbuf, 3);
+    165          	TEST_ASSERT(!CBufIsFull(&cbuf));
+    166          	ret = CBufFree(&cbuf);
+    167          	TEST_ASSERT_EQUAL_INT(3, ret);
+    168          	ret = CBufUsed(&cbuf);
+    169          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr)-3, ret);
+    170          
+    171          	ret = CBufRead(rd, sizeof(rd), &cbuf);
+    172          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr)-3, ret);
+    173          	TEST_ASSERT_EQUAL_BUF(&wr[3], rd, ret);
+    174          }
+    175          
+    176          static void CBufTestSeekNeg(void)
+    177          {
+    178          	UINT8 wr[sizeof(ctestArr)];
+    179          	UINT8 rd[sizeof(ctestArr)];
+    180          	UINT32 ret;
+    181          	for (UINT8 i = 0; i < sizeof(wr); i++)
+    182          		wr[i] = i;
+    183          	ret = CBufWrite(&cbuf, wr, sizeof(wr));
+    184          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), ret);
+    185          	ret = CBufRead(rd, 3, &cbuf);
+    186          	TEST_ASSERT_EQUAL_INT(3, ret);
+    187          	TEST_ASSERT_EQUAL_BUF(wr, rd, 3);
+    188          	ret = CBufRead(rd, 3, &cbuf);
+    189          	TEST_ASSERT_EQUAL_INT(3, ret);
+    190          	TEST_ASSERT_EQUAL_BUF(&wr[3], rd, 3);
+    191          
+    192          	CBufSeek(&cbuf, -4);
+    193          	ret = CBufFree(&cbuf);
+    194          	TEST_ASSERT_EQUAL_INT(2, ret);
+    195          	ret = CBufUsed(&cbuf);
+    196          	TEST_ASSERT_EQUAL_INT(sizeof(wr)-2, ret);
+    197          
+    198          	ret = CBufRead(rd, sizeof(rd), &cbuf);
+    199          	TEST_ASSERT_EQUAL_INT(sizeof(wr)-2, ret);
+    200          	TEST_ASSERT_EQUAL_BUF(&wr[2], rd, ret);
+    201          }
+    202          
+    203          static void CBufTestFlush(void)
+    204          {
+    205          	UINT32 ret;
+    206          	ret = CBufPuts(&cbuf, "123");
+    207          	TEST_ASSERT_EQUAL_INT(4, ret);
+    208          	TEST_ASSERT_EQUAL_INT(4, CBufUsed(&cbuf));
+    209          	CBufFlush(&cbuf);
+    210          	TEST_ASSERT_EQUAL_INT(0, CBufUsed(&cbuf));
+    211          	TEST_ASSERT_EQUAL_INT(sizeof(ctestArr), CBufFree(&cbuf));
+    212          	TEST_ASSERT_EQUAL_INT(4, cbuf.wrOffset);
+    213          	TEST_ASSERT_EQUAL_INT(4, cbuf.rdOffset);
+    214          }
+    215          
+    216          static void CBufTestPutsGets(void)
+    217          {
+    218          	char rd[sizeof(ctestArr)];
+    219          	UINT32 ret;
+    220          	char *pStr;
+    221          	char *pStr1 = "abcd";
+    222          	char *pStr2 = "123";
+    223          
+    224          	ret = CBufPuts(&cbuf, pStr1);
+    225          	TEST_ASSERT_EQUAL_INT(strlen(pStr1)+1, ret);
+    226          	TEST_ASSERT_EQUAL_INT(strlen(pStr1)+1, CBufUsed(&cbuf));
+    227          	ret = CBufPuts(&cbuf, pStr2);
+    228          	TEST_ASSERT_EQUAL_INT(strlen(pStr2)+1, ret);
+    229          	TEST_ASSERT_EQUAL_INT(strlen(pStr1)+strlen(pStr2)+2, CBufUsed(&cbuf));
+    230          
+    231          	pStr = CBufGets(rd, sizeof(rd), &cbuf);
+    232          	TEST_ASSERT_NOT_NULL(pStr);
+    233          	TEST_ASSERT_EQUAL_STRING(pStr1, rd);
+    234          	TEST_ASSERT_EQUAL_INT(strlen(pStr2)+1, CBufUsed(&cbuf));
+    235          	pStr = CBufGets(rd, sizeof(rd), &cbuf);
+    236          	TEST_ASSERT_NOT_NULL(pStr);
+    237          	TEST_ASSERT_EQUAL_STRING(pStr2, rd);
+    238          	TEST_ASSERT_EQUAL_INT(0, CBufUsed(&cbuf));
+    239          }
+    240          
+    241          
+    242          /**************************************************************************
+    243           *                                  Global Functions
+    244           **************************************************************************/
+    245          TestRef CBufTests(void)
+    246          {
+    247          	static const TestFixture fixtures[] =
+    248          	{
+    249          		new_TestFixtureFn(CBufTestInit),
+    250          		new_TestFixtureFn(CBufTestUsedFreeEmpty),
+    251          		new_TestFixtureFn(CBufTestWriteUntilFull),
+    252          		new_TestFixtureFn(CBufTestWritePastFull),
+    253          		new_TestFixtureFn(CBufTestPeek),
+    254          		new_TestFixtureFn(CBufTestSeekPos),
+    255          		new_TestFixtureFn(CBufTestSeekNeg),
+    256          		new_TestFixtureFn(CBufTestFlush),
+    257          		new_TestFixtureFn(CBufTestPutsGets),
+    258          	};
+    259          	EMB_UNIT_TEST_CALLER(CBufTest);
+    260          }
+    261          
+    262          
+    263          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   CBufTestFlush
+         8   -> CBufFlush
+         8   -> CBufFree
+         8   -> CBufPuts
+         8   -> CBufUsed
+         8   -> assertImplementationInt
+       8   CBufTestInit
+         8   -> addFailure
+         8   -> assertImplementationInt
+      40   CBufTestPeek
+        40   -> CBufIsFull
+        40   -> CBufPeek
+        40   -> CBufRead
+        40   -> CBufWrite
+        40   -> addFailure
+        40   -> assertImplementationCBuf
+        40   -> assertImplementationInt
+        40   -> stdimpl_memcmp
+      40   CBufTestPutsGets
+        40   -> CBufGets
+        40   -> CBufPuts
+        40   -> CBufUsed
+        40   -> addFailure
+        40   -> assertImplementationCStr
+        40   -> assertImplementationInt
+        40   -> stdimpl_strcmp
+        40   -> strlen
+      40   CBufTestSeekNeg
+        40   -> CBufFree
+        40   -> CBufRead
+        40   -> CBufSeek
+        40   -> CBufUsed
+        40   -> CBufWrite
+        40   -> assertImplementationCBuf
+        40   -> assertImplementationInt
+        40   -> stdimpl_memcmp
+      40   CBufTestSeekPos
+        40   -> CBufFree
+        40   -> CBufIsFull
+        40   -> CBufRead
+        40   -> CBufSeek
+        40   -> CBufUsed
+        40   -> CBufWrite
+        40   -> addFailure
+        40   -> assertImplementationCBuf
+        40   -> assertImplementationInt
+        40   -> stdimpl_memcmp
+       8   CBufTestSetup
+         8   -> CBufInit
+         8   -> memset
+       0   CBufTestTeardown
+       8   CBufTestUsedFreeEmpty
+         8   -> CBufFree
+         8   -> CBufUsed
+         8   -> assertImplementationInt
+      40   CBufTestWritePastFull
+        40   -> CBufFree
+        40   -> CBufIsFull
+        40   -> CBufRead
+        40   -> CBufUsed
+        40   -> CBufWrite
+        40   -> addFailure
+        40   -> assertImplementationCBuf
+        40   -> assertImplementationInt
+        40   -> memset
+        40   -> stdimpl_memcmp
+      40   CBufTestWriteUntilFull
+        40   -> CBufFree
+        40   -> CBufInit
+        40   -> CBufIsFull
+        40   -> CBufRead
+        40   -> CBufUsed
+        40   -> CBufWrite
+        40   -> addFailure
+        40   -> assertImplementationCBuf
+        40   -> assertImplementationInt
+        40   -> memset
+        40   -> stdimpl_memcmp
+       0   CBufTests
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  ?<Constant "!CBufIsFull(&cbuf)">
+       4  ?<Constant "123">
+     100  ?<Constant "C:\\Users\\Quinn\\Docume...">
+      20  ?<Constant "CBufIsFull(&cbuf)">
+      16  ?<Constant "CBufTestFlush">
+      16  ?<Constant "CBufTestInit">
+      16  ?<Constant "CBufTestPeek">
+      20  ?<Constant "CBufTestPutsGets">
+      16  ?<Constant "CBufTestSeekNeg">
+      16  ?<Constant "CBufTestSeekPos">
+      24  ?<Constant "CBufTestUsedFreeEmpty">
+      24  ?<Constant "CBufTestWritePastFull">
+      24  ?<Constant "CBufTestWriteUntilFull">
+      12  ?<Constant "CBufTests">
+       8  ?<Constant "abcd">
+      24  ?<Constant "ctestArr == cbuf.pStart">
+      16  ?<Constant "pStr was null.">
+       4  ??DataTable10
+       4  ??DataTable10_1
+       4  ??DataTable10_2
+       4  ??DataTable10_3
+       4  ??DataTable10_4
+       4  ??DataTable10_5
+       4  ??DataTable10_6
+       4  ??DataTable10_7
+       4  ??DataTable10_8
+       4  ??DataTable10_9
+     176  CBufTestFlush
+     154  CBufTestInit
+     254  CBufTestPeek
+     422  CBufTestPutsGets
+     324  CBufTestSeekNeg
+     298  CBufTestSeekPos
+      28  CBufTestSetup
+       2  CBufTestTeardown
+      64  CBufTestUsedFreeEmpty
+     314  CBufTestWritePastFull
+     480  CBufTestWriteUntilFull
+       4  CBufTests
+      20  cbuf
+      12  ctestArr
+      72  fixtures
+      24  res
+
+ 
+    32 bytes in section .bss
+   472 bytes in section .rodata
+ 2 560 bytes in section .text
+ 
+ 2 560 bytes of CODE  memory
+   472 bytes of CONST memory
+    32 bytes of DATA  memory
+
+Errors: none
+Warnings: none

@@ -1,0 +1,392 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:39 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\timer.c                               #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\timer.c" -D __SAM3U2C__               #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\timer.lst                      #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\timer.o                         #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\timer.c
+      1          /*******************************************************************************************
+      2          TIMER driver
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "timer.h"
+     12          #include "bsp.h"
+     13          #include "irq.h"
+     14          #include "core_cm3.h"
+     15          
+     16          
+     17          /**************************************************************************
+     18           *                                  Constants
+     19           **************************************************************************/
+     20          #define MS_TIMER           AT91C_BASE_TC0
+     21          #define MS_TIMER_IRQ       IRQn_TC0
+     22          #define MS_TIMER_PERIPH    PERIPH_TC0
+     23          #define US_TIMER           AT91C_BASE_TC1
+     24          #define US_TIMER_PERIPH    PERIPH_TC1
+     25          
+     26          
+     27          /**************************************************************************
+     28           *                                  Types
+     29           **************************************************************************/
+     30          typedef struct
+     31          {
+     32          	void     (*pfnCb)(void);
+     33          	u32      compareTime;
+     34          	volatile TIMER_ID timId;
+     35          } volatile TIME_X_MS;
+     36          
+     37          typedef struct
+     38          {
+     39             TIME_X_MS user[TIMER_MAX_CALLBACKS];
+     40             vu32 numUsers;
+     41             vu32 timerId;
+     42             vu32 ms;
+     43             bool waitActive;
+     44          }TIMER_DRIVER;
+     45          
+     46          
+     47          /**************************************************************************
+     48           *                                  Variables
+     49           **************************************************************************/
+     50          static TIMER_DRIVER timer;
+     51          
+     52          
+     53          /**************************************************************************
+     54           *                                  Prototypes
+     55           **************************************************************************/
+     56          static void TimerWaitXMsCallback(void);
+     57          static bool TimerWaitMsActive(void);
+     58          
+     59          
+     60          /**************************************************************************
+     61           *                                  Global Functions
+     62           **************************************************************************/
+     63          void TimerInit(void)
+     64          {
+     65             memset(&timer, 0, sizeof(timer));
+     66             timer.timerId = 0x1;
+     67          
+     68             // millisecond wait and callback timer
+     69             // Configure to count MAIN_CLK/2 up to RC compare, interrupt and repeat...
+     70             BspPeriphOn(MS_TIMER_PERIPH);
+     71             MS_TIMER->TC_CCR = AT91C_TC_CLKDIS;
+     72             MS_TIMER->TC_CMR = AT91C_TC_WAVESEL_UP_AUTO; // all other bits = 0 (clk = MAIN_CLK/2)
+     73             MS_TIMER->TC_RC = BspGetCpuClkFreq() / (2 * 1000); // (MAIN_CLK/2) @ 1ms interval
+     74             MS_TIMER->TC_SR;                    // dummy read to clear
+     75             MS_TIMER->TC_IDR = 0xFF;            // disable all interrupts
+     76             MS_TIMER->TC_IER = AT91C_TC_CPCS;   // interrupt on RC compare match
+     77             NVIC_EnableIRQ(MS_TIMER_IRQ);
+     78             NVIC_SetPriority(MS_TIMER_IRQ, IRQ_PRIO_TIMER_MS);
+     79             MS_TIMER->TC_CCR = AT91C_TC_CLKEN | AT91C_TC_SWTRG;
+     80          
+     81          	// Microsecond delay timer:
+     82             // Configure to count a 1us rate
+     83             BspPeriphOn(US_TIMER_PERIPH);
+     84             US_TIMER->TC_CCR = AT91C_TC_CLKDIS;
+     85             US_TIMER->TC_CMR = AT91C_TC_WAVESEL_UP_AUTO; // all other bits = 0 (clk = MAIN_CLK/2)
+     86             US_TIMER->TC_RC = BspGetCpuClkFreq() / 2; // (MAIN_CLK/2) @ 1us interval
+     87             US_TIMER->TC_IDR = 0xFF;            // disable all interrupts
+     88             // keep timer disabled until needed...
+     89          }
+     90          
+     91          void TimerKill(void)
+     92          {
+     93             MS_TIMER->TC_CCR = AT91C_TC_CLKDIS;
+     94             US_TIMER->TC_CCR = AT91C_TC_CLKDIS;
+     95             BspPeriphOff(MS_TIMER_PERIPH);
+     96             BspPeriphOff(US_TIMER_PERIPH);
+     97          }
+     98          
+     99          
+    100          TIMER_ID TimerTimeXMs(u32 ms, PFV pfn)
+    101          {
+    102             return TimerTimeXMsRestart(ms, pfn, TIMER_INVALID);
+    103          }
+    104          
+    105          TIMER_ID TimerTimeXMsRestart(u32 ms, PFV pfn, TIMER_ID tid)
+    106          {
+    107             for (TIME_X_MS *pTm = &timer.user[TIMER_MAX_CALLBACKS-1]; pTm >= timer.user; pTm--)
+    108             {
+    109                if (pTm->timId == tid)
+    110                {
+    111                   PREPARE_CRITICAL();
+    112                   ENTER_CRITICAL();
+    113                   if (pTm->timId == tid)
+    114                   {
+    115                      MS_TIMER->TC_IER = AT91C_TC_CPCS;
+    116                      if (tid == TIMER_INVALID)
+    117                         timer.numUsers++;
+    118                      pTm->compareTime = timer.ms + ms;
+    119                      pTm->pfnCb = pfn;
+    120                      pTm->timId = tid = timer.timerId;
+    121                      if (++timer.timerId == 0)
+    122                         timer.timerId = 1;
+    123                      EXIT_CRITICAL();
+    124                      return tid;
+    125                   }
+    126                   EXIT_CRITICAL();
+    127                }
+    128             }
+    129             return (tid == TIMER_INVALID) ? TIMER_INVALID : TimerTimeXMsRestart(ms, pfn, TIMER_INVALID);
+    130          }
+    131          
+    132          void TimerTimeXMsCancel(TIMER_ID tid)
+    133          {
+    134             for (TIME_X_MS *pTm = &timer.user[TIMER_MAX_CALLBACKS-1]; pTm >= timer.user; pTm--)
+    135             {
+    136                if (pTm->timId == tid)
+    137                {
+    138                   PREPARE_CRITICAL();
+    139                   ENTER_CRITICAL();
+    140                   if (pTm->timId == tid)
+    141                   {
+    142                      TimerMsStopIfUnused();
+    143                      pTm->pfnCb = NULL;
+    144                      pTm->timId = TIMER_INVALID;
+    145                   }
+    146                   EXIT_CRITICAL();
+    147                }
+    148             }
+    149          }
+    150          
+    151          
+    152          void TimerWaitXMs(u32 ms)
+    153          {
+    154             timer.waitActive = true;
+    155             TIMER_ID tid = TimerTimeXMs(ms, TimerWaitXMsCallback);
+    156             if (tid != TIMER_INVALID)
+    157             {
+    158                BspSleepWhile(TimerWaitMsActive);
+    159             }
+    160             else
+    161             {
+    162                while (ms-- > 0)
+    163                {
+    164                   TimerWaitXUs(1000);
+    165                }
+    166             }
+    167          }
+    168          
+    169          void TimerWaitXUs(u32 us)
+    170          {
+    171             US_TIMER->TC_CCR = AT91C_TC_CLKEN | AT91C_TC_SWTRG;
+    172             s32 endTick = (s32)(us << 16);
+    173             do{} while ((endTick - (s32)(US_TIMER->TC_CV << 16)) >= 0);
+    174             US_TIMER->TC_CCR = AT91C_TC_CLKDIS;
+    175          }
+    176          
+    177          
+    178          u32 TimerMsGet(void)
+    179          {
+    180             timer.numUsers++;
+    181             MS_TIMER->TC_IER = AT91C_TC_CPCS;
+    182             return timer.ms;
+    183          }
+    184          
+    185          bool TimerMsHasElapsed(u32 checkMs)
+    186          {
+    187             return (bool)(((s32)timer.ms - (s32)checkMs) >= 0);
+    188          }
+    189          
+    190          s32 TimerMsRemaining(u32 checkMs)
+    191          {
+    192             return (s32)checkMs - (s32)timer.ms;
+    193          }
+    194          
+    195          void TimerWaitMsElapsed(u32 checkMs)
+    196          {
+    197             s32 remain = TimerMsRemaining(checkMs);
+    198             if (remain > 0)
+    199             {
+    200                TimerWaitXMs((u32)remain);
+    201             }
+    202          }
+    203          
+    204          void TimerMsStopIfUnused(void)
+    205          {
+    206             if ((timer.numUsers > 0) && (--timer.numUsers == 0))
+    207             {
+    208                MS_TIMER->TC_IDR = 0xFF;
+    209             }
+    210          }
+    211          
+    212          
+    213          /**************************************************************************
+    214           *                                 Private Functions
+    215           **************************************************************************/
+    216          static void TimerWaitXMsCallback(void)
+    217          {
+    218             timer.waitActive = false;
+    219          }
+    220          
+    221          static bool TimerWaitMsActive(void)
+    222          {
+    223             return timer.waitActive;
+    224          }
+    225          
+    226          void TC0_IrqHandler(void)
+    227          {
+    228             u32 msTimer = ++timer.ms;
+    229             MS_TIMER->TC_SR;  // dummy read to clear flags
+    230          
+    231             for (TIME_X_MS *pTm = &timer.user[TIMER_MAX_CALLBACKS-1]; pTm >= timer.user; pTm--)
+    232             {
+    233                if (pTm->pfnCb && (pTm->compareTime == msTimer))
+    234                {
+    235                   TimerMsStopIfUnused();
+    236                   PFV pfn = pTm->pfnCb;
+    237                   pTm->pfnCb = NULL;
+    238                   pTm->timId = TIMER_INVALID;
+    239                   pfn();   //lint !e746
+    240                }
+    241             }
+    242          }
+    243          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       4   NVIC_EnableIRQ
+       0   NVIC_SetPriority
+      16   TC0_IrqHandler
+        16   -- Indirect call
+        16   -> TimerMsStopIfUnused
+       8   TimerInit
+         8   -> BspGetCpuClkFreq
+         8   -> BspPeriphOn
+         8   -> NVIC_EnableIRQ
+         8   -> NVIC_SetPriority
+         8   -> memset
+       8   TimerKill
+         8   -> BspPeriphOff
+       0   TimerMsGet
+       0   TimerMsHasElapsed
+       0   TimerMsRemaining
+       0   TimerMsStopIfUnused
+      16   TimerTimeXMs
+        16   -> TimerTimeXMsRestart
+      16   TimerTimeXMsCancel
+        16   -> TimerMsStopIfUnused
+      16   TimerTimeXMsRestart
+        16   -> TimerTimeXMsRestart
+       0   TimerWaitMsActive
+      16   TimerWaitMsElapsed
+        16   -> TimerMsRemaining
+        16   -> TimerWaitXMs
+      16   TimerWaitXMs
+        16   -> BspSleepWhile
+        16   -> TimerTimeXMs
+        16   -> TimerWaitXUs
+       0   TimerWaitXMsCallback
+       0   TimerWaitXUs
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable14
+       4  ??DataTable14_1
+       4  ??DataTable14_10
+       4  ??DataTable14_11
+       4  ??DataTable14_12
+       4  ??DataTable14_13
+       4  ??DataTable14_14
+       4  ??DataTable14_15
+       4  ??DataTable14_2
+       4  ??DataTable14_3
+       4  ??DataTable14_4
+       4  ??DataTable14_5
+       4  ??DataTable14_6
+       4  ??DataTable14_7
+       4  ??DataTable14_8
+       4  ??DataTable14_9
+      24  NVIC_EnableIRQ
+      32  NVIC_SetPriority
+      58  TC0_IrqHandler
+     128  TimerInit
+      28  TimerKill
+      22  TimerMsGet
+      20  TimerMsHasElapsed
+       8  TimerMsRemaining
+      30  TimerMsStopIfUnused
+      18  TimerTimeXMs
+      54  TimerTimeXMsCancel
+     130  TimerTimeXMsRestart
+       8  TimerWaitMsActive
+      24  TimerWaitMsElapsed
+      58  TimerWaitXMs
+      10  TimerWaitXMsCallback
+      28  TimerWaitXUs
+     112  timer
+
+ 
+ 112 bytes in section .bss
+ 744 bytes in section .text
+ 
+ 744 bytes of CODE memory
+ 112 bytes of DATA memory
+
+Errors: none
+Warnings: none

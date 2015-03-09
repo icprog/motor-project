@@ -1,0 +1,110 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	TemplateName="Other C/C++"
+	WorkingDir=".">
+	<Config
+		Name="Debug"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdMpgDemo"
+		CompilerConfigName="IAR ARM v6.4">
+		<Menu>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw\project\makeout\"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make.exe"/>
+			</Target>
+			<Target
+				Name="Clean"
+				MenuCaption="&amp;Clean"
+				RunFromDir="%rw\project\makeout\"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make.exe clean"/>
+			</Target>
+			<Target
+				Name="Clean Lint"
+				MenuCaption="&amp;Clean Lint"
+				RunFromDir="%rw\project\makeout\"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make.exe clean_lint"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Config
+		Name="Release"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdMpgDemo"
+		CompilerConfigName="IAR ARM v6.4">
+		<Menu>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw\project\makeout\"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make.exe"/>
+			</Target>
+			<Target
+				Name="Clean"
+				MenuCaption="&amp;Clean"
+				RunFromDir="%rw\project\makeout\"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make.exe clean"/>
+			</Target>
+			<Target
+				Name="Clean Lint"
+				MenuCaption="&amp;Clean Lint"
+				RunFromDir="%rw\project\makeout\"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				ClearProcessBuffer="1">
+				<Exec CmdLine="make.exe clean_lint"/>
+			</Target>
+		</Menu>
+	</Config>
+	<Rules Name="Compile">
+		<Rule
+			InputExts="*.s"
+			OutputExts="*.o"
+			LinkObject="1">
+			<Exec CmdLine='as -o "%bd%n.o" "%f"'/>
+		</Rule>
+	</Rules>
+	<CustomFolders>
+		<Folder
+			Name="Source Files"
+			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm"/>
+		<Folder
+			Name="Header Files"
+			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.inc;*.sh;*.cpy;*.if"/>
+		<Folder
+			Name="Resource Files"
+			Filters="*.ico;*.cur;*.dlg"/>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.bmp"/>
+		<Folder
+			Name="Other Files"
+			Filters=""/>
+	</CustomFolders>
+	<Files AutoFolders="DirectoryView">
+		<F
+			N="*.*"
+			Recurse="1"
+			Excludes=".svn/;*.ewd;*.ewp;*.eww;*.icf;*.exe;*.d;*.i;*.lnt;*.lst;*.o;*.lob;templates/;*.vpj;*.vpw;*.vpwhist;*.vtg;project/Debug/;project/settings/;bin/;*.out;*.sfr;*.dep"/>
+	</Files>
+</Project>

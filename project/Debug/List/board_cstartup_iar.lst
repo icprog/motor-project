@@ -1,0 +1,217 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:32 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\bsp\board_cstartup_iar.c                      #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\bsp\board_cstartup_iar.c" -D __SAM3U2C__      #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\board_cstartup_iar.lst         #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\board_cstartup_iar.o            #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\bsp\board_cstartup_iar.c
+      1          /* ----------------------------------------------------------------------------
+      2           *         ATMEL Microcontroller Software Support
+      3           * ----------------------------------------------------------------------------
+      4           * Copyright (c) 2008, Atmel Corporation
+      5           *
+      6           * All rights reserved.
+      7           *
+      8           * Redistribution and use in source and binary forms, with or without
+      9           * modification, are permitted provided that the following conditions are met:
+     10           *
+     11           * - Redistributions of source code must retain the above copyright notice,
+     12           * this list of conditions and the disclaimer below.
+     13           *
+     14           * Atmel's name may not be used to endorse or promote products derived from
+     15           * this software without specific prior written permission.
+     16           *
+     17           * DISCLAIMER: THIS SOFTWARE IS PROVIDED BY ATMEL "AS IS" AND ANY EXPRESS OR
+     18           * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     19           * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE
+     20           * DISCLAIMED. IN NO EVENT SHALL ATMEL BE LIABLE FOR ANY DIRECT, INDIRECT,
+     21           * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+     22           * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA,
+     23           * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     24           * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     25           * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+     26           * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     27           * ----------------------------------------------------------------------------
+     28           */
+     29          
+     30          #include "bsp.h"
+     31          #include "irq.h"
+     32          
+     33          
+     34          //------------------------------------------------------------------------------
+     35          //         Types
+     36          //------------------------------------------------------------------------------
+     37          typedef void( *IntFunc )( void );
+     38          typedef union { IntFunc __fun; void * __ptr; } IntVector;
+     39          
+     40          //------------------------------------------------------------------------------
+     41          //         ProtoTypes
+     42          //------------------------------------------------------------------------------
+     43          
+     44          extern void __iar_program_start( void );
+     45          
+     46          int __low_level_init( void );
+     47          
+     48          //------------------------------------------------------------------------------
+     49          //         Variables
+     50          //------------------------------------------------------------------------------
+     51          extern unsigned int __ICFEDIT_vector_start__;
+     52          
+     53          //------------------------------------------------------------------------------
+     54          //         Exception Table
+     55          //------------------------------------------------------------------------------
+     56          
+     57          #pragma language=extended
+     58          #pragma segment="CSTACK"
+     59          
+     60          // The name "__vector_table" has special meaning for C-SPY:
+     61          // it is where the SP start value is found, and the NVIC vector
+     62          // table register (VTOR) is initialized to this address if != 0.
+     63          
+     64          #pragma section = ".intvec"
+     65          #pragma location = ".intvec"
+     66          const IntVector __vector_table[] =
+     67          {
+     68              { .__ptr = __sfe( "CSTACK" ) },
+     69              __iar_program_start,
+     70          
+     71              NMI_Handler,
+     72              HardFault_Handler,
+     73              MemManage_Handler,
+     74              BusFault_Handler,
+     75              UsageFault_Handler,
+     76              0, 0, 0, 0,             // Reserved
+     77              SVC_Handler,
+     78              DebugMon_Handler,
+     79              0,                      // Reserved
+     80              PendSV_Handler,
+     81              SysTick_Handler,
+     82          
+     83              // Configurable interrupts
+     84              SUPC_IrqHandler,    // 0  SUPPLY CONTROLLER
+     85              RSTC_IrqHandler,    // 1  RESET CONTROLLER
+     86              RTC_IrqHandler,     // 2  REAL TIME CLOCK
+     87              RTT_IrqHandler,     // 3  REAL TIME TIMER
+     88              WDT_IrqHandler,     // 4  WATCHDOG TIMER
+     89              PMC_IrqHandler,     // 5  PMC
+     90              EFC0_IrqHandler,    // 6  EFC0
+     91              EFC1_IrqHandler,    // 7  EFC1
+     92              DBGU_IrqHandler,    // 8  DBGU
+     93              HSMC4_IrqHandler,   // 9  HSMC4
+     94              PIOA_IrqHandler,    // 10 Parallel IO Controller A
+     95              PIOB_IrqHandler,    // 11 Parallel IO Controller B
+     96              PIOC_IrqHandler,    // 12 Parallel IO Controller C
+     97              USART0_IrqHandler,  // 13 USART 0
+     98              USART1_IrqHandler,  // 14 USART 1
+     99              USART2_IrqHandler,  // 15 USART 2
+    100              USART3_IrqHandler,  // 16 USART 3
+    101              MCI0_IrqHandler,    // 17 Multimedia Card Interface
+    102              TWI0_IrqHandler,    // 18 TWI 0
+    103              TWI1_IrqHandler,    // 19 TWI 1
+    104              SPI0_IrqHandler,    // 20 Serial Peripheral Interface
+    105              SSC0_IrqHandler,    // 21 Serial Synchronous Controller 0
+    106              TC0_IrqHandler,     // 22 Timer Counter 0
+    107              TC1_IrqHandler,     // 23 Timer Counter 1
+    108              TC2_IrqHandler,     // 24 Timer Counter 2
+    109              PWM_IrqHandler,     // 25 Pulse Width Modulation Controller
+    110              ADCC0_IrqHandler,   // 26 ADC controller0
+    111              ADCC1_IrqHandler,   // 27 ADC controller1
+    112              HDMA_IrqHandler,    // 28 HDMA
+    113              UDPD_IrqHandler,   // 29 USB Device High Speed UDP_HS
+    114              IrqHandlerNotUsed   // 30 not used
+    115          };
+    116          
+    117          //------------------------------------------------------------------------------
+    118          //         Exported functions
+    119          //------------------------------------------------------------------------------
+    120          
+    121          //------------------------------------------------------------------------------
+    122          /// This is the code that gets called on processor reset. To initialize the
+    123          /// device.
+    124          //------------------------------------------------------------------------------
+    125          int __low_level_init( void )
+    126          {
+    127              unsigned int * src = __section_begin(".intvec");
+    128          
+    129              AT91C_BASE_NVIC->NVIC_VTOFFR = ((unsigned int)(src)) | (0x0 << 7);
+    130          
+    131              return 1; // if return 0, the data sections will not be initialized.
+    132          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   __low_level_init
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      20  __low_level_init
+     188  __vector_table
+
+ 
+ 188 bytes in section .intvec
+  20 bytes in section .text
+ 
+  20 bytes of CODE  memory
+ 188 bytes of CONST memory
+
+Errors: none
+Warnings: none

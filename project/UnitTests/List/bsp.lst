@@ -1,0 +1,235 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:01 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\bsp\bsp.c                                     #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\bsp\bsp.c" -D UNIT_TESTING=1 --preprocess=c   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\bsp.lst                    #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\bsp.o                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\bsp\bsp.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          
+     10          #include "bsp.h"
+     11          #include "gpio.h"
+     12          
+     13          
+     14          /**************************************************************************
+     15           *                                  Constants
+     16           **************************************************************************/
+     17          //lint -e506 -e514
+     18          #define PMC_MOR_KEY        (0x37 << 16)
+     19          #define PMC_MOSCXTST       (0xF0)      // crystal startup time = xx * (8/32768)
+     20          #define PMC_FAST_RC        (0x1 << 4)  // 0 = 4 MHz, 1 = 8 MHz, 2 = 12 MHz
+     21          #define PLLA_COUNT         (0x3F)      // PLL lock time = xx * (8/32768)
+     22          #define PMC_MCKR_UPLLDIV   (BIT13)
+     23          
+     24          // PLL freq from (MUL + 1) / DIV.
+     25          // NOTE: PLL_CLK is divided by 2 (PMC_MCKR)
+     26          #define PLL_MUL            (7)
+     27          #define PLL_DIV            (1)
+     28          #define PLL_FREQ           ((OSC_CLK_HZ * (PLL_MUL + 1)) / (PLL_DIV * 2))
+     29          
+     30          
+     31          /**************************************************************************
+     32           *                                  Types
+     33           **************************************************************************/
+     34          /**************************************************************************
+     35           *                                  Variables
+     36           **************************************************************************/
+     37          /**************************************************************************
+     38           *                                  Prototypes
+     39           **************************************************************************/
+     40          static void BspClockInit(void);
+     41          
+     42          
+     43          /**************************************************************************
+     44           *                                  Global Functions
+     45           **************************************************************************/
+     46          void BspInit(void)
+     47          {
+     48             GpioInit();
+     49             BspPeriphOn(PERIPH_PMC);
+     50             BspClockInit();
+     51             AT91C_BASE_PMC->PMC_FSMR &= ~AT91C_PMC_LPM;
+     52             AT91C_BASE_NVIC->NVIC_SCR &= ~AT91C_NVIC_SLEEPDEEP;
+     53          }
+     54          
+     55          u32 BspGetCpuClkFreq(void)
+     56          {
+     57             // This product always uses the PLL ... no need to dynamically calculate the clk frequency
+     58             return PLL_FREQ;
+     59          }
+     60          
+     61          void BspPeriphOn(PERIPH_ID periph)
+     62          {
+     63             AT91C_BASE_PMC->PMC_PCER = _BIT(periph);
+     64          }
+     65          
+     66          void BspPeriphOff(PERIPH_ID periph)
+     67          {
+     68             AT91C_BASE_PMC->PMC_PCDR = _BIT(periph);
+     69          }
+     70          
+     71          
+     72          void BspSleepWhile(PFN_SLEEP pfnSleep)
+     73          {
+     74             for (;;)
+     75             {
+     76                __enable_interrupt();
+     77                __disable_interrupt();
+     78                if (pfnSleep())
+     79                {
+     80                   __WFI();
+     81                }
+     82                else
+     83                {
+     84                   break;
+     85                }
+     86             }
+     87             __enable_interrupt();
+     88          }
+     89          
+     90          
+     91          /**************************************************************************
+     92           *                                 Private Functions
+     93           **************************************************************************/
+     94          static void BspClockInit(void)
+     95          {
+     96             // Enable the master clock on the PKC0 clock out pin (PA_27_CLOCK_OUT)
+     97             AT91C_BASE_PMC->PMC_PCKR[0] = AT91C_PMC_CSS_SYS_CLK | AT91C_PMC_PRES_CLK;
+     98             AT91C_BASE_PMC->PMC_SCER = AT91C_PMC_PCK0;
+     99          
+    100             // Turn on the main oscillator and wait for it to start up before switching to it
+    101             AT91C_BASE_PMC->PMC_MOR = (!AT91C_CKGR_CFDEN | !AT91C_CKGR_MOSCSEL | PMC_MOR_KEY | PMC_MOSCXTST |
+    102                                        PMC_FAST_RC | AT91C_CKGR_MOSCRCEN | !AT91C_CKGR_WAITMODE |
+    103                                        !AT91C_CKGR_MOSCXTBY | AT91C_CKGR_MOSCXTEN);
+    104             do{} while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCXTS));
+    105             AT91C_BASE_PMC->PMC_MOR |= (AT91C_CKGR_MOSCSEL | PMC_MOR_KEY);
+    106          
+    107             // Initialize PLLA and wait for lock
+    108             AT91C_BASE_PMC->PMC_PLLAR = (AT91C_CKGR_SRC | (PLL_MUL << 16) | (PLLA_COUNT << 8) | (PLL_DIV)) ;
+    109             do{} while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCKA));
+    110          
+    111             // Before switching to new clock, ensure that Flash Wait State is valid for the new freq
+    112             AT91C_BASE_EFC0->EFC_FMR = AT91C_EFC_FWS_2WS;
+    113          
+    114             // Now switch to the PLL clock (follow sequence from pg. 472 of manual)
+    115             AT91C_BASE_PMC->PMC_MCKR = (PMC_MCKR_UPLLDIV | AT91C_PMC_PRES_CLK_2 | AT91C_PMC_CSS_MAIN_CLK);
+    116             do{} while(!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY));
+    117             AT91C_BASE_PMC->PMC_MCKR = (PMC_MCKR_UPLLDIV | AT91C_PMC_PRES_CLK_2 | AT91C_PMC_CSS_PLLA_CLK);
+    118             do{} while(!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY));
+    119          
+    120             //TODO: CKGR_UCKR for USB? Or move to USB driver?
+    121          // AT91C_BASE_CKGR->CKGR_UCKR |= (AT91C_CKGR_UPLLCOUNT & (3 << 20)) | AT91C_CKGR_UPLLEN;
+    122          // while ( !(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCKU) );
+    123          }
+    124          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   BspClockInit
+       0   BspGetCpuClkFreq
+       8   BspInit
+         8   -> BspClockInit
+         8   -> BspPeriphOn
+         8   -> GpioInit
+       0   BspPeriphOff
+       0   BspPeriphOn
+       8   BspSleepWhile
+         8   -- Indirect call
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable4
+       4  ??DataTable4_1
+       4  ??DataTable4_10
+       4  ??DataTable4_11
+       4  ??DataTable4_12
+       4  ??DataTable4_13
+       4  ??DataTable4_14
+       4  ??DataTable4_2
+       4  ??DataTable4_3
+       4  ??DataTable4_4
+       4  ??DataTable4_5
+       4  ??DataTable4_6
+       4  ??DataTable4_7
+       4  ??DataTable4_8
+       4  ??DataTable4_9
+      96  BspClockInit
+       4  BspGetCpuClkFreq
+      42  BspInit
+      10  BspPeriphOff
+      10  BspPeriphOn
+      22  BspSleepWhile
+
+ 
+ 244 bytes in section .text
+ 
+ 244 bytes of CODE memory
+
+Errors: none
+Warnings: none

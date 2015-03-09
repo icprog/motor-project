@@ -1,0 +1,447 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:11 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\utils\utils.c                             #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\utils\utils.c" -D UNIT_TESTING=1          #
+#                    --preprocess=c "C:\Users\Quinn\Documents\School\MPG\SVN  #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\utils.lst                  #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\utils.o                     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\utils\utils.c
+      1          /*******************************************************************************************
+      2           Generic Utilities
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "utils.h"
+     12          #include <ctype.h>	//lint !e537
+     13          #include <stdlib.h>	//lint !e537
+     14          #include <string.h>	//lint !e537
+     15          #include <stdio.h>	//lint !e537
+     16          #include <stdlib.h>	//lint !e537
+     17          #include <stdarg.h>	//lint !e537
+     18          
+     19          
+     20          /**************************************************************************
+     21           *                                  Constants
+     22           **************************************************************************/
+     23          /**************************************************************************
+     24           *                                  Types
+     25           **************************************************************************/
+     26          /**************************************************************************
+     27           *                                  Variables
+     28           **************************************************************************/
+     29          /**************************************************************************
+     30           *                                  Prototypes
+     31           **************************************************************************/
+     32          /**************************************************************************
+     33           *                                  Global Functions
+     34           **************************************************************************/
+     35          BOOL CpuIsLittleEndian(void)
+     36          {
+     37          	UINT16 n = 1;
+     38          	char *p = (char *)&n;
+     39          	return (BOOL)(*p == 1);
+     40          }
+     41          
+     42          INT32 antoi(char const *pStr, UINT32 maxChars)
+     43          {
+     44          	char buffer[12];
+     45          	maxChars = MIN(sizeof(buffer)-1, maxChars);
+     46          	memcpy(buffer, pStr, maxChars);
+     47          	buffer[maxChars] = '\0';
+     48          	return atoi(buffer);
+     49          }
+     50          
+     51          UINT32 GetStringIndexFromTable(char const *const *ppTable, char const *pSearchStr, UINT32 maxIndex)
+     52          {
+     53          	UINT32 stringIndex;
+     54          	for (stringIndex = 0; stringIndex < maxIndex; stringIndex++)
+     55          	{
+     56          		if (strncmp(pSearchStr, ppTable[stringIndex], strlen(ppTable[stringIndex])) == STR_CMP_MATCH)
+     57          		{
+     58          			break;
+     59          		}
+     60          	}
+     61          	return stringIndex;
+     62          }
+     63          
+     64          int stricmp(char const *pStr1, char const *pStr2)
+     65          {
+     66          	UINT32 len1 = strlen(pStr1);
+     67          	UINT32 len2 = strlen(pStr2);
+     68          
+     69          	return strnicmp(pStr1, pStr2, (len1 > len2)? len1: len2);
+     70          }
+     71          int strnicmp(char const *pStr1, char const *pStr2, UINT32 len)
+     72          {
+     73          	char c1, c2;
+     74          	while (len--)
+     75          	{
+     76          		c1 = *pStr1++;
+     77          		c2 = *pStr2++;
+     78          		c1 = (char)toupper((int)c1);
+     79          		c2 = (char)toupper((int)c2);
+     80          
+     81          		if (c1 < c2)
+     82          			return -1;
+     83          		else if (c1 > c2)
+     84          			return 1;
+     85          		else if (c1 == '\0')
+     86          			return 0;
+     87          	}
+     88          	return 0;
+     89          }
+     90          char * stristr(char *pStr1, char *pStr2)
+     91          {
+     92          	char c1, c2;
+     93          	UINT32 len2 = strlen(pStr2);
+     94          
+     95          	c1 = (char)toupper((int)*pStr2);
+     96          	while (*pStr1)
+     97          	{
+     98          		c2 = (char)toupper((int)*pStr1);
+     99          		if (c1 == c2)
+    100          		{
+    101          			if (strnicmp(pStr1, pStr2, len2) == 0)
+    102          			{
+    103          				return pStr1;
+    104          			}
+    105          		}
+    106          		pStr1++;
+    107          	}
+    108          	return NULL;
+    109          }//lint !e818
+    110          
+    111          char const * strTrimFront(char const *pStr)
+    112          {
+    113          	if (pStr)
+    114          	{
+    115          		while ((*pStr != '\0') && isspace(*pStr))
+    116          		{
+    117          			pStr++;
+    118          		}
+    119          	}
+    120          	return pStr;
+    121          }
+    122          char * strTrimTail(char *pStr)
+    123          {
+    124          	if (pStr)
+    125          	{
+    126          		char *pEnd = &pStr[(strlen(pStr) - 1)];
+    127          		while (pEnd > pStr)
+    128          		{
+    129          			if (!isspace(*pEnd))
+    130          			{
+    131          				pEnd[1] = '\0';
+    132          				break;
+    133          			}
+    134          			pEnd--;
+    135          		}
+    136          	}
+    137          	return pStr;
+    138          }
+    139          char * strTrim(char *pStr)
+    140          {
+    141          	if (pStr)
+    142          	{
+    143          		while ((*pStr != '\0') && isspace(*pStr))
+    144          		{
+    145          			pStr++;
+    146          		}
+    147          		pStr = strTrimTail(pStr);
+    148          	}
+    149          	return pStr;
+    150          }
+    151          
+    152          char * Strxtoa(UINT32 v,char *pStr, INT32 r, INT32 isNeg)
+    153          {
+    154          	char *pStart = pStr;
+    155          	char buf[33],*p;
+    156          
+    157          	p = buf;
+    158          
+    159          	do
+    160          	{
+    161          		*p++ = "0123456789abcdef"[(v % (UINT32)r) & 0xf];
+    162          	} while (v /= (UINT32)r);	//lint !e720
+    163          
+    164          	if (isNeg)
+    165          	{
+    166          		*p++ = '-';
+    167          	}
+    168          
+    169          	do
+    170          	{
+    171          		*pStr++ = *--p;
+    172          	} while (buf != p);
+    173          
+    174          	*pStr = '\0';
+    175          
+    176          	return pStart;
+    177          }
+    178          char * Stritoa(INT32 v, char *pStr, INT32 r)
+    179          {
+    180          	if ((r == 10) && (v < 0))
+    181          	{
+    182          		return Strxtoa((UINT32)(-v), pStr, r, 1);
+    183          	}
+    184          	return Strxtoa((UINT32)(v), pStr, r, 0);
+    185          }
+    186          
+    187          void strncatf(char *pDest, UINT32 maxLen, char const *pFormat, ...)
+    188          {
+    189          	va_list pArg;
+    190          	UINT32 len = strlen(pDest);
+    191          	if (maxLen > len)
+    192          	{
+    193          		va_start(pArg, pFormat);
+    194          		vsnprintf(pDest + len, maxLen - len, pFormat, pArg);	//lint !e534
+    195          		va_end(pArg);
+    196          	}
+    197          }
+    198          
+    199          
+    200          UINT32 aton(char const *pAddr)
+    201          {
+    202          	// Example: 192.168.1.120 = 0x7801ABC0
+    203          	UINT32 retAddr = 0;
+    204          	char const *pStart = pAddr;
+    205          	for (UINT32 i = 0; i < 4; i++)
+    206          	{
+    207          		retAddr |= ((UINT32)atoi(pStart) & 0xFF) << (UINT32)(8 * i);
+    208          		pStart = strchr(pStart, '.');
+    209          		if (pStart)
+    210          		{
+    211          			pStart++;	// move past the '.' char
+    212          		}
+    213          		else
+    214          		{
+    215          			break;
+    216          		}
+    217          	}
+    218          	return retAddr;
+    219          }
+    220          
+    221          char const * ntoa(UINT32 addr)
+    222          {
+    223          	static char a[16];
+    224          	ntoa_r(a, addr);
+    225          	return a;
+    226          }
+    227          
+    228          void ntoa_r(char *pDest, UINT32 addr)
+    229          {
+    230          #define UINT_FIELD(b)		(((UINT32)b) & 0xFF)
+    231          	// Example: 0x7801ABC0 = 192.168.1.120
+    232          	char *baddr = (char *)&addr;
+    233          	sprintf(pDest, "%u.%u.%u.%u",
+    234          			  UINT_FIELD(baddr[0]), UINT_FIELD(baddr[1]), UINT_FIELD(baddr[2]), UINT_FIELD(baddr[3]));
+    235          }
+    236          
+    237          void macToa(char *pDest, char const *pMac)
+    238          {
+    239          	sprintf(pDest, "%02X:%02X:%02X:%02X:%02X:%02X",
+    240          			  UINT_FIELD(pMac[0]), UINT_FIELD(pMac[1]), UINT_FIELD(pMac[2]),
+    241          			  UINT_FIELD(pMac[3]), UINT_FIELD(pMac[4]), UINT_FIELD(pMac[5]));
+    242          }
+    243          void atoMac(char *pDest, char const *pMac)
+    244          {
+    245          	for (UINT32 i = 0; i < 6; i++)
+    246          	{
+    247          		pDest[i] = (UINT8)strtoul(&pMac[i*3], NULL, 16);	// each field is 3 digits (i.e. 00:11:22:33:44:55)
+    248          	}
+    249          }
+    250          
+    251          
+    252          //http://stackoverflow.com/questions/746171/best-algorithm-for-bit-reversal-from-msb-lsb-to-lsb-msb-in-c
+    253          //http://graphics.stanford.edu/~seander/bithacks.html
+    254          UINT32 BitReverseWord(UINT32 x)
+    255          {
+    256              x = (((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1));
+    257              x = (((x & 0xcccccccc) >> 2) | ((x & 0x33333333) << 2));
+    258              x = (((x & 0xf0f0f0f0) >> 4) | ((x & 0x0f0f0f0f) << 4));
+    259              x = (((x & 0xff00ff00) >> 8) | ((x & 0x00ff00ff) << 8));
+    260              return((x >> 16) | (x << 16));
+    261          }
+    262          
+    263          
+    264          // "maxUlps" is the "Units in the Last Place", which specifies how big an error the caller is willing
+    265          // to accept in terms of the value of the least significant digits of the FP number's representation.
+    266          // AKA how many representable floats we are willing to accept between A and B
+    267          BOOL Fp32AlmostEqual(FP32 A, FP32 B, INT32 maxUlps)
+    268          {
+    269             // Make sure maxUlps is non-negative and small enough that the
+    270             // default NAN won't compare as equal to anything.
+    271          	ASSERT_RET((maxUlps > 0) && (maxUlps < (4*1024*1024)), FALSE);
+    272          
+    273          	// Make aInt lexicographically ordered as a twos-complement int
+    274          	INT32 aInt = *(INT32*)&A;		//lint !e740
+    275          	if (aInt < 0)
+    276          		aInt = (INT32)0x80000000 - aInt;
+    277          
+    278          	// Make bInt lexicographically ordered as a twos-complement int
+    279          	INT32 bInt = *(INT32*)&B;  	//lint !e740
+    280          	if (bInt < 0)
+    281          		bInt = (INT32)0x80000000 - bInt;
+    282          
+    283          	INT32 intDiff = ABS(aInt - bInt);
+    284          	return (BOOL)(intDiff <= maxUlps);
+    285          }
+    286          
+    287          /**************************************************************************
+    288           *                                 Private Functions
+    289           **************************************************************************/
+    290          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   BitReverseWord
+       4   CpuIsLittleEndian
+       8   Fp32AlmostEqual
+      24   GetStringIndexFromTable
+        24   -> strlen
+        24   -> strncmp
+      16   Stritoa
+        16   -> Strxtoa
+      52   Strxtoa
+      24   antoi
+        24   -> atoi
+        24   -> memcpy
+      16   atoMac
+        16   -> strtoul
+      24   aton
+        24   -> atoi
+        24   -> strchr
+      32   macToa
+        32   -> sprintf
+       8   ntoa
+         8   -> ntoa_r
+      24   ntoa_r
+        24   -> sprintf
+       8   strTrim
+         8   -> isspace
+         8   -> strTrimTail
+       8   strTrimFront
+         8   -> isspace
+      16   strTrimTail
+        16   -> isspace
+        16   -> strlen
+      16   strchr
+        16   -> __iar_Strchr
+      24   stricmp
+        24   -> strlen
+        24   -> strnicmp
+      24   stristr
+        24   -> strlen
+        24   -> strnicmp
+        24   -> toupper
+      32   strncatf
+        32   -> strlen
+        32   -> vsnprintf
+      24   strnicmp
+        24   -> toupper
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      32  ?<Constant "%02X:%02X:%02X:%02X:%...">
+      12  ?<Constant "%u.%u.%u.%u">
+      20  ?<Constant "0123456789abcdef">
+       4  ??DataTable3
+       4  ??DataTable3_1
+       4  ??DataTable3_2
+       4  ??DataTable3_3
+      62  BitReverseWord
+      28  CpuIsLittleEndian
+      70  Fp32AlmostEqual
+      48  GetStringIndexFromTable
+      44  Stritoa
+      74  Strxtoa
+      16  a
+      38  antoi
+      34  atoMac
+      58  aton
+      40  macToa
+      16  ntoa
+      30  ntoa_r
+      40  strTrim
+      32  strTrimFront
+      46  strTrimTail
+      16  strchr
+      42  stricmp
+      74  stristr
+      52  strncatf
+      98  strnicmp
+
+ 
+  16 bytes in section .bss
+  64 bytes in section .rodata
+ 958 bytes in section .text
+ 
+ 942 bytes of CODE  memory (+ 16 bytes shared)
+  64 bytes of CONST memory
+  16 bytes of DATA  memory
+
+Errors: none
+Warnings: none

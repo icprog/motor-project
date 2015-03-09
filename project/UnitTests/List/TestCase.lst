@@ -1,0 +1,184 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:09:09 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\embUnit\embUnit\TestCase.c                #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\embUnit\embUnit\TestCase.c" -D            #
+#                    UNIT_TESTING=1 --preprocess=c                            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" -lcN                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\UnitTests\List\" --diag_suppress Pa050    #
+#                    -o "C:\Users\Quinn\Documents\School\MPG\SVN              #
+#                    Server\project\UnitTests\Obj\" --no_cse --no_unroll      #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Ful #
+#                    l.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN         #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\lib\embUnit\" -I       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\unitTests\" -I      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\List\TestCase.lst               #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\UnitTests\Obj\TestCase.o                  #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\embUnit\embUnit\TestCase.c
+      1          /*
+      2           * COPYRIGHT AND PERMISSION NOTICE
+      3           *
+      4           * Copyright (c) 2003 Embedded Unit Project
+      5           *
+      6           * All rights reserved.
+      7           *
+      8           * Permission is hereby granted, free of charge, to any person obtaining
+      9           * a copy of this software and associated documentation files (the
+     10           * "Software"), to deal in the Software without restriction, including
+     11           * without limitation the rights to use, copy, modify, merge, publish,
+     12           * distribute, and/or sell copies of the Software, and to permit persons
+     13           * to whom the Software is furnished to do so, provided that the above
+     14           * copyright notice(s) and this permission notice appear in all copies
+     15           * of the Software and that both the above copyright notice(s) and this
+     16           * permission notice appear in supporting documentation.
+     17           *
+     18           * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+     19           * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+     20           * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+     21           * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+     22           * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY
+     23           * SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER
+     24           * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+     25           * CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+     26           * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+     27           *
+     28           * Except as contained in this notice, the name of a copyright holder
+     29           * shall not be used in advertising or otherwise to promote the sale,
+     30           * use or other dealings in this Software without prior written
+     31           * authorization of the copyright holder.
+     32           *
+     33           * $Id: TestCase.c,v 1.6 2004/02/10 16:19:29 arms22 Exp $
+     34           */
+     35          #include "Test.h"
+     36          #include "TestCase.h"
+     37          #include "TestResult.h"
+     38          
+     39          static TestResult* result_;
+     40          static TestCase* self_;
+     41          
+     42          char* TestCase_name(TestCase* self)
+     43          {
+     44          	return self->name;
+     45          }
+     46          
+     47          void TestCase_run(TestCase* self,TestResult* result)
+     48          {
+     49          	TestResult_startTest(result, (Test*)self);
+     50          	if (self->setUp) {
+     51          		self->setUp();
+     52          	}
+     53          	if (self->runTest) {
+     54          		TestResult* wr =result_;	/*push*/
+     55          		TestCase* ws = self_;	/*push*/
+     56          		result_ = result;
+     57          		self_ = self;
+     58          		self->runTest();
+     59          		result_ = wr;	/*pop*/
+     60          		self_ = ws;	/*pop*/
+     61          	}
+     62          	if (self->tearDown) {
+     63          		self->tearDown();
+     64          	}
+     65          	TestResult_endTest(result, (Test*)self);
+     66          }
+     67          
+     68          int TestCase_countTestCases(TestCase* self)
+     69          {
+     70          	return 1;
+     71          }
+     72          
+     73          const TestImplement TestCaseImplement = {
+     74          	(TestNameFunction)			TestCase_name,
+     75          	(TestRunFunction)			TestCase_run,
+     76          	(TestCountTestCasesFunction)TestCase_countTestCases,
+     77          };
+     78          
+     79          void addFailure(const char *msg, long line, const char *file)
+     80          {
+     81          	TestResult_addFailure(result_, (Test*)self_, (char*)msg, line, (char*)file);
+     82          }
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   TestCase_countTestCases
+       0   TestCase_name
+      24   TestCase_run
+        24   -- Indirect call
+        24   -> TestResult_endTest
+        24   -> TestResult_startTest
+      24   addFailure
+        24   -> TestResult_addFailure
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable1
+       4  ??DataTable1_1
+      12  TestCaseImplement
+       6  TestCase_countTestCases
+       4  TestCase_name
+      78  TestCase_run
+      30  addFailure
+       4  result_
+       4  self_
+
+ 
+   8 bytes in section .bss
+  12 bytes in section .rodata
+ 126 bytes in section .text
+ 
+ 126 bytes of CODE  memory
+  12 bytes of CONST memory
+   8 bytes of DATA  memory
+
+Errors: none
+Warnings: none

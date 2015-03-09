@@ -1,0 +1,723 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:34 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\lib\file\hooks\FatFs\fileFat.c                #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\lib\file\hooks\FatFs\fileFat.c" -D            #
+#                    __SAM3U2C__ --preprocess=c "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\Debug\List\" -lcN             #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\fileFat.lst                    #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\fileFat.o                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\lib\file\hooks\FatFs\fileFat.c
+      1          /*******************************************************************************************
+      2          This is free, public domain software and there is NO WARRANTY.
+      3          No restriction on use. You can use, modify and redistribute it for
+      4          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      5          
+      6          Sheldon Patterson
+      7          ********************************************************************************************/
+      8          
+      9          
+     10          #include "fileFat.h"
+     11          #include "diskio.h"
+     12          #include "ff.h"
+     13          #include "threadUtils.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          
+     20          
+     21          /**************************************************************************
+     22           *                                  Types
+     23           **************************************************************************/
+     24          
+     25          
+     26          /**************************************************************************
+     27           *                                  Variables
+     28           **************************************************************************/
+     29          
+     30          
+     31          /**************************************************************************
+     32           *                                  Prototypes
+     33           **************************************************************************/
+     34          static BYTE FileFatModeToFlags(FOPEN_MODE openMode);
+     35          static FIL * FileFatGetFreeFile(FAT_DISK *pFs);
+     36          static void FileFatFreeFile(FIL *pFile);
+     37          static time_t FileFatInfoToTime(WORD date, WORD tim);
+     38          static FATTRIB FileFatModeFromAttribute(BYTE fattrib);
+     39          static int FileFatErrorCode(FRESULT result);
+     40          static FDISK_IOCTLS FileFatGetIoctl(BYTE controlCode);
+     41          
+     42          static time_t read_fattime (DWORD fTime);
+     43          
+     44          
+     45          /**************************************************************************
+     46           *                                  Global Functions
+     47           **************************************************************************/
+     48          // Disk operations:
+     49          FDISK_RESULT FileFatMount(FDISK *pDisk)
+     50          {
+     51          	FAT_DISK *pFs = (FAT_DISK *)pDisk->pFsData;
+     52          	FATFS *pFatFs = &pFs->fileSystem;
+     53          	FDISK_RESULT result = FDISK_ERROR;
+     54          
+     55          	pFatFs->drv = (BYTE)pDisk->diskNum;
+     56          	memset(pFs->dirs, 0, sizeof(pFs->dirs));
+     57          	if (f_mount(pFatFs->drv, pFatFs) == FR_OK)
+     58          	{
+     59          		// ELM FatFs doesn't actually do anything when mounting, so we have to perform an operation
+     60          		// in order to ensure that disk is okay
+     61          		DWORD freeClusters;
+     62          		char drive[4];
+     63          		sprintf(drive, "%1d:/", pDisk->diskNum);
+     64          		if (f_getfree(drive, &freeClusters, &pFatFs) == FR_OK)
+     65          		{
+     66          			result = FDISK_OK;
+     67          		}
+     68          	}
+     69          	return result;
+     70          }//lint !e818
+     71          
+     72          FDISK_RESULT FileFatUnmount(FDISK *pDisk)
+     73          {
+     74          	FDISK_RESULT result;
+     75          	if (f_mount((BYTE)pDisk->diskNum, NULL) != FR_OK)
+     76          	{
+     77          		result = FDISK_ERROR;
+     78          	}
+     79          	else if (pDisk && pDisk->pfnClose)
+     80          	{
+     81          		result = pDisk->pfnClose();
+     82          	}
+     83          	else
+     84          	{
+     85          		result = FDISK_OK;
+     86          	}
+     87          	return result;
+     88          }//lint !e818
+     89          
+     90          FDISK_RESULT FileFatGetStats(FDISK const *pDisk, FDISK_STATS *pStats)
+     91          {
+     92          	FDISK_RESULT result;
+     93          	FATFS *pFatFs = &((FAT_DISK *)pDisk->pFsData)->fileSystem;
+     94          	DWORD freeClusters;
+     95          	char drive[4];
+     96          	sprintf(drive, "%1d:/", pDisk->diskNum);
+     97          
+     98          	if (f_getfree(drive, &freeClusters, &pFatFs) != FR_OK)
+     99          	{
+    100          		result = FDISK_ERROR;
+    101          	}
+    102          	else
+    103          	{
+    104          		result = FDISK_OK;
+    105          		pStats->diskNum = pDisk->diskNum;
+    106          		pStats->isMounted = pDisk->isMounted;
+    107          		pStats->blockSize = 1;		// 1 sector erase size
+    108          #if _MAX_SS != 512
+    109          		pStats->sectorSize = ((FAT_DISK *)pDisk->pFsData)->ssize;
+    110          #else
+    111          		pStats->sectorSize = 512;
+    112          #endif
+    113          		pStats->sectorCount = (pFatFs->n_fatent - 2) * pFatFs->csize;
+    114          		pStats->sectorFreeCount = (UINT32)freeClusters * pFatFs->csize;
+    115          	}
+    116          	return result;
+    117          }
+    118          
+    119          
+    120          // File Operations:
+    121          int FileFatFOpen(void *pFs, char const *pFileName, FOPEN_MODE openMode)
+    122          {
+    123          	int retVal;
+    124          	FAT_DISK *pDev = (FAT_DISK *)pFs;
+    125          	FIL *pFile = FileFatGetFreeFile(pDev);
+    126          	if (!pFile)
+    127          	{
+    128          		retVal = (int)FERR_TOO_MANY;
+    129          	}
+    130          	else
+    131          	{
+    132          		FRESULT result = f_open(pFile, pFileName, FileFatModeToFlags(openMode));
+    133          		if (result == FR_OK)
+    134          		{
+    135          			retVal = (int)pFile;
+    136          
+    137          			// NOTE: FatFS doesn't support "append" directly, so we have to seek to the end
+    138          			if ((openMode == FOPEN_APPEND) || (openMode == FOPEN_APPEND_PLUS))
+    139          			{
+    140          				if (f_lseek(pFile, pFile->fsize) != FR_OK)
+    141          				{
+    142          					retVal = FileFatFClose((int)pFile);
+    143          				}
+    144          			}
+    145          		}
+    146          		else
+    147          		{
+    148          			FileFatFreeFile(pFile);
+    149          			retVal = FileFatErrorCode(result);
+    150          		}
+    151          	}
+    152          	return retVal;
+    153          }
+    154          
+    155          int FileFatFClose(int fd)
+    156          {
+    157          	FRESULT result = f_close((FIL *)fd);
+    158          	FileFatFreeFile((FIL *)fd);
+    159          	return FileFatErrorCode(result);
+    160          }
+    161          
+    162          int FileFatFRead(int fd, void *pDest, int len)
+    163          {
+    164          	UINT readLen;
+    165          	FRESULT res = f_read((FIL *)fd, pDest, (UINT)len, &readLen);
+    166          	return (res == FR_OK)? (int)readLen : FileFatErrorCode(res);
+    167          }
+    168          
+    169          int FileFatFWrite(int fd, const void *pSrc, int len)
+    170          {
+    171          	UINT writeLen;
+    172          	FRESULT res = f_write((FIL *)fd, pSrc, (UINT32)len, &writeLen);
+    173          	return (res == FR_OK)? (int)writeLen : FileFatErrorCode(res);
+    174          }
+    175          
+    176          long FileFatFSeek (int fd, long offset, FSEEK_ORIGIN origin)
+    177          {
+    178          	FIL *pFile = (FIL *)fd;
+    179          	FRESULT result;
+    180          	DWORD fileOffset = (origin == FSEEK_CUR)? pFile->fptr : (origin == FSEEK_END)? pFile->fsize : 0;
+    181          
+    182          	if (offset < 0)
+    183          	{
+    184          		offset = -offset;
+    185          		if (offset > (long)fileOffset)
+    186          		{
+    187          			fileOffset = 0;
+    188          		}
+    189          		else
+    190          		{
+    191          			fileOffset -= (DWORD)offset;
+    192          		}
+    193          	}
+    194          	else
+    195          	{
+    196          		fileOffset += (DWORD)offset;
+    197          	}
+    198          
+    199          	result = f_lseek(pFile, fileOffset);
+    200          	return (result == FR_OK)? FileFatFTell(fd) : (long)FileFatErrorCode(result);
+    201          }
+    202          
+    203          long FileFatFTell(int fd)
+    204          {
+    205          	return (long)((FIL *)fd)->fptr;
+    206          }
+    207          
+    208          int FileFatFEof(int fd)
+    209          {
+    210          	return f_eof((FIL *)fd);
+    211          }
+    212          
+    213          int FileFatFFlush(int fd)
+    214          {
+    215          	FRESULT result = f_sync((FIL *)fd);
+    216          	return FileFatErrorCode(result);
+    217          }
+    218          
+    219          int FileFatRename(char const *pOld, char const *pNew)
+    220          {
+    221          	FRESULT result = f_rename(pOld, pNew);
+    222          	return FileFatErrorCode(result);
+    223          }
+    224          
+    225          int FileFatRemove(char const *pName)
+    226          {
+    227          	FRESULT result = f_unlink(pName);	// File or empty directory
+    228          	return FileFatErrorCode(result);
+    229          }
+    230          
+    231          int FileFatFStat(int fd, FSTAT *pDest)
+    232          {
+    233          	FIL *pFile = (FIL *)fd;
+    234          	pDest->st_mode = FileFatModeFromAttribute(pFile->flag);
+    235          	pDest->st_size = (int)pFile->fsize;
+    236          	pDest->st_mtime = pDest->st_ctime =
+    237          		FileFatInfoToTime(LD_WORD(pFile->dir_ptr+/*DIR_WrtDate*/24),
+    238          								LD_WORD(pFile->dir_ptr+/*DIR_WrtTime*/22));
+    239          	return FERR_NONE;
+    240          }
+    241          
+    242          int FileFatStat(char const *pName, FSTAT *pDest)
+    243          {
+    244          	FILINFO fInfo;
+    245          	FRESULT result;
+    246          
+    247          #if _USE_LFN
+    248          	fInfo.lfname = NULL;
+    249          	fInfo.lfsize = 0;
+    250          #endif
+    251          	result = f_stat(pName, &fInfo);
+    252          	if (result == FR_OK)
+    253          	{
+    254          		pDest->st_mode = FileFatModeFromAttribute(fInfo.fattrib);
+    255          		pDest->st_size = (int)fInfo.fsize;
+    256          		pDest->st_mtime = pDest->st_ctime = FileFatInfoToTime(fInfo.fdate, fInfo.ftime);
+    257          	}
+    258          	return FileFatErrorCode(result);
+    259          }
+    260          
+    261          
+    262          // Directory operations:
+    263          int FileFatMkDir(char const *pName)
+    264          {
+    265          	FRESULT result = f_mkdir(pName);
+    266          	return FileFatErrorCode(result);
+    267          }
+    268          
+    269          void * FileFatOpenDir(void *pFs, char const *pName)
+    270          {
+    271          	FAT_DISK *pDev = (FAT_DISK *)pFs;
+    272          	FRESULT result = FR_TOO_MANY_OPEN_FILES;
+    273          	FAT_DIR *pDir = NULL;
+    274          
+    275          	for (UINT8F i = 0; i < F_MAX_FINDS_PER_DISK; i++)
+    276          	{
+    277          		if (!pDev->dirs[i].isOpen)
+    278          		{
+    279          			result = f_opendir(&pDev->dirs[i].dir, pName);
+    280          			if (result == FR_OK)
+    281          			{
+    282          				pDev->dirs[i].isOpen = TRUE;
+    283          				pDir = &pDev->dirs[i];
+    284          			}
+    285          			break;
+    286          		}
+    287          	}
+    288          	return pDir;
+    289          }
+    290          
+    291          int FileFatReadDir(FFIND *pDest, void *pDirArg)
+    292          {
+    293          	FAT_DIR *pDir = (FAT_DIR *)pDirArg;
+    294          	FRESULT result;
+    295          	FILINFO fInfo;
+    296          #if _USE_LFN
+    297          	fInfo.lfname = &pDest->fileName[strlen(pDest->fileName)];
+    298          	fInfo.lfsize = sizeof(pDest->fileName) - (UINT32)(fInfo.lfname - pDest->fileName);
+    299          #endif
+    300          
+    301          	result = f_readdir(&pDir->dir, &fInfo);
+    302          	if ((result == FR_OK) && (fInfo.fname[0] != '\0'))
+    303          	{
+    304          		pDest->foundType = (fInfo.fattrib & AM_DIR)? FFIND_TYPE_DIR: FFIND_TYPE_FILE;
+    305          		pDest->readOnly = (fInfo.fattrib & AM_RDO)? TRUE : FALSE;
+    306          		pDest->createTime = pDest->lastModifyTime = FileFatInfoToTime(fInfo.fdate, fInfo.ftime);
+    307          #if _USE_LFN
+    308          		if (*fInfo.lfname == '\0')
+    309          #endif
+    310          		{
+    311          			strcat(pDest->fileName, fInfo.fname);
+    312          		}
+    313          	}
+    314          	else
+    315          	{
+    316          		pDest->foundType = FFIND_TYPE_DONE;
+    317          		result = FR_NO_FILE;
+    318          		if (pDir)
+    319          			pDir->isOpen = FALSE;
+    320          	}
+    321          	return FileFatErrorCode(result);
+    322          }
+    323          
+    324          int FileFatCloseDir(void *pDirArg)
+    325          {
+    326          	if (pDirArg)
+    327          	{
+    328          		((FAT_DIR *)pDirArg)->isOpen = FALSE;
+    329          	}
+    330          	return (int)FERR_NONE;
+    331          }
+    332          
+    333          
+    334          /**************************************************************************
+    335           *                                 Private Functions
+    336           **************************************************************************/
+    337          static BYTE FileFatModeToFlags(FOPEN_MODE openMode)
+    338          {
+    339          	static const BYTE openFlags[FOPEN_END] =
+    340          	{
+    341          		[FOPEN_READ]			= (FA_READ | FA_OPEN_EXISTING),
+    342          		[FOPEN_WRITE]			= (FA_WRITE | FA_CREATE_ALWAYS),
+    343          		[FOPEN_APPEND]			= (FA_WRITE | FA_OPEN_ALWAYS),
+    344          		[FOPEN_READ_PLUS]		= (FA_READ | FA_WRITE | FA_OPEN_EXISTING),
+    345          		[FOPEN_WRITE_PLUS]	= (FA_READ | FA_WRITE | FA_CREATE_ALWAYS),
+    346          		[FOPEN_APPEND_PLUS]	= (FA_READ | FA_WRITE | FA_OPEN_ALWAYS)
+    347          	};
+    348          	return (openMode < FOPEN_END)? openFlags[openMode] : 0;
+    349          }
+    350          
+    351          static FIL * FileFatGetFreeFile(FAT_DISK *pFs)
+    352          {
+    353          	FIL *pFile = NULL;
+    354          	for (int i = 0; i < F_MAX_FILES_PER_DISK; i++)
+    355          	{
+    356          		if (pFs->files[i].fs == NULL)
+    357          		{
+    358          			pFile = &pFs->files[i];
+    359          			pFile->fs = &pFs->fileSystem;
+    360          			break;
+    361          		}
+    362          	}
+    363          	return pFile;
+    364          }
+    365          
+    366          static void FileFatFreeFile(FIL *pFile)
+    367          {
+    368          	if (pFile)
+    369          	{
+    370          		pFile->fs = NULL;
+    371          	}
+    372          }
+    373          
+    374          static time_t FileFatInfoToTime(WORD fdate, WORD ftime)
+    375          {
+    376          	return read_fattime(((DWORD)fdate << 16) | (DWORD)ftime);
+    377          }
+    378          
+    379          static FATTRIB FileFatModeFromAttribute(BYTE fattrib)
+    380          {
+    381          	FATTRIB attrib = 0;
+    382          	if (fattrib & AM_RDO)	attrib |= FA_RO;
+    383          	if (fattrib & AM_HID)	attrib |= FA_HID;
+    384          	if (fattrib & AM_SYS)	attrib |= FA_SYS;
+    385          	if (fattrib & AM_DIR)	attrib |= FA_DIR;
+    386          	if (fattrib & AM_ARC)	attrib |= FA_ARC;
+    387          	return attrib;
+    388          }
+    389          
+    390          static int FileFatErrorCode(FRESULT result)
+    391          {
+    392          	FERR err;
+    393          	switch (result)
+    394          	{
+    395          	case FR_OK:							err = FERR_NONE;		break;
+    396          	case FR_DISK_ERR:					err = FERR_DISK;		break;
+    397          	case FR_INT_ERR:					err = FERR_UNKNOWN;	break;
+    398          	case FR_NOT_READY:				err = FERR_DISK;		break;
+    399          	case FR_NO_FILE:					err = FERR_NO_FILE;	break;
+    400          	case FR_NO_PATH:					err = FERR_NO_FILE;	break;
+    401          	case FR_INVALID_NAME:			err = FERR_INVALID;	break;
+    402          	case FR_DENIED:					err = FERR_ACCESS;	break;
+    403          	case FR_EXIST:						err = FERR_ACCESS;	break;
+    404          	case FR_INVALID_OBJECT:			err = FERR_INVALID;	break;
+    405          	case FR_WRITE_PROTECTED:		err = FERR_ACCESS;	break;
+    406          	case FR_INVALID_DRIVE:			err = FERR_DISK;		break;
+    407          	case FR_NOT_ENABLED:				err = FERR_DISK;		break;
+    408          	case FR_NO_FILESYSTEM:			err = FERR_FORMAT;	break;
+    409          	case FR_MKFS_ABORTED:			err = FERR_FORMAT;	break;
+    410          	case FR_TIMEOUT:					err = FERR_DISK;		break;
+    411          	case FR_LOCKED:					err = FERR_ACCESS;	break;
+    412          	case FR_NOT_ENOUGH_CORE:		err = FERR_DISK;		break;
+    413          	case FR_TOO_MANY_OPEN_FILES:	err = FERR_TOO_MANY;	break;
+    414          	default:								err = FERR_UNKNOWN;	break;
+    415          	}
+    416          	return (int)err;
+    417          }
+    418          
+    419          static FDISK_IOCTLS FileFatGetIoctl(BYTE controlCode)
+    420          {
+    421          	FDISK_IOCTLS ioctl;
+    422          	switch (controlCode)
+    423          	{
+    424          	default:
+    425          	case CTRL_SYNC:			ioctl = FDISK_SYNC;					break;
+    426          	case GET_SECTOR_SIZE:	ioctl = FDISK_GET_SECTOR_SIZE;	break;
+    427          	case GET_SECTOR_COUNT:	ioctl = FDISK_GET_SECTOR_COUNT;	break;
+    428          	case GET_BLOCK_SIZE:		ioctl = FDISK_GET_BLOCK_SIZE;		break;
+    429          	case CTRL_ERASE_SECTOR:	ioctl = FDISK_ERASE_SECTOR;		break;
+    430          	}
+    431          	return ioctl;
+    432          }
+    433          
+    434          
+    435          
+    436          /**************************************************************************
+    437           *    									  FAT Driver Hooks (diskio.h)
+    438           *
+    439           * These functions are called by ELM-Chan FatFs to read/write to the disk
+    440           **************************************************************************/
+    441          DWORD get_fattime (void)
+    442          {
+    443          #ifdef FAT_TIME_DIS
+    444             return 0;
+    445          #else
+    446             struct tm timeStruct;
+    447             time_t tm = time(NULL);
+    448             localtime_r(&tm, &timeStruct);
+    449          
+    450             /* Pack date and time into a DWORD variable */
+    451             return ( ((DWORD)(timeStruct.tm_year - 80) << 25)	// Bits 31:25 Set years since 1980 (tm_year is since 1900)
+    452                      |((DWORD)(timeStruct.tm_mon + 1) << 21)	// Bits 24:21 Month 1-12 (tm_mon is 0-11)
+    453                      |((DWORD)timeStruct.tm_mday << 16)			// Bits 20:16 Day of month (tm_mday matches)
+    454                      |((DWORD)timeStruct.tm_hour << 11)			// Bits 15:11 Hour 0-23
+    455                      |((DWORD)timeStruct.tm_min << 5)				// Bits 10:5  Minute 0-59
+    456                      |((DWORD)timeStruct.tm_sec >> 1));			// Bits 4:0   Seconds / 2
+    457          #endif
+    458          }
+    459          
+    460          static time_t read_fattime (DWORD fTime)
+    461          {
+    462          #ifdef FAT_TIME_DIS
+    463             return 0;
+    464          #else
+    465             struct tm timeStruct;
+    466             timeStruct.tm_year =  (fTime >> 25) + 80;
+    467             timeStruct.tm_hour = ((fTime & (BIT21 | BIT22 | BIT23 | BIT24)) >> 21) - 1;
+    468             timeStruct.tm_mday = ((fTime & (BIT20 | BIT19 | BIT18 | BIT17 | BIT16)) >> 16);
+    469             timeStruct.tm_hour = ((fTime & (BIT15 | BIT14 | BIT13 | BIT12 | BIT11)) >> 11);
+    470             timeStruct.tm_min  = ((fTime & (BIT10 | BIT9 | BIT8 | BIT7 | BIT6 | BIT5)) >> 5);
+    471             timeStruct.tm_sec  = ((fTime & (BIT4 | BIT3 | BIT2 | BIT1 | BIT0)) << 1);
+    472             return mktime(&timeStruct);
+    473          #endif
+    474          }//lint !e715
+    475          
+    476          
+    477          DSTATUS disk_initialize(BYTE drvNum)
+    478          {
+    479          	FDISK *pDisk = FileDiskFromNum((FDISK_NUM)drvNum);
+    480          	return pDisk? (DSTATUS)pDisk->pfnOpen() : STA_NOINIT;
+    481          }
+    482          
+    483          DSTATUS disk_status(BYTE drvNum)
+    484          {
+    485          	FDISK *pDisk = FileDiskFromNum((FDISK_NUM)drvNum);
+    486          	return pDisk? (DSTATUS)pDisk->pfnIoctl(FDISK_STATUS, NULL) : STA_NOINIT;
+    487          }
+    488          
+    489          DRESULT disk_read(BYTE drvNum, BYTE *buff, DWORD sectorAddress, BYTE sectorCount)
+    490          {
+    491          	FDISK *pDisk = FileDiskFromNum((FDISK_NUM)drvNum);
+    492          	return pDisk?
+    493          		(DRESULT)pDisk->pfnRead(buff, (UINT32)sectorAddress, (UINT32)sectorCount) :
+    494          		RES_NOTRDY;
+    495          }
+    496          
+    497          DRESULT disk_write(BYTE drvNum, const BYTE *buff, DWORD sectorAddress, BYTE sectorCount)
+    498          {
+    499          	FDISK *pDisk = FileDiskFromNum((FDISK_NUM)drvNum);
+    500          	return pDisk?
+    501          		(DRESULT)pDisk->pfnWrite(buff, (UINT32)sectorAddress, (UINT32)sectorCount) :
+    502          		RES_NOTRDY;
+    503          }
+    504          
+    505          DRESULT disk_ioctl(BYTE drvNum, BYTE controlCode, void *pTxRxDataBuf)
+    506          {
+    507          	FDISK *pDisk = FileDiskFromNum((FDISK_NUM)drvNum);
+    508          	return pDisk?
+    509          		(DRESULT)pDisk->pfnIoctl(FileFatGetIoctl(controlCode), pTxRxDataBuf) :
+    510          		RES_NOTRDY;
+    511          }
+    512          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   FileFatCloseDir
+       0   FileFatErrorCode
+      16   FileFatFClose
+        16   -> FileFatErrorCode
+        16   -> FileFatFreeFile
+        16   -> f_close
+       0   FileFatFEof
+      16   FileFatFFlush
+        16   -> FileFatErrorCode
+        16   -> f_sync
+      32   FileFatFOpen
+        32   -> FileFatErrorCode
+        32   -> FileFatFClose
+        32   -> FileFatFreeFile
+        32   -> FileFatGetFreeFile
+        32   -> FileFatModeToFlags
+        32   -> f_lseek
+        32   -> f_open
+      24   FileFatFRead
+        24   -> FileFatErrorCode
+        24   -> f_read
+      32   FileFatFSeek
+        32   -> FileFatErrorCode
+        32   -> FileFatFTell
+        32   -> f_lseek
+      16   FileFatFStat
+        16   -> FileFatInfoToTime
+        16   -> FileFatModeFromAttribute
+       0   FileFatFTell
+      24   FileFatFWrite
+        24   -> FileFatErrorCode
+        24   -> f_write
+       0   FileFatFreeFile
+       0   FileFatGetFreeFile
+       0   FileFatGetIoctl
+      32   FileFatGetStats
+        32   -> f_getfree
+        32   -> sprintf
+      16   FileFatInfoToTime
+        16   -> read_fattime
+      16   FileFatMkDir
+        16   -> FileFatErrorCode
+        16   -> f_mkdir
+       0   FileFatModeFromAttribute
+       0   FileFatModeToFlags
+      32   FileFatMount
+        32   -> f_getfree
+        32   -> f_mount
+        32   -> memset
+        32   -> sprintf
+      32   FileFatOpenDir
+        32   -> f_opendir
+      48   FileFatReadDir
+        48   -> FileFatErrorCode
+        48   -> FileFatInfoToTime
+        48   -> f_readdir
+        48   -> strcat
+      16   FileFatRemove
+        16   -> FileFatErrorCode
+        16   -> f_unlink
+      16   FileFatRename
+        16   -> FileFatErrorCode
+        16   -> f_rename
+      40   FileFatStat
+        40   -> FileFatErrorCode
+        40   -> FileFatInfoToTime
+        40   -> FileFatModeFromAttribute
+        40   -> f_stat
+      16   FileFatUnmount
+        16   -- Indirect call
+        16   -> f_mount
+      16   disk_initialize
+        16   -- Indirect call
+        16   -> FileDiskFromNum
+      24   disk_ioctl
+        24   -- Indirect call
+        24   -> FileDiskFromNum
+        24   -> FileFatGetIoctl
+      24   disk_read
+        24   -- Indirect call
+        24   -> FileDiskFromNum
+      16   disk_status
+        16   -- Indirect call
+        16   -> FileDiskFromNum
+      24   disk_write
+        24   -- Indirect call
+        24   -> FileDiskFromNum
+      56   get_fattime
+        56   -> __time32
+        56   -> localtime_r
+      56   read_fattime
+        56   -> __mktime32
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant "%1d:/">
+       4  ??DataTable2
+       4  ??DataTable2_1
+      14  FileFatCloseDir
+     224  FileFatErrorCode
+      28  FileFatFClose
+      16  FileFatFEof
+      22  FileFatFFlush
+     126  FileFatFOpen
+      42  FileFatFRead
+     106  FileFatFSeek
+      58  FileFatFStat
+       4  FileFatFTell
+      42  FileFatFWrite
+      10  FileFatFreeFile
+      50  FileFatGetFreeFile
+      52  FileFatGetIoctl
+     106  FileFatGetStats
+      20  FileFatInfoToTime
+      22  FileFatMkDir
+      46  FileFatModeFromAttribute
+      20  FileFatModeToFlags
+      88  FileFatMount
+      94  FileFatOpenDir
+     120  FileFatReadDir
+      22  FileFatRemove
+      26  FileFatRename
+      66  FileFatStat
+      56  FileFatUnmount
+      32  disk_initialize
+      48  disk_ioctl
+      52  disk_read
+      36  disk_status
+      52  disk_write
+      64  get_fattime
+       8  openFlags
+      58  read_fattime
+
+ 
+    16 bytes in section .rodata
+ 1 830 bytes in section .text
+ 
+ 1 830 bytes of CODE  memory
+    16 bytes of CONST memory
+
+Errors: none
+Warnings: none

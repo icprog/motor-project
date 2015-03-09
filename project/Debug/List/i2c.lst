@@ -1,0 +1,409 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:35 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\i2c.c                                 #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\i2c.c" -D __SAM3U2C__ --preprocess=c  #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\i2c.lst                        #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\i2c.o                           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\i2c.c
+      1          /*******************************************************************************************
+      2          Inter-Integrated Circuit (I2C) Driver
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "i2c.h"
+     12          #include "bsp.h"
+     13          #include "irq.h"
+     14          #include "core_cm3.h"
+     15          
+     16          
+     17          /**************************************************************************
+     18           *                                  Constants
+     19           **************************************************************************/
+     20          typedef struct
+     21          {
+     22             AT91PS_TWI const pRegs;
+     23             PERIPH_ID periphId;
+     24          }I2C_DEFS;
+     25          static const I2C_DEFS i2cDefs[NUM_I2C_DEVS] =
+     26          {
+     27             [I2C_DEV0] = { .pRegs = AT91C_BASE_TWI0, .periphId = PERIPH_TWI0 },
+     28             [I2C_DEV1] = { .pRegs = AT91C_BASE_TWI1, .periphId = PERIPH_TWI1 },  //lint !e485
+     29          };
+     30          
+     31          
+     32          /**************************************************************************
+     33           *                                  Types
+     34           **************************************************************************/
+     35          typedef struct
+     36          {
+     37             AT91PS_TWI pRegs;
+     38          	I2C_TRANSFER_PARAMS	transfer;
+     39          	I2C_CBS cbs;
+     40          	I2C_DEV dev;
+     41          	bool isOpened;
+     42             volatile bool isBusy;
+     43             volatile bool isError;
+     44          } I2C_CH;
+     45          
+     46          
+     47          /**************************************************************************
+     48           *                                  Variables
+     49           **************************************************************************/
+     50          static I2C_CH i2cDev[NUM_I2C_DEVS];
+     51          
+     52          
+     53          /**************************************************************************
+     54           *                                  Prototypes
+     55           **************************************************************************/
+     56          static void I2cSetupClock(I2C_CH const *pDev, u32 clockRateHz);
+     57          static void I2cStartTx(I2C_CH *pDev);
+     58          static void I2cIrqHandler(I2C_CH *pDev);
+     59          
+     60          
+     61          /**************************************************************************
+     62           *                                  Global Functions
+     63           **************************************************************************/
+     64          void I2cOpen(I2C_DEV dev, u32 clockRateHz, I2C_CBS const *pCallBacks)
+     65          {
+     66          	I2C_CH *pDev = &i2cDev[dev];
+     67          	if ((dev < NUM_I2C_DEVS) && !pDev->isOpened)
+     68          	{
+     69          		pDev->isOpened = true;
+     70                pDev->isBusy = false;
+     71          		pDev->dev = dev;
+     72                pDev->pRegs = i2cDefs[dev].pRegs;
+     73          
+     74          		if (pCallBacks)
+     75          			memcpy(&pDev->cbs, pCallBacks, sizeof(I2C_CBS));
+     76          		else
+     77          			memset(&pDev->cbs, 0, sizeof(I2C_CBS));
+     78          
+     79                BspPeriphOn(i2cDefs[dev].periphId);
+     80                pDev->pRegs->TWI_CR = AT91C_TWI_SWRST;
+     81                I2cSetupClock(pDev, clockRateHz);
+     82                NVIC_SetPriority((IRQn_Type)i2cDefs[pDev->dev].periphId, IRQ_PRIO_TWI);
+     83                NVIC_ClearPendingIRQ((IRQn_Type)i2cDefs[pDev->dev].periphId);
+     84                NVIC_EnableIRQ((IRQn_Type)i2cDefs[pDev->dev].periphId);
+     85          	}
+     86          }
+     87          
+     88          void I2cClose(I2C_DEV dev)
+     89          {
+     90          	I2C_CH *pDev = &i2cDev[dev];
+     91          	if ((dev < NUM_I2C_DEVS) && pDev->isOpened)
+     92          	{
+     93          		pDev->isOpened = false;
+     94                pDev->pRegs->TWI_CR = AT91C_TWI_SWRST;
+     95                BspPeriphOff(i2cDefs[dev].periphId);
+     96          	}
+     97          }
+     98          
+     99          // interrupt-based call
+    100          void I2cWriteRead(I2C_DEV dev, I2C_TRANSFER_PARAMS const *pTransfer)
+    101          {
+    102          	I2C_CH *pDev = &i2cDev[dev];
+    103          	if ((dev < NUM_I2C_DEVS) && pDev->isOpened)
+    104          	{
+    105                if (I2cIsBusy(dev))
+    106                {
+    107                   I2cWait(dev);  //lint !e534
+    108                }
+    109                memcpy(&pDev->transfer, pTransfer, sizeof(I2C_TRANSFER_PARAMS));
+    110                pDev->transfer.destAddr &= 0xFE; // Only support writes with this driver, so last bit is always 0
+    111                I2cStartTx(pDev);
+    112          	}
+    113          }
+    114          
+    115          bool I2cIsBusy(I2C_DEV dev)
+    116          {
+    117             return i2cDev[dev].isBusy;
+    118          }
+    119          bool I2c0IsBusy(void)
+    120          {
+    121             return i2cDev[0].isBusy;
+    122          }
+    123          bool I2c1IsBusy(void)
+    124          {
+    125             return i2cDev[1].isBusy;
+    126          }
+    127          
+    128          // Blocking (polling) call
+    129          bool I2cWriteReadWait(I2C_DEV dev, I2C_TRANSFER_PARAMS const *pTransfer)
+    130          {
+    131          	I2cWriteRead(dev, pTransfer);
+    132             return I2cWait(dev);
+    133          }
+    134          
+    135          bool I2cWait(I2C_DEV dev)
+    136          {
+    137             BspSleepWhile((dev ==I2C_DEV0)? I2c0IsBusy : I2c1IsBusy);
+    138             return !i2cDev[dev].isError;
+    139          }
+    140          
+    141          
+    142          void TWI0_IrqHandler(void)
+    143          {
+    144             I2cIrqHandler(&i2cDev[0]);
+    145          }
+    146          void Twi1_IrqHandler(void)
+    147          {
+    148             I2cIrqHandler(&i2cDev[0]);
+    149          }
+    150          
+    151          
+    152          /**************************************************************************
+    153           *                                 Private Functions
+    154           **************************************************************************/
+    155          static void I2cSetupClock(I2C_CH const *pDev, u32 clockRateHz)
+    156          {
+    157             if (clockRateHz > 400000)
+    158                clockRateHz = 400000;
+    159          
+    160             // NOTE: Setting Tlow = Thigh (50% duty cycle)
+    161             // From datasheet: Tlow = Thigh = 1/(2*clockRateHz) = ((CLHDIV * 2^CKDIV) + 4) * (1/Fmck)
+    162             // CLHDIV = Fmck / (((2*clockRateHz) - 4) * 2^CKDIV)
+    163             // Fi2c = Fmck/(2 * ((CLHDIV * 2^CKDIV) + 4))
+    164             // solve for both CLHDIV and CKDIV by looping and finding the closest match
+    165             u32 mclkDiv2 = BspGetCpuClkFreq()/2;
+    166             u32 preCalc = ((mclkDiv2 / clockRateHz) - 4);
+    167             u32 bestClkDiv = 0, bestClhDiv = 0;
+    168             u32 bestClkRate = UINT32_MAX;
+    169             for (u32 ckDiv = 0; ckDiv < 8; ckDiv++)
+    170             {
+    171                for (u32 clhDiv = ((preCalc / (1UL << ckDiv)) - 1); clhDiv < 0x100; clhDiv++)
+    172                {
+    173                   u32 i2cClk = mclkDiv2 / ((clhDiv * (1UL << ckDiv)) + 4);
+    174                   if (ABS_DIF(i2cClk, clockRateHz) < ABS_DIF(bestClkRate, clockRateHz))
+    175                   {
+    176                      bestClkDiv = ckDiv;
+    177                      bestClhDiv = clhDiv;
+    178                      bestClkRate = i2cClk;
+    179                      if (i2cClk == clockRateHz)
+    180                         break;
+    181                   }
+    182                   if (i2cClk < clockRateHz)
+    183                      break;
+    184                }
+    185             }
+    186          
+    187             if (clockRateHz <= 100e3)
+    188             {
+    189                // 50% duty cycle
+    190                pDev->pRegs->TWI_CWGR = (bestClhDiv | (bestClhDiv << 8) | (bestClkDiv << 16));
+    191             }
+    192             else
+    193             {
+    194                // 2/3 duty cycle
+    195                pDev->pRegs->TWI_CWGR = (((bestClhDiv * 4) / 3) |
+    196                                         (((bestClhDiv * 2) / 3) << 8) |
+    197                                         (bestClkDiv << 16));
+    198             }
+    199          }
+    200          
+    201          static void I2cStartTx(I2C_CH *pDev)
+    202          {
+    203             AT91PS_TWI const pRegs = pDev->pRegs;
+    204             pDev->isBusy = true;
+    205             pDev->isError = false;
+    206             NVIC_ClearPendingIRQ((IRQn_Type)i2cDefs[pDev->dev].periphId);
+    207             BspPeriphOn(i2cDefs[pDev->dev].periphId);
+    208             pRegs->TWI_MMR = (pDev->transfer.destAddr & 0xFE) << 15;
+    209             pRegs->TWI_CR = (AT91C_TWI_MSEN | AT91C_TWI_START);
+    210          
+    211             // Setup DMA (PDC) to feed data into the driver as it's needed:
+    212             pRegs->TWI_TPR = (u32)pDev->transfer.pTxData;
+    213             pRegs->TWI_TCR = pDev->transfer.txLen;
+    214             pRegs->TWI_PTCR = AT91C_PDC_TXTEN;
+    215          
+    216             // Interrupt when the transfer is finished (or NAK error)
+    217             pRegs->TWI_IER = (AT91C_TWI_TXBUFE | AT91C_TWI_NACK_MASTER);
+    218          }
+    219          
+    220          static void I2cIrqHandler(I2C_CH *pDev)
+    221          {
+    222             // Get the cause of the interrupt
+    223             AT91PS_TWI const pRegs = pDev->pRegs;
+    224             u32 status = pRegs->TWI_SR;
+    225             if ((status & (AT91C_TWI_TXBUFE | AT91C_TWI_TXCOMP_MASTER)) == AT91C_TWI_TXBUFE)
+    226             {
+    227                // I2C STOP to end the transfer
+    228                pRegs->TWI_CR = AT91C_TWI_STOP;
+    229                pRegs->TWI_IDR = AT91C_TWI_TXBUFE;
+    230                pRegs->TWI_IER = AT91C_TWI_TXCOMP_MASTER;
+    231             }
+    232             else
+    233             {
+    234                // turn off peripheral until it's needed again...
+    235                pRegs->TWI_IDR = (AT91C_TWI_TXBUFE | AT91C_TWI_NACK_MASTER | AT91C_TWI_TXCOMP_MASTER);
+    236                pRegs->TWI_PTCR = AT91C_PDC_TXTDIS;
+    237                BspPeriphOff(i2cDefs[pDev->dev].periphId);
+    238          
+    239                // Inform user that transfer is complete
+    240                pDev->isBusy = false;
+    241                if (status & AT91C_TWI_TXCOMP_MASTER)
+    242                {
+    243                   if (pDev->cbs.doneCallback)
+    244                   {
+    245                      pDev->cbs.doneCallback(pDev->dev);
+    246                   }
+    247                }
+    248                else //if (status & AT91C_TWI_NACK_MASTER)
+    249                {
+    250                   pDev->isError = true;
+    251                   if (pDev->cbs.errorCallback)
+    252                   {
+    253                      pDev->cbs.errorCallback(pDev->dev);
+    254                   }
+    255                }
+    256             }
+    257          }
+    258          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   I2c0IsBusy
+       0   I2c1IsBusy
+      16   I2cClose
+        16   -> BspPeriphOff
+      16   I2cIrqHandler
+        16   -- Indirect call
+        16   -> BspPeriphOff
+       0   I2cIsBusy
+      24   I2cOpen
+        24   -> BspPeriphOn
+        24   -> I2cSetupClock
+        24   -> NVIC_ClearPendingIRQ
+        24   -> NVIC_EnableIRQ
+        24   -> NVIC_SetPriority
+        24   -> memcpy
+        24   -> memset
+      32   I2cSetupClock
+        32   -> BspGetCpuClkFreq
+      16   I2cStartTx
+        16   -> BspPeriphOn
+        16   -> NVIC_ClearPendingIRQ
+       8   I2cWait
+         8   -> BspSleepWhile
+      16   I2cWriteRead
+        16   -> I2cIsBusy
+        16   -> I2cStartTx
+        16   -> I2cWait
+        16   -> memcpy
+      16   I2cWriteReadWait
+        16   -> I2cWait
+        16   -> I2cWriteRead
+       4   NVIC_ClearPendingIRQ
+       4   NVIC_EnableIRQ
+       0   NVIC_SetPriority
+       8   TWI0_IrqHandler
+         8   -> I2cIrqHandler
+       8   Twi1_IrqHandler
+         8   -> I2cIrqHandler
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable14
+       4  ??DataTable14_1
+       4  ??DataTable14_10
+       4  ??DataTable14_2
+       4  ??DataTable14_3
+       4  ??DataTable14_4
+       4  ??DataTable14_5
+       4  ??DataTable14_6
+       4  ??DataTable14_7
+       4  ??DataTable14_8
+       4  ??DataTable14_9
+       6  I2c0IsBusy
+       8  I2c1IsBusy
+      52  I2cClose
+     104  I2cIrqHandler
+      14  I2cIsBusy
+     166  I2cOpen
+     208  I2cSetupClock
+      88  I2cStartTx
+      40  I2cWait
+      74  I2cWriteRead
+      26  I2cWriteReadWait
+      24  NVIC_ClearPendingIRQ
+      26  NVIC_EnableIRQ
+      32  NVIC_SetPriority
+      10  TWI0_IrqHandler
+      10  Twi1_IrqHandler
+      16  i2cDefs
+      48  i2cDev
+
+ 
+  48 bytes in section .bss
+  16 bytes in section .rodata
+ 932 bytes in section .text
+ 
+ 932 bytes of CODE  memory
+  16 bytes of CONST memory
+  48 bytes of DATA  memory
+
+Errors: none
+Warnings: none

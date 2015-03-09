@@ -1,0 +1,274 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:37 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\src\drivers\rtc.c                                 #
+#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\src\drivers\rtc.c" -D __SAM3U2C__ --preprocess=c  #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" -lcN                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
+#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
+#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
+#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\app\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\utils\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\structures\src\" -I            #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\" -I                      #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\file\disk\" -I                 #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\version\" -I                   #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\lib\FatFs\" -I                     #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\bsp\" -I                           #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\config\" -I                        #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -I                       #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\utils\" -I                         #
+#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
+#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
+#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\List\rtc.lst                        #
+#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
+#                    Server\project\Debug\Obj\rtc.o                           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\rtc.c
+      1          /*******************************************************************************************
+      2          Atmel SAM3U RTC driver
+      3          
+      4          This is free, public domain software and there is NO WARRANTY.
+      5          No restriction on use. You can use, modify and redistribute it for
+      6          personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+      7          
+      8          Sheldon Patterson
+      9          ********************************************************************************************/
+     10          
+     11          #include "rtc.h"
+     12          #include "bsp.h"
+     13          #include "version.h"
+     14          
+     15          
+     16          /**************************************************************************
+     17           *                                  Constants
+     18           **************************************************************************/
+     19          //#define RTC_WPMR           (*(AT91_REG *)(0x400E1344))
+     20          //#define RTC_UNLOCK()       {RTC_WPMR = 0x525443;}
+     21          //#define RTC_LOCK()         {RTC_WPMR = 0x535443;}
+     22          #define RTC                ((AT91PS_RTC)AT91C_BASE_RTC)
+     23          
+     24          
+     25          /**************************************************************************
+     26           *                                  Types
+     27           **************************************************************************/
+     28          typedef struct
+     29          {
+     30             struct tm rtcTm;
+     31             bool isValid;
+     32          }RTC_VAR;
+     33          
+     34          
+     35          /**************************************************************************
+     36           *                                  Variables
+     37           **************************************************************************/
+     38          static RTC_VAR rtc;
+     39          
+     40          
+     41          /**************************************************************************
+     42           *                                  Prototypes
+     43           **************************************************************************/
+     44          static void RtcRegToTm(struct tm *pTm);
+     45          static void RtcTmToReg(struct tm const *pTm);
+     46          static u8 RtcByteToBcd(u8 val);
+     47          static u8 RtcBcdToByte(u8 bcd);
+     48          
+     49          
+     50          /**************************************************************************
+     51           *                                  Global Functions
+     52           **************************************************************************/
+     53          void RtcInit(void)
+     54          {
+     55             time_t buildTime = VersionGetBuildTime();
+     56             if (RtcGet() < buildTime)
+     57             {
+     58                RtcSet(buildTime);
+     59                rtc.isValid = false;
+     60             }
+     61             else
+     62             {
+     63                rtc.isValid = true;
+     64             }
+     65          }
+     66          
+     67          bool RtcIsValid(void)
+     68          {
+     69             return rtc.isValid;
+     70          }
+     71          
+     72          time_t RtcGet(void)
+     73          {
+     74             return mktime(RtcGetTm());
+     75          }
+     76          
+     77          void RtcSet(time_t newTime)
+     78          {
+     79             struct tm *pTmStr = localtime(&newTime);
+     80             RtcSetTm(pTmStr);
+     81          }
+     82          
+     83          struct tm * RtcGetTm(void)
+     84          {
+     85             RtcRegToTm(&rtc.rtcTm);
+     86             return &rtc.rtcTm;
+     87          }
+     88          
+     89          void RtcSetTm(struct tm const *pTm)
+     90          {
+     91             if (rtc.isValid)
+     92             {
+     93                do{} while (!(RTC->RTC_SR & AT91C_RTC_SECEV));
+     94             }
+     95             RTC->RTC_CR |= (AT91C_RTC_UPDTIM | AT91C_RTC_UPDCAL);
+     96             do{} while (!(RTC->RTC_SR & AT91C_RTC_ACKUPD));
+     97             RTC->RTC_SCCR = (AT91C_RTC_ACKUPD | AT91C_RTC_SECEV | AT91C_RTC_TIMEV | AT91C_RTC_CALEV);
+     98             RtcTmToReg(pTm);
+     99             RTC->RTC_CR &= ~(AT91C_RTC_UPDTIM | AT91C_RTC_UPDCAL);
+    100             rtc.isValid = true;
+    101          }
+    102          
+    103          
+    104          /**************************************************************************
+    105           *                                 Private Functions
+    106           **************************************************************************/
+    107          static void RtcRegToTm(struct tm *pTm)
+    108          {
+    109             u32 date = RTC->RTC_CALR;
+    110             u32 tim  = RTC->RTC_TIMR;
+    111          
+    112             pTm->tm_year = (int)RtcBcdToByte((date & AT91C_RTC_YEAR)  >>  8) + 100;
+    113             pTm->tm_mon  = (int)RtcBcdToByte((date & AT91C_RTC_MONTH) >> 16) - 1;
+    114             pTm->tm_mday = (int)RtcBcdToByte((date & AT91C_RTC_DATE)  >> 24);
+    115             pTm->tm_wday = (int)            ((date & AT91C_RTC_DAY)   >> 21);
+    116             if (pTm->tm_wday == 0x07)
+    117                pTm->tm_wday = 0;
+    118             pTm->tm_isdst = -1;
+    119          
+    120             pTm->tm_hour = (int)RtcBcdToByte((tim & AT91C_RTC_HOUR) >> 16);
+    121             pTm->tm_min  = (int)RtcBcdToByte((tim & AT91C_RTC_MIN)  >> 8 );
+    122             pTm->tm_sec  = (int)RtcBcdToByte((tim & AT91C_RTC_SEC)       );
+    123          }
+    124          
+    125          static void RtcTmToReg(struct tm const *pTm)
+    126          {
+    127             u32 wday = (pTm->tm_wday == 0)? (u32)0x07 : (u32)pTm->tm_wday;
+    128             RTC->RTC_CALR = (((u32)RtcByteToBcd((u8)(pTm->tm_year - 100)) <<  8) | 0x20UL |
+    129                              ((u32)RtcByteToBcd((u8)(pTm->tm_mon + 1   )) << 16) |
+    130                              ((u32)RtcByteToBcd((u8)(pTm->tm_mday      )) << 24) |
+    131                              (wday << 21));
+    132          
+    133             RTC->RTC_TIMR = (((u32)RtcByteToBcd((u8)pTm->tm_hour) << 16) |
+    134                              ((u32)RtcByteToBcd((u8)pTm->tm_min ) << 8 ) |
+    135                              ((u32)RtcByteToBcd((u8)pTm->tm_sec )      ));
+    136          }
+    137          
+    138          static u8 RtcByteToBcd(u8 val)
+    139          {
+    140             u8 tens = 0;
+    141             while (val >= 10)
+    142             {
+    143                tens++;
+    144                val -= 10;
+    145             }
+    146             return (u8)((tens << 4) | val);
+    147          }
+    148          
+    149          static u8 RtcBcdToByte(u8 bcd)
+    150          {
+    151             u8 val = (u8)((((bcd & 0xF0) >> 4) * 10) + (bcd & 0x0F));
+    152             return val;
+    153          }
+    154          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   RtcBcdToByte
+       0   RtcByteToBcd
+       8   RtcGet
+         8   -> RtcGetTm
+         8   -> __mktime32
+       8   RtcGetTm
+         8   -> RtcRegToTm
+       8   RtcInit
+         8   -> RtcGet
+         8   -> RtcSet
+         8   -> VersionGetBuildTime
+       0   RtcIsValid
+      16   RtcRegToTm
+        16   -> RtcBcdToByte
+      16   RtcSet
+        16   -> RtcSetTm
+        16   -> __localtime32
+       8   RtcSetTm
+         8   -> RtcTmToReg
+      16   RtcTmToReg
+        16   -> RtcByteToBcd
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable5
+       4  ??DataTable5_1
+       4  ??DataTable5_2
+       4  ??DataTable5_3
+       4  ??DataTable5_4
+       4  ??DataTable5_5
+      24  RtcBcdToByte
+      22  RtcByteToBcd
+      16  RtcGet
+      12  RtcGetTm
+      42  RtcInit
+       8  RtcIsValid
+     108  RtcRegToTm
+      20  RtcSet
+      76  RtcSetTm
+     116  RtcTmToReg
+      48  rtc
+
+ 
+  48 bytes in section .bss
+ 468 bytes in section .text
+ 
+ 468 bytes of CODE memory
+  48 bytes of DATA memory
+
+Errors: none
+Warnings: none
