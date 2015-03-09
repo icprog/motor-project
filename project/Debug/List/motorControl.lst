@@ -5,9 +5,10 @@
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
 #    Endian       =  little                                                   #
-#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\main.c #
-#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\main.c #
-#                     -D __SAM3U2C__ --preprocess=c                           #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\mo #
+#                    torControl.c                                             #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\mo #
+#                    torControl.c -D __SAM3U2C__ --preprocess=c               #
 #                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
 #                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
 #                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
@@ -43,14 +44,14 @@
 #                    (x86)\IAR Systems\Embedded Workbench                     #
 #                    6.5\arm\CMSIS\Include\"                                  #
 #    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
-#                    bug\List\main.lst                                        #
+#                    bug\List\motorControl.lst                                #
 #    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
-#                    bug\Obj\main.o                                           #
+#                    bug\Obj\motorControl.o                                   #
 #                                                                             #
 #                                                                             #
 ###############################################################################
 
-C:\Users\Quinn\Documents\GitHub\motor-project\src\main.c
+C:\Users\Quinn\Documents\GitHub\motor-project\src\app\motorControl.c
       1          /*******************************************************************************************
       2          This is free, public domain software and there is NO WARRANTY.
       3          No restriction on use. You can use, modify and redistribute it for
@@ -59,117 +60,59 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\main.c
       6          Sheldon Patterson
       7          ********************************************************************************************/
       8          
-      9          #include "includes.h"
-     10          #include "bsp.h"
-     11          #include "gpio.h"
-     12          #include "sysTick.h"
-     13          #include "timer.h"
-     14          #include "wdt.h"
-     15          #include "beeper.h"
-     16          #include "lcd.h"
-     17          #include "version.h"
-     18          #include "led.h"
-     19          #include "button.h"
-     20          #include "rtc.h"
-     21          #include "demo.h"
-     22          #include "motorControl.h"
-     23          
-     24          
+      9          
+     10          #include "motorControl.h"
+     11          
+     12          
+     13          /**************************************************************************
+     14           *                                  Constants
+     15           **************************************************************************/
+     16          /**************************************************************************
+     17           *                                  Types
+     18           **************************************************************************/
+     19          /**************************************************************************
+     20           *                                  Variables
+     21           **************************************************************************/
+     22          /**************************************************************************
+     23           *                                  Prototypes
+     24           **************************************************************************/
      25          /**************************************************************************
-     26           *                                  Constants
+     26           *                                  Global Functions
      27           **************************************************************************/
-     28          /**************************************************************************
-     29           *                                  Types
-     30           **************************************************************************/
-     31          /**************************************************************************
-     32           *                                  Variables
-     33           **************************************************************************/
-     34          /**************************************************************************
-     35           *                                  Prototypes
-     36           **************************************************************************/
-     37          static void MainInit(void);
-     38          
-     39          /**************************************************************************
-     40           *                                  Global Functions
-     41           **************************************************************************/
-     42          void main(void)
-     43          {
-     44             MainInit();
-     45             MotorControlInit();
-     46          
-     47             for (;;)
-     48             {
-     49                // Drivers
-     50                LedUpdate();
-     51                ButtonUpdate();
-     52                LcdUpdate();
-     53          
-     54                // Application
-     55                MotorControlUpdate();
-     56          
-     57                // Heartbeat
-     58                GpioSet(GPIO_PIN_HEARTBEAT);   // active low
-     59                TimerWaitXMs(SYS_TICK_RATE_MS);
-     60                GpioClear(GPIO_PIN_HEARTBEAT);
-     61                
-     62             }
-     63          }
-     64          
-     65          
-     66          /**************************************************************************
-     67           *                                 Private Functions
-     68           **************************************************************************/
-     69          static void MainInit(void)
-     70          {
-     71             BspInit();
-     72             SysTickInitMs(SYS_TICK_RATE_MS);
-     73             TimerInit();
-     74             RtcInit();
-     75             BeeperInit();
-     76             ButtonInit();
-     77             LedInit();
-     78             LcdInit();
-     79             WdtInit();
-     80          }
-     81          
+     28          void MotorControlInit () {
+     29            
+     30          }
+     31          
+     32          void MotorControlUpdate () {
+     33            
+     34          }
+     35          
+     36          /**************************************************************************
+     37           *                                 Private Functions
+     38           **************************************************************************/
+     39          
+     40          
+     41          
 
    Maximum stack usage in bytes:
 
    .cstack Function
    ------- --------
-       8   MainInit
-         8   -> BeeperInit
-         8   -> BspInit
-         8   -> ButtonInit
-         8   -> LcdInit
-         8   -> LedInit
-         8   -> RtcInit
-         8   -> SysTickInitMs
-         8   -> TimerInit
-         8   -> WdtInit
-       8   main
-         8   -> ButtonUpdate
-         8   -> GpioClear
-         8   -> GpioSet
-         8   -> LcdUpdate
-         8   -> LedUpdate
-         8   -> MainInit
-         8   -> MotorControlInit
-         8   -> MotorControlUpdate
-         8   -> TimerWaitXMs
+       0   MotorControlInit
+       0   MotorControlUpdate
 
 
    Section sizes:
 
    Bytes  Function/Label
    -----  --------------
-      42  MainInit
-      46  main
+       2  MotorControlInit
+       2  MotorControlUpdate
 
  
- 88 bytes in section .text
+ 4 bytes in section .text
  
- 88 bytes of CODE memory
+ 4 bytes of CODE memory
 
 Errors: none
 Warnings: none

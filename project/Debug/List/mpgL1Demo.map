@@ -1,87 +1,62 @@
 ###############################################################################
 #                                                                             #
-# IAR ELF Linker V6.60.2.5449/W32 for ARM               26/Feb/2015  21:37:09 #
+# IAR ELF Linker V6.60.2.5449/W32 for ARM               09/Mar/2015  13:20:38 #
 # Copyright 2007-2013 IAR Systems AB.                                         #
 #                                                                             #
-#    Output file  =  C:\Users\Quinn\Documents\School\MPG\Motor                #
-#                    Project\project\Debug\Exe\mpgL1Demo.out                  #
-#    Map file     =  C:\Users\Quinn\Documents\School\MPG\Motor                #
-#                    Project\project\Debug\List\mpgL1Demo.map                 #
-#    Command line =  "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\beeper.o"                      #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\board_cstartup_iar.o"          #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\bsp.o"                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\button.o"                      #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\circularBuffer.o"              #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\demo.o"                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\ff.o"                          #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\file.o"                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\fileFat.o"                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\fileSystem.o"                  #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\futils.o"                      #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\gpio.o"                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\i2c.o"                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\irq.o"                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\itemQ.o"                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\lcd.o"                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\led.o"                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\ledShow.o"                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\main.o"                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\motorDemo.o"                   #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\music.o"                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\musicPlayer.o"                 #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\rtc.o"                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\sd.o"                          #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\songTwinkleTwinkle.o"          #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\sysTick.o"                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\textEditor.o"                  #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\threadUtils.o"                 #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\time.o"                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\timer.o"                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\usart.o"                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\utils.o"                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\version.o"                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Obj\wdt.o" --redirect              #
-#                    _Printf=_PrintfSmallNoMb -o                              #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\Exe\mpgL1Demo.out" --map           #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\Debug\List\mpgL1Demo.map" --config       #
-#                    "C:\Users\Quinn\Documents\School\MPG\Motor               #
-#                    Project\project\sam3u2-flash.icf" --semihosting --entry  #
+#    Output file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Exe\mpgL1Demo.out                                    #
+#    Map file     =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\mpgL1Demo.map                                   #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\beeper.o C:\Users\Quinn\Documents\GitHub\motor-p #
+#                    roject\project\Debug\Obj\board_cstartup_iar.o            #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\bsp.o C:\Users\Quinn\Documents\GitHub\motor-proj #
+#                    ect\project\Debug\Obj\button.o                           #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\circularBuffer.o C:\Users\Quinn\Documents\GitHub #
+#                    \motor-project\project\Debug\Obj\demo.o                  #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\ff.o C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\Debug\Obj\file.o                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\fileFat.o C:\Users\Quinn\Documents\GitHub\motor- #
+#                    project\project\Debug\Obj\fileSystem.o                   #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\futils.o C:\Users\Quinn\Documents\GitHub\motor-p #
+#                    roject\project\Debug\Obj\gpio.o                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\i2c.o C:\Users\Quinn\Documents\GitHub\motor-proj #
+#                    ect\project\Debug\Obj\irq.o                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\itemQ.o C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\Debug\Obj\lcd.o                            #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\led.o C:\Users\Quinn\Documents\GitHub\motor-proj #
+#                    ect\project\Debug\Obj\main.o                             #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\motorControl.o C:\Users\Quinn\Documents\GitHub\m #
+#                    otor-project\project\Debug\Obj\rtc.o                     #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\sd.o C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\Debug\Obj\sysTick.o                           #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\threadUtils.o C:\Users\Quinn\Documents\GitHub\mo #
+#                    tor-project\project\Debug\Obj\time.o                     #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\timer.o C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\Debug\Obj\usart.o                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\utils.o C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\Debug\Obj\version.o                        #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\wdt.o --redirect _Printf=_PrintfSmallNoMb -o     #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Exe\mpgL1Demo.out --map                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\mpgL1Demo.map --config                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\sa #
+#                    m3u2-flash.icf --semihosting --entry                     #
 #                    __iar_program_start --vfe                                #
 #                                                                             #
 #                                                                             #
@@ -113,133 +88,118 @@ __dlib_dynamic_initialization = normal
     .intvec           const    0x00080000    0xbc  board_cstartup_iar.o [1]
                              - 0x000800bc    0xbc
 
-"P1":                                      0x2e80
-  .text               ro code  0x000800bc   0x4a0  xprintfsmall_nomb.o [3]
-  .text               ro code  0x0008055c    0x16  strchr.o [4]
-  .text               ro code  0x00080572    0x2e  copy_init3.o [4]
-  .text               ro code  0x000805a0    0x36  strlen.o [4]
-  .text               ro code  0x000805d6    0x22  zero_init3.o [4]
-  .text               ro code  0x000805f8    0x58  memchr.o [4]
-  .text               ro code  0x00080650   0x434  gpio.o [1]
-  .text               ro code  0x00080a84    0xf4  bsp.o [1]
-  .text               ro code  0x00080b78    0x14  memset.o [3]
-  .text               ro code  0x00080b8c    0x66  ABImemset.o [4]
-  .text               ro code  0x00080bf2    0x1a  xsnprout.o [3]
-  .text               ro code  0x00080c0c   0x380  lcd.o [1]
-  .text               ro code  0x00080f8c   0x34c  i2c.o [1]
-  .text               ro code  0x000812d8   0x266  itemQ.o [1]
-  .text               ro code  0x0008153e     0xa  xsprout.o [3]
-  .text               ro code  0x00081548   0x250  timer.o [1]
-  .text               ro code  0x00081798    0x3c  vsnprint.o [3]
-  .text               ro code  0x000817d4    0x2a  textEditor.o [1]
-  .text               ro code  0x00081800    0x62  memcmp_unaligned.o [4]
-  .text               ro code  0x00081862     0xc  memcpy.o [3]
-  .text               ro code  0x0008186e     0xc  textEditor.o [1]
-  .text               ro code  0x0008187a     0xc  textEditor.o [1]
-  .text               ro code  0x00081888    0x76  ABImemcpy_unaligned.o [4]
-  .text               ro code  0x000818fe    0x22  textEditor.o [1]
-  .text               ro code  0x00081920    0x2a  textEditor.o [1]
-  .text               ro code  0x0008194a    0x12  utils.o [1]
-  .text               ro code  0x0008195c    0x12  textEditor.o [1]
-  .text               ro code  0x00081970   0x228  button.o [1]
-  .text               ro code  0x00081b98   0x1ce  rtc.o [1]
-  .text               ro code  0x00081d68    0xc0  version.o [1]
-  .text               ro code  0x00081e28    0xd4  mktime.o [3]
-  .text               ro code  0x00081efc    0xba  localtim.o [3]
-  .text               ro code  0x00081fb6    0x2a  strncmp.o [3]
-  .text               ro code  0x00081fe0     0x8  atoi.o [3]
-  .text               ro code  0x00081fe8   0x188  xttotm.o [3]
-  .text               ro code  0x00082170     0x2  xtls.o [3]
-  .text               ro code  0x00082174    0x29  setlocale.o [3]
-  .text               ro code  0x000821a0     0xa  getzone.o [3]
-  .text               ro code  0x000821aa    0x42  xgettime.o [3]
-  .text               ro code  0x000821ec    0x86  xstol.o [3]
-  .text               ro code  0x00082274   0x174  xstoul.o [3]
-  .text               ro code  0x000823e8   0x134  xisdst.o [3]
-  .text               ro code  0x0008251c     0xc  errno.o [3]
-  .text               ro code  0x00082528   0x168  xgetdst.o [3]
-  .text               ro code  0x00082690    0x80  xxmemxfree.o [3]
-  .text               ro code  0x00082710    0xb0  xxmemxmalloc.o [3]
-  .text               ro code  0x000827c0    0x2c  xgetmemchunk.o [3]
-  .text               ro code  0x000827ec   0x190  led.o [1]
-  .text               ro code  0x0008297c    0xe0  usart.o [1]
-  .text               ro code  0x00082a5c    0x9c  motorDemo.o [1]
-  .text               ro code  0x00082af8    0x34  sprintf.o [3]
-  .text               ro code  0x00082b2c    0x8c  sysTick.o [1]
-  .rodata             const    0x00082bb8    0x80  led.o [1]
-  .text               ro code  0x00082c38    0x5c  beeper.o [1]
-  .text               ro code  0x00082c94    0x58  main.o [1]
-  .text               ro code  0x00082cec    0x18  wdt.o [1]
-  .rodata             const    0x00082d04    0x40  version.o [1]
-  .text               ro code  0x00082d44    0x3c  irq.o [1]
-  .rodata             const    0x00082d80    0x30  version.o [1]
-  .text               ro code  0x00082db0    0x28  data_init.o [4]
-  .iar.init_table     const    0x00082dd8    0x24  - Linker created -
-  .text               ro code  0x00082dfc    0x1a  cmain.o [4]
-  .text               ro code  0x00082e18    0x14  board_cstartup_iar.o [1]
-  .text               ro code  0x00082e2c     0x4  exit.o [3]
-  .text               ro code  0x00082e30     0xa  cexit.o [4]
-  .text               ro code  0x00082e3c    0x14  exit.o [5]
-  .rodata             const    0x00082e50    0x10  beeper.o [1]
-  .rodata             const    0x00082e60    0x10  i2c.o [1]
-  .rodata             const    0x00082e70     0xc  led.o [1]
-  .text               ro code  0x00082e7c     0xc  cstartup_M.o [4]
-  .rodata             const    0x00082e88     0x8  gpio.o [1]
-  .rodata             const    0x00082e90     0x8  lcd.o [1]
-  .rodata             const    0x00082e98     0x8  lcd.o [1]
-  .rodata             const    0x00082ea0     0x8  lcd.o [1]
-  .rodata             const    0x00082ea8     0x4  button.o [1]
-  .rodata             const    0x00082eac     0x4  version.o [1]
-  .rodata             const    0x00082eb0     0x4  version.o [1]
-  .rodata             const    0x00082eb4     0x4  version.o [1]
-  .rodata             const    0x00082eb8     0x4  version.o [1]
-  .rodata             const    0x00082ebc     0x4  version.o [1]
-  .rodata             const    0x00082ec0     0x4  version.o [1]
-  .rodata             const    0x00082ec4     0x4  version.o [1]
-  .rodata             const    0x00082ec8     0x4  version.o [1]
-  .rodata             const    0x00082ecc     0x4  version.o [1]
-  .rodata             const    0x00082ed0     0x4  version.o [1]
-  .rodata             const    0x00082ed4     0x4  version.o [1]
-  .rodata             const    0x00082ed8     0x4  version.o [1]
-  .rodata             const    0x00082edc     0x0  zero_init3.o [4]
-  .rodata             const    0x00082edc     0x0  copy_init3.o [4]
-  Initializer bytes   ro data  0x00082edc    0x60  <for P2 s0>
-                             - 0x00082f3c  0x2e80
+"P1":                                      0x2610
+  .text               ro code  0x000800bc   0x434  gpio.o [1]
+  .text               ro code  0x000804f0    0xf4  bsp.o [1]
+  .text               ro code  0x000805e4    0x14  memset.o [3]
+  .text               ro code  0x000805f8    0x66  ABImemset.o [4]
+  .text               ro code  0x0008065e    0x2e  copy_init3.o [4]
+  .text               ro code  0x0008068c   0x34c  i2c.o [1]
+  .text               ro code  0x000809d8     0xc  memcpy.o [3]
+  .text               ro code  0x000809e4    0x76  ABImemcpy_unaligned.o [4]
+  .text               ro code  0x00080a5a   0x266  itemQ.o [1]
+  .text               ro code  0x00080cc0   0x250  timer.o [1]
+  .text               ro code  0x00080f10   0x218  lcd.o [1]
+  .text               ro code  0x00081128    0x62  memcmp_unaligned.o [4]
+  .text               ro code  0x0008118a    0x22  zero_init3.o [4]
+  .text               ro code  0x000811ac   0x204  button.o [1]
+  .text               ro code  0x000813b0   0x1ce  rtc.o [1]
+  .text               ro code  0x00081580    0xc0  version.o [1]
+  .text               ro code  0x00081640    0xd4  mktime.o [3]
+  .text               ro code  0x00081714    0xba  localtim.o [3]
+  .text               ro code  0x000817ce    0x2a  strncmp.o [3]
+  .text               ro code  0x000817f8     0x8  atoi.o [3]
+  .text               ro code  0x00081800   0x188  xttotm.o [3]
+  .text               ro code  0x00081988     0x2  xtls.o [3]
+  .text               ro code  0x0008198c    0x29  setlocale.o [3]
+  .text               ro code  0x000819b8     0xa  getzone.o [3]
+  .text               ro code  0x000819c2    0x42  xgettime.o [3]
+  .text               ro code  0x00081a04    0x86  xstol.o [3]
+  .text               ro code  0x00081a8c   0x174  xstoul.o [3]
+  .text               ro code  0x00081c00   0x134  xisdst.o [3]
+  .text               ro code  0x00081d34    0x16  strchr.o [4]
+  .text               ro code  0x00081d4c    0x36  strlen.o [4]
+  .text               ro code  0x00081d84     0xc  errno.o [3]
+  .text               ro code  0x00081d90    0x58  memchr.o [4]
+  .text               ro code  0x00081de8   0x168  xgetdst.o [3]
+  .text               ro code  0x00081f50    0x80  xxmemxfree.o [3]
+  .text               ro code  0x00081fd0    0xb0  xxmemxmalloc.o [3]
+  .text               ro code  0x00082080    0x2c  xgetmemchunk.o [3]
+  .text               ro code  0x000820ac   0x144  led.o [1]
+  .text               ro code  0x000821f0    0xe0  usart.o [1]
+  .text               ro code  0x000822d0    0x8c  sysTick.o [1]
+  .rodata             const    0x0008235c    0x80  led.o [1]
+  .text               ro code  0x000823dc    0x5c  beeper.o [1]
+  .text               ro code  0x00082438    0x58  main.o [1]
+  .text               ro code  0x00082490     0x4  motorControl.o [1]
+  .text               ro code  0x00082494    0x18  wdt.o [1]
+  .rodata             const    0x000824ac    0x40  version.o [1]
+  .text               ro code  0x000824ec    0x3c  irq.o [1]
+  .rodata             const    0x00082528    0x30  version.o [1]
+  .text               ro code  0x00082558    0x28  data_init.o [4]
+  .iar.init_table     const    0x00082580    0x24  - Linker created -
+  .text               ro code  0x000825a4    0x1a  cmain.o [4]
+  .text               ro code  0x000825c0    0x14  board_cstartup_iar.o [1]
+  .text               ro code  0x000825d4     0x4  exit.o [3]
+  .text               ro code  0x000825d8     0xa  cexit.o [4]
+  .text               ro code  0x000825e4    0x14  exit.o [5]
+  .rodata             const    0x000825f8    0x10  beeper.o [1]
+  .rodata             const    0x00082608    0x10  i2c.o [1]
+  .rodata             const    0x00082618     0xc  led.o [1]
+  .text               ro code  0x00082624     0xc  cstartup_M.o [4]
+  .rodata             const    0x00082630     0x8  gpio.o [1]
+  .rodata             const    0x00082638     0x8  lcd.o [1]
+  .rodata             const    0x00082640     0x8  lcd.o [1]
+  .rodata             const    0x00082648     0x8  lcd.o [1]
+  .rodata             const    0x00082650     0x4  button.o [1]
+  .rodata             const    0x00082654     0x4  version.o [1]
+  .rodata             const    0x00082658     0x4  version.o [1]
+  .rodata             const    0x0008265c     0x4  version.o [1]
+  .rodata             const    0x00082660     0x4  version.o [1]
+  .rodata             const    0x00082664     0x4  version.o [1]
+  .rodata             const    0x00082668     0x4  version.o [1]
+  .rodata             const    0x0008266c     0x4  version.o [1]
+  .rodata             const    0x00082670     0x4  version.o [1]
+  .rodata             const    0x00082674     0x4  version.o [1]
+  .rodata             const    0x00082678     0x4  version.o [1]
+  .rodata             const    0x0008267c     0x4  version.o [1]
+  .rodata             const    0x00082680     0x4  version.o [1]
+  .rodata             const    0x00082684     0x0  zero_init3.o [4]
+  .rodata             const    0x00082684     0x0  copy_init3.o [4]
+  Initializer bytes   ro data  0x00082684    0x48  <for P2 s0>
+                             - 0x000826cc  0x2610
 
-"P2", part 1 of 3:                           0x60
-  P2 s0                        0x20000000    0x60  <Init block>
+"P2", part 1 of 3:                           0x48
+  P2 s0                        0x20000000    0x48  <Init block>
     __DLIB_PERTHREAD  inited   0x20000000    0x2c  xttotm.o [3]
-    .data             inited   0x2000002c    0x14  motorDemo.o [1]
-    __DLIB_PERTHREAD  inited   0x20000040     0x8  localtim.o [3]
-    __DLIB_PERTHREAD  inited   0x20000048     0x8  setlocale.o [3]
-    __DLIB_PERTHREAD  inited   0x20000050     0x4  errno.o [3]
-    __DLIB_PERTHREAD  inited   0x20000054     0x4  xisdst.o [3]
-    __DLIB_PERTHREAD  inited   0x20000058     0x4  xisdstData.o [3]
-    .data             inited   0x2000005c     0x2  motorDemo.o [1]
-                             - 0x20000060    0x60
+    __DLIB_PERTHREAD  inited   0x2000002c     0x8  localtim.o [3]
+    __DLIB_PERTHREAD  inited   0x20000034     0x8  setlocale.o [3]
+    __DLIB_PERTHREAD  inited   0x2000003c     0x4  errno.o [3]
+    __DLIB_PERTHREAD  inited   0x20000040     0x4  xisdst.o [3]
+    __DLIB_PERTHREAD  inited   0x20000044     0x4  xisdstData.o [3]
+                             - 0x20000048    0x48
 
-"P2", part 2 of 3:                          0x3e0
-  .bss                zero     0x20000060    0xe4  gpio.o [1]
-  .bss                zero     0x20000144    0xbc  lcd.o [1]
-  .bss                zero     0x20000200    0x8c  usart.o [1]
-  .bss                zero     0x2000028c    0x70  timer.o [1]
-  .bss                zero     0x200002fc    0x58  led.o [1]
-  .bss                zero     0x20000354    0x50  button.o [1]
-  .bss                zero     0x200003a4    0x30  i2c.o [1]
-  .bss                zero     0x200003d4    0x30  rtc.o [1]
-  .bss                zero     0x20000404    0x14  motorDemo.o [1]
-  .bss                zero     0x20000418     0xc  led.o [1]
-  .bss                zero     0x20000424     0x8  xxmemxmalloc.o [3]
-  .bss                zero     0x2000042c     0x4  beeper.o [1]
-  .bss                zero     0x20000430     0x4  sysTick.o [1]
-  .bss                zero     0x20000434     0x4  version.o [1]
-  .bss                zero     0x20000438     0x4  xgetmemchunk.o [3]
-                             - 0x2000043c   0x3dc
+"P2", part 2 of 3:                          0x3c8
+  .bss                zero     0x20000048    0xe4  gpio.o [1]
+  .bss                zero     0x2000012c    0xbc  lcd.o [1]
+  .bss                zero     0x200001e8    0x8c  usart.o [1]
+  .bss                zero     0x20000274    0x70  timer.o [1]
+  .bss                zero     0x200002e4    0x58  led.o [1]
+  .bss                zero     0x2000033c    0x50  button.o [1]
+  .bss                zero     0x2000038c    0x30  i2c.o [1]
+  .bss                zero     0x200003bc    0x30  rtc.o [1]
+  .bss                zero     0x200003ec     0xc  led.o [1]
+  .bss                zero     0x200003f8     0x8  xxmemxmalloc.o [3]
+  .bss                zero     0x20000400     0x4  beeper.o [1]
+  .bss                zero     0x20000404     0x4  sysTick.o [1]
+  .bss                zero     0x20000408     0x4  version.o [1]
+  .bss                zero     0x2000040c     0x4  xgetmemchunk.o [3]
+                             - 0x20000410   0x3c8
 
 "P2", part 3 of 3:                          0x200
-  HEAP                         0x20000440   0x200  <Block>
-    HEAP              uninit   0x20000440   0x200  <Block tail>
-                             - 0x20000640   0x200
+  HEAP                         0x20000410   0x200  <Block>
+    HEAP              uninit   0x20000410   0x200  <Block tail>
+                             - 0x20000610   0x200
 
 "P3":                                      0x2000
   CSTACK                       0x20080000  0x2000  <Block>
@@ -254,14 +214,14 @@ __dlib_dynamic_initialization = normal
           Address     Size
           -------     ----
 Zero (__iar_zero_init3)
-    1 destination range, total size 0x3dc:
-          0x20000060  0x3dc
+    1 destination range, total size 0x3c8:
+          0x20000048  0x3c8
 
 Copy (__iar_copy_init3)
-    1 source range, total size 0x60 (102% of destination):
-          0x00082edc   0x60
-    1 destination range, total size 0x5e:
-          0x20000000   0x5e
+    1 source range, total size 0x48:
+          0x00082684   0x48
+    1 destination range, total size 0x48:
+          0x20000000   0x48
 
 
 
@@ -271,29 +231,27 @@ Copy (__iar_copy_init3)
 
     Module                 ro code  ro data  rw data
     ------                 -------  -------  -------
-C:\Users\Quinn\Documents\School\MPG\Motor Project\project\Debug\Obj: [1]
+C:\Users\Quinn\Documents\GitHub\motor-project\project\Debug\Obj: [1]
     beeper.o                    92       16        4
     board_cstartup_iar.o        20      188
     bsp.o                      244
-    button.o                   552        4       80
+    button.o                   516        4       80
     gpio.o                   1 076        8      228
     i2c.o                      844       16       48
     irq.o                       60
     itemQ.o                    614
-    lcd.o                      896       24      188
-    led.o                      400      140      100
+    lcd.o                      536       24      188
+    led.o                      324      140      100
     main.o                      88
-    motorDemo.o                156       22       42
+    motorControl.o               4
     rtc.o                      462                48
     sysTick.o                  140                 4
-    textEditor.o               160
     timer.o                    592               112
     usart.o                    224               140
-    utils.o                     18
     version.o                  192      160        4
     wdt.o                       24
     ------------------------------------------------
-    Total:                   6 854      578      998
+    Total:                   6 052      556      956
 
 command line: [2]
     ------------------------------------------------
@@ -309,17 +267,12 @@ dl7M_tln.a: [3]
     memset.o                    20
     mktime.o                   212
     setlocale.o                 41        8        8
-    sprintf.o                   52
     strncmp.o                   42
-    vsnprint.o                  60
     xgetdst.o                  360
     xgetmemchunk.o              44                 4
     xgettime.o                  66
     xisdst.o                   308        4        4
     xisdstData.o                          4        4
-    xprintfsmall_nomb.o      1 184
-    xsnprout.o                  26
-    xsprout.o                   10
     xstol.o                    134
     xstoul.o                   372
     xtls.o                       2
@@ -327,7 +280,7 @@ dl7M_tln.a: [3]
     xxmemxfree.o               128
     xxmemxmalloc.o             176                 8
     ------------------------------------------------
-    Total:                   3 861       72       84
+    Total:                   2 529       72       84
 
 rt7M_tl.a: [4]
     ABImemcpy_unaligned.o      118
@@ -350,10 +303,10 @@ shb_l.a: [5]
     ------------------------------------------------
     Total:                      20
 
-    Gaps                        19
-    Linker created                       38    8 704
+    Gaps                        17
+    Linker created                       36    8 704
 ----------------------------------------------------
-    Grand Total:            11 404      688    9 786
+    Grand Total:             9 268      664    9 744
 
 
 *******************************************************************************
@@ -364,268 +317,241 @@ Entry                      Address   Size  Type      Object
 -----                      -------   ----  ----      ------
 .intvec$$Base           0x00080000          --   Gb  - Linker created -
 .intvec$$Limit          0x000800bc          --   Gb  - Linker created -
-?main                   0x00082dfd         Code  Gb  cmain.o [4]
-ADCC0_IrqHandler        0x00082d77    0x2  Code  Wk  irq.o [1]
-ADCC1_IrqHandler        0x00082d79    0x2  Code  Wk  irq.o [1]
-BeeperChannelSetup      0x00082c67   0x22  Code  Lc  beeper.o [1]
-BeeperInit              0x00082c39   0x2e  Code  Gb  beeper.o [1]
-Beepers                 0x00082e50   0x10  Data  Lc  beeper.o [1]
-BspClockInit            0x00080add   0x60  Code  Lc  bsp.o [1]
-BspGetCpuClkFreq        0x00080aaf    0x4  Code  Gb  bsp.o [1]
-BspInit                 0x00080a85   0x2a  Code  Gb  bsp.o [1]
-BspPeriphOff            0x00080abd    0xa  Code  Gb  bsp.o [1]
-BspPeriphOn             0x00080ab3    0xa  Code  Gb  bsp.o [1]
-BspSleepWhile           0x00080ac7   0x16  Code  Gb  bsp.o [1]
-BtnToGpio               0x00082ea8    0x4  Data  Lc  button.o [1]
-BusFault_Handler        0x00082d4b    0x2  Code  Wk  irq.o [1]
-ButtonChangeIrq         0x00081ad5   0xba  Code  Lc  button.o [1]
-ButtonInit              0x00081971   0x4e  Code  Gb  button.o [1]
-ButtonIsHeld            0x00081a7b   0x12  Code  Gb  button.o [1]
-ButtonIsHeldXMs         0x00081a8d   0x30  Code  Gb  button.o [1]
-ButtonIsPressed         0x00081a53   0x1a  Code  Gb  button.o [1]
-ButtonPressAck          0x00081abd   0x16  Code  Gb  button.o [1]
-ButtonUpdate            0x000819bf   0x94  Code  Gb  button.o [1]
-ButtonWasPressed        0x00081a6d    0xe  Code  Gb  button.o [1]
+?main                   0x000825a5         Code  Gb  cmain.o [4]
+ADCC0_IrqHandler        0x0008251f    0x2  Code  Wk  irq.o [1]
+ADCC1_IrqHandler        0x00082521    0x2  Code  Wk  irq.o [1]
+BeeperChannelSetup      0x0008240b   0x22  Code  Lc  beeper.o [1]
+BeeperInit              0x000823dd   0x2e  Code  Gb  beeper.o [1]
+Beepers                 0x000825f8   0x10  Data  Lc  beeper.o [1]
+BspClockInit            0x00080549   0x60  Code  Lc  bsp.o [1]
+BspGetCpuClkFreq        0x0008051b    0x4  Code  Gb  bsp.o [1]
+BspInit                 0x000804f1   0x2a  Code  Gb  bsp.o [1]
+BspPeriphOff            0x00080529    0xa  Code  Gb  bsp.o [1]
+BspPeriphOn             0x0008051f    0xa  Code  Gb  bsp.o [1]
+BspSleepWhile           0x00080533   0x16  Code  Gb  bsp.o [1]
+BtnToGpio               0x00082650    0x4  Data  Lc  button.o [1]
+BusFault_Handler        0x000824f3    0x2  Code  Wk  irq.o [1]
+ButtonChangeIrq         0x000812ed   0xba  Code  Lc  button.o [1]
+ButtonInit              0x000811ad   0x4e  Code  Gb  button.o [1]
+ButtonIsHeld            0x000812a9   0x12  Code  Gb  button.o [1]
+ButtonIsHeldXMs         0x000812bb   0x30  Code  Gb  button.o [1]
+ButtonIsPressed         0x0008128f   0x1a  Code  Gb  button.o [1]
+ButtonUpdate            0x000811fb   0x94  Code  Gb  button.o [1]
 CSTACK$$Base            0x20080000          --   Gb  - Linker created -
 CSTACK$$Limit           0x20082000          --   Gb  - Linker created -
-DBGU_IrqHandler         0x0008297d    0xa  Code  Gb  usart.o [1]
-DebugMon_Handler        0x00082d51    0x2  Code  Wk  irq.o [1]
-EFC0_IrqHandler         0x00082d61    0x2  Code  Wk  irq.o [1]
-EFC1_IrqHandler         0x00082d63    0x2  Code  Wk  irq.o [1]
-GpioClear               0x000808df   0x1c  Code  Gb  gpio.o [1]
-GpioInit                0x000806a9  0x19a  Code  Gb  gpio.o [1]
-GpioIrqHandler          0x0008095f   0x24  Code  Lc  gpio.o [1]
-GpioIrqInstall          0x00080843   0x80  Code  Gb  gpio.o [1]
-GpioIsSet               0x0008091b   0x1c  Code  Gb  gpio.o [1]
-GpioSet                 0x000808c3   0x1c  Code  Gb  gpio.o [1]
-GpioSetState            0x000808fb   0x20  Code  Gb  gpio.o [1]
-HDMA_IrqHandler         0x00082d7b    0x2  Code  Wk  irq.o [1]
-HEAP$$Base              0x20000440          --   Gb  - Linker created -
-HEAP$$Limit             0x20000640          --   Gb  - Linker created -
-HSMC4_IrqHandler        0x00082d65    0x2  Code  Wk  irq.o [1]
-HardFault_Handler       0x00082d47    0x2  Code  Wk  irq.o [1]
-I2c0IsBusy              0x000810dd    0x6  Code  Gb  i2c.o [1]
-I2c1IsBusy              0x000810e3    0x8  Code  Gb  i2c.o [1]
-I2cIrqHandler           0x00081245   0x68  Code  Lc  i2c.o [1]
-I2cIsBusy               0x000810cf    0xe  Code  Gb  i2c.o [1]
-I2cOpen                 0x00080fdf   0xa6  Code  Gb  i2c.o [1]
-I2cSetupClock           0x0008111d   0xd0  Code  Lc  i2c.o [1]
-I2cStartTx              0x000811ed   0x58  Code  Lc  i2c.o [1]
-I2cWait                 0x000810eb   0x28  Code  Gb  i2c.o [1]
-I2cWriteRead            0x00081085   0x4a  Code  Gb  i2c.o [1]
-IrqHandlerNotUsed       0x00082d7f    0x2  Code  Wk  irq.o [1]
-ItemQBytesFree          0x00081337   0x38  Code  Gb  itemQ.o [1]
-ItemQBytesUsed          0x00081309   0x2e  Code  Gb  itemQ.o [1]
-ItemQFlush              0x000812fb    0xe  Code  Gb  itemQ.o [1]
+DBGU_IrqHandler         0x000821f1    0xa  Code  Gb  usart.o [1]
+DebugMon_Handler        0x000824f9    0x2  Code  Wk  irq.o [1]
+EFC0_IrqHandler         0x00082509    0x2  Code  Wk  irq.o [1]
+EFC1_IrqHandler         0x0008250b    0x2  Code  Wk  irq.o [1]
+GpioClear               0x0008034b   0x1c  Code  Gb  gpio.o [1]
+GpioInit                0x00080115  0x19a  Code  Gb  gpio.o [1]
+GpioIrqHandler          0x000803cb   0x24  Code  Lc  gpio.o [1]
+GpioIrqInstall          0x000802af   0x80  Code  Gb  gpio.o [1]
+GpioIsSet               0x00080387   0x1c  Code  Gb  gpio.o [1]
+GpioSet                 0x0008032f   0x1c  Code  Gb  gpio.o [1]
+GpioSetState            0x00080367   0x20  Code  Gb  gpio.o [1]
+HDMA_IrqHandler         0x00082523    0x2  Code  Wk  irq.o [1]
+HEAP$$Base              0x20000410          --   Gb  - Linker created -
+HEAP$$Limit             0x20000610          --   Gb  - Linker created -
+HSMC4_IrqHandler        0x0008250d    0x2  Code  Wk  irq.o [1]
+HardFault_Handler       0x000824ef    0x2  Code  Wk  irq.o [1]
+I2c0IsBusy              0x000807dd    0x6  Code  Gb  i2c.o [1]
+I2c1IsBusy              0x000807e3    0x8  Code  Gb  i2c.o [1]
+I2cIrqHandler           0x00080945   0x68  Code  Lc  i2c.o [1]
+I2cIsBusy               0x000807cf    0xe  Code  Gb  i2c.o [1]
+I2cOpen                 0x000806df   0xa6  Code  Gb  i2c.o [1]
+I2cSetupClock           0x0008081d   0xd0  Code  Lc  i2c.o [1]
+I2cStartTx              0x000808ed   0x58  Code  Lc  i2c.o [1]
+I2cWait                 0x000807eb   0x28  Code  Gb  i2c.o [1]
+I2cWriteRead            0x00080785   0x4a  Code  Gb  i2c.o [1]
+IrqHandlerNotUsed       0x00082527    0x2  Code  Wk  irq.o [1]
+ItemQBytesFree          0x00080ab9   0x38  Code  Gb  itemQ.o [1]
+ItemQBytesUsed          0x00080a8b   0x2e  Code  Gb  itemQ.o [1]
+ItemQFlush              0x00080a7d    0xe  Code  Gb  itemQ.o [1]
 ItemQIndexUpdateFromWrite
-                        0x00081479   0x20  Code  Lc  itemQ.o [1]
-ItemQInit               0x000812d9   0x22  Code  Gb  itemQ.o [1]
-ItemQPop                0x000813d5   0x5e  Code  Gb  itemQ.o [1]
-ItemQPopBytes           0x00081499   0xa6  Code  Lc  itemQ.o [1]
-ItemQPush               0x0008136f   0x66  Code  Gb  itemQ.o [1]
-ItemQPushBytes          0x00081433   0x46  Code  Lc  itemQ.o [1]
-LcdClear                0x00080cdd   0x2a  Code  Gb  lcd.o [1]
-LcdCmd                  0x00080ed9   0x1a  Code  Lc  lcd.o [1]
-LcdCmdDequeue           0x00080f15   0x2c  Code  Lc  lcd.o [1]
-LcdCmdQueue             0x00080ef3   0x22  Code  Lc  lcd.o [1]
-LcdI2cDone              0x00080f4b   0x10  Code  Lc  lcd.o [1]
-LcdI2cErr               0x00080f5b   0x10  Code  Lc  lcd.o [1]
-LcdI2cWait              0x00080f41    0xa  Code  Lc  lcd.o [1]
-LcdInit                 0x00080c0d   0x9a  Code  Gb  lcd.o [1]
-LcdPrintf               0x00080d1d   0x26  Code  Gb  lcd.o [1]
-LcdPuts                 0x00080d07   0x16  Code  Gb  lcd.o [1]
-LcdSetCursor            0x00080eb7   0x22  Code  Lc  lcd.o [1]
-LcdSetPos               0x00080ca7   0x36  Code  Gb  lcd.o [1]
-LcdUpdate               0x00080e0b   0xac  Code  Gb  lcd.o [1]
-LcdWrite                0x00080d43   0xc8  Code  Gb  lcd.o [1]
-LedInit                 0x00082839   0x2e  Code  Gb  led.o [1]
-LedIoSetState           0x00082955   0x16  Code  Lc  led.o [1]
-LedRgbSet               0x00082815   0x24  Code  Gb  led.o [1]
-LedRgbUpdate            0x00082901   0x54  Code  Lc  led.o [1]
-LedSetPwm               0x000827ed   0x28  Code  Gb  led.o [1]
-LedUpdate               0x00082867   0x9a  Code  Gb  led.o [1]
-MCI0_IrqHandler         0x00082d69    0x2  Code  Wk  irq.o [1]
-MainInit                0x00082cc3   0x2a  Code  Lc  main.o [1]
-MemManage_Handler       0x00082d49    0x2  Code  Wk  irq.o [1]
-MotorDemoInit           0x00082a5d    0xe  Code  Gb  motorDemo.o [1]
-MotorDemoUpdate         0x00082a6b   0x54  Code  Gb  motorDemo.o [1]
-NMI_Handler             0x00082d45    0x2  Code  Wk  irq.o [1]
-NVIC_ClearPendingIRQ    0x0008066b   0x1a  Code  Lc  gpio.o [1]
-NVIC_ClearPendingIRQ    0x00080fa7   0x18  Code  Lc  i2c.o [1]
-NVIC_EnableIRQ          0x00080651   0x1a  Code  Lc  gpio.o [1]
-NVIC_EnableIRQ          0x00080f8d   0x1a  Code  Lc  i2c.o [1]
-NVIC_EnableIRQ          0x00081549   0x18  Code  Lc  timer.o [1]
-NVIC_SetPriority        0x00080685   0x24  Code  Lc  gpio.o [1]
-NVIC_SetPriority        0x00080fbf   0x20  Code  Lc  i2c.o [1]
-NVIC_SetPriority        0x00082b2d   0x20  Code  Lc  sysTick.o [1]
-NVIC_SetPriority        0x00081561   0x20  Code  Lc  timer.o [1]
-PIOA_IrqHandler         0x00080937   0x14  Code  Gb  gpio.o [1]
-PIOB_IrqHandler         0x0008094b   0x14  Code  Gb  gpio.o [1]
-PIOC_IrqHandler         0x00082d67    0x2  Code  Wk  irq.o [1]
-PMC_IrqHandler          0x00082d5f    0x2  Code  Wk  irq.o [1]
-PWM_IrqHandler          0x00082d75    0x2  Code  Wk  irq.o [1]
-PendSV_Handler          0x00082d53    0x2  Code  Wk  irq.o [1]
-RSTC_IrqHandler         0x00082d57    0x2  Code  Wk  irq.o [1]
-RTC_IrqHandler          0x00082d59    0x2  Code  Wk  irq.o [1]
-RTT_IrqHandler          0x00082d5b    0x2  Code  Wk  irq.o [1]
-Region$$Table$$Base     0x00082dd8          --   Gb  - Linker created -
-Region$$Table$$Limit    0x00082dfc          --   Gb  - Linker created -
-RtcBcdToByte            0x00081d4f   0x18  Code  Lc  rtc.o [1]
-RtcByteToBcd            0x00081d39   0x16  Code  Lc  rtc.o [1]
-RtcGet                  0x00081bc3   0x10  Code  Gb  rtc.o [1]
-RtcGetTm                0x00081be7    0xc  Code  Gb  rtc.o [1]
-RtcInit                 0x00081b99   0x2a  Code  Gb  rtc.o [1]
-RtcRegToTm              0x00081c3f   0x6c  Code  Lc  rtc.o [1]
-RtcSet                  0x00081bd3   0x14  Code  Gb  rtc.o [1]
-RtcSetTm                0x00081bf3   0x4c  Code  Gb  rtc.o [1]
-RtcTmToReg              0x00081cab   0x74  Code  Lc  rtc.o [1]
-SPI0_IrqHandler         0x00082d6d    0x2  Code  Wk  irq.o [1]
-SSC0_IrqHandler         0x00082d6f    0x2  Code  Wk  irq.o [1]
-SUPC_IrqHandler         0x00082d55    0x2  Code  Wk  irq.o [1]
-SVC_Handler             0x00082d4f    0x2  Code  Wk  irq.o [1]
-SysTickInit             0x00082b5f   0x2c  Code  Gb  sysTick.o [1]
-SysTickInitMs           0x00082b4d   0x12  Code  Gb  sysTick.o [1]
-SysTickStop             0x00082b8b    0x8  Code  Gb  sysTick.o [1]
-SysTick_Handler         0x00082b93    0xc  Code  Gb  sysTick.o [1]
-TC0_IrqHandler          0x0008171d   0x3a  Code  Gb  timer.o [1]
-TC1_IrqHandler          0x00082d71    0x2  Code  Wk  irq.o [1]
-TC2_IrqHandler          0x00082d73    0x2  Code  Wk  irq.o [1]
-TWI0_IrqHandler         0x00081113    0xa  Code  Gb  i2c.o [1]
-TWI1_IrqHandler         0x00082d6b    0x2  Code  Wk  irq.o [1]
-TimerInit               0x00081581   0x80  Code  Gb  timer.o [1]
-TimerMsStopIfUnused     0x000816eb   0x1e  Code  Gb  timer.o [1]
-TimerTimeXMs            0x00081601   0x12  Code  Gb  timer.o [1]
-TimerTimeXMsRestart     0x00081613   0x82  Code  Gb  timer.o [1]
-TimerWaitMsActive       0x00081715    0x8  Code  Lc  timer.o [1]
-TimerWaitXMs            0x00081695   0x3a  Code  Gb  timer.o [1]
-TimerWaitXMsCallback    0x00081709    0xa  Code  Lc  timer.o [1]
-TimerWaitXUs            0x000816cf   0x1c  Code  Gb  timer.o [1]
-UDPD_IrqHandler         0x00082d7d    0x2  Code  Wk  irq.o [1]
-USART0_IrqHandler       0x00082987    0xa  Code  Gb  usart.o [1]
-USART1_IrqHandler       0x00082991    0xa  Code  Gb  usart.o [1]
-USART2_IrqHandler       0x0008299b    0xa  Code  Gb  usart.o [1]
-USART3_IrqHandler       0x000829a5    0xa  Code  Gb  usart.o [1]
-UsageFault_Handler      0x00082d4d    0x2  Code  Wk  irq.o [1]
-UsartHandler            0x000829c3   0x84  Code  Lc  usart.o [1]
-UsartRxRemain           0x000829af   0x14  Code  Lc  usart.o [1]
-VersionBuildTime        0x00081d81   0x86  Code  Lc  version.o [1]
-VersionGetBuildTime     0x00081d69   0x18  Code  Gb  version.o [1]
-WDT_IrqHandler          0x00082d5d    0x2  Code  Wk  irq.o [1]
-WdtInit                 0x00082ced    0x8  Code  Gb  wdt.o [1]
-WdtKill                 0x00082cf5    0xa  Code  Gb  wdt.o [1]
-_Getdst                 0x00082551  0x140  Code  Gb  xgetdst.o [3]
-_Gettime                0x000821ab   0x42  Code  Gb  xgettime.o [3]
-_IsdstStr               0x2000004c    0x4  Data  Gb  setlocale.o [3]
-_Isdst_olddst           0x20000054    0x4  Data  Lc  xisdst.o [3]
-_Isdst_rules            0x20000058    0x4  Data  Gb  xisdstData.o [3]
-_LitobSmallNoMb         0x00080459   0xce  Code  Lc  xprintfsmall_nomb.o [3]
-_LocaleC_isalpha        0x000818ff   0x22  Code  Gb  textEditor.o [1]
-_LocaleC_islower        0x0008194b   0x12  Code  Gb  utils.o [1]
-_LocaleC_ispunct        0x00081921   0x2a  Code  Gb  textEditor.o [1]
-_LocaleC_isupper        0x0008195d   0x12  Code  Gb  textEditor.o [1]
-_Localtime_oldzone      0x20000040    0x4  Data  Lc  localtim.o [3]
-_Localtime_tzoff        0x20000044    0x4  Data  Lc  localtim.o [3]
-_PrintfSmallNoMb        0x000800bd  0x396  Code  Gb  xprintfsmall_nomb.o [3]
-_PutcharsSmallNoMb      0x00080527   0x2e  Code  Lc  xprintfsmall_nomb.o [3]
-_SNProut                0x00080bf3   0x1a  Code  Gb  xsnprout.o [3]
-_SProut                 0x0008153f    0xa  Code  Gb  xsprout.o [3]
+                        0x00080bfb   0x20  Code  Lc  itemQ.o [1]
+ItemQInit               0x00080a5b   0x22  Code  Gb  itemQ.o [1]
+ItemQPop                0x00080b57   0x5e  Code  Gb  itemQ.o [1]
+ItemQPopBytes           0x00080c1b   0xa6  Code  Lc  itemQ.o [1]
+ItemQPush               0x00080af1   0x66  Code  Gb  itemQ.o [1]
+ItemQPushBytes          0x00080bb5   0x46  Code  Lc  itemQ.o [1]
+LcdCmd                  0x00081079   0x1a  Code  Lc  lcd.o [1]
+LcdCmdDequeue           0x000810b5   0x2c  Code  Lc  lcd.o [1]
+LcdCmdQueue             0x00081093   0x22  Code  Lc  lcd.o [1]
+LcdI2cDone              0x000810eb   0x10  Code  Lc  lcd.o [1]
+LcdI2cErr               0x000810fb   0x10  Code  Lc  lcd.o [1]
+LcdI2cWait              0x000810e1    0xa  Code  Lc  lcd.o [1]
+LcdInit                 0x00080f11   0x9a  Code  Gb  lcd.o [1]
+LcdSetCursor            0x00081057   0x22  Code  Lc  lcd.o [1]
+LcdUpdate               0x00080fab   0xac  Code  Gb  lcd.o [1]
+LedInit                 0x000820ad   0x2e  Code  Gb  led.o [1]
+LedIoSetState           0x000821c9   0x16  Code  Lc  led.o [1]
+LedRgbUpdate            0x00082175   0x54  Code  Lc  led.o [1]
+LedUpdate               0x000820db   0x9a  Code  Gb  led.o [1]
+MCI0_IrqHandler         0x00082511    0x2  Code  Wk  irq.o [1]
+MainInit                0x00082467   0x2a  Code  Lc  main.o [1]
+MemManage_Handler       0x000824f1    0x2  Code  Wk  irq.o [1]
+MotorControlInit        0x00082491    0x2  Code  Gb  motorControl.o [1]
+MotorControlUpdate      0x00082493    0x2  Code  Gb  motorControl.o [1]
+NMI_Handler             0x000824ed    0x2  Code  Wk  irq.o [1]
+NVIC_ClearPendingIRQ    0x000800d7   0x1a  Code  Lc  gpio.o [1]
+NVIC_ClearPendingIRQ    0x000806a7   0x18  Code  Lc  i2c.o [1]
+NVIC_EnableIRQ          0x000800bd   0x1a  Code  Lc  gpio.o [1]
+NVIC_EnableIRQ          0x0008068d   0x1a  Code  Lc  i2c.o [1]
+NVIC_EnableIRQ          0x00080cc1   0x18  Code  Lc  timer.o [1]
+NVIC_SetPriority        0x000800f1   0x24  Code  Lc  gpio.o [1]
+NVIC_SetPriority        0x000806bf   0x20  Code  Lc  i2c.o [1]
+NVIC_SetPriority        0x000822d1   0x20  Code  Lc  sysTick.o [1]
+NVIC_SetPriority        0x00080cd9   0x20  Code  Lc  timer.o [1]
+PIOA_IrqHandler         0x000803a3   0x14  Code  Gb  gpio.o [1]
+PIOB_IrqHandler         0x000803b7   0x14  Code  Gb  gpio.o [1]
+PIOC_IrqHandler         0x0008250f    0x2  Code  Wk  irq.o [1]
+PMC_IrqHandler          0x00082507    0x2  Code  Wk  irq.o [1]
+PWM_IrqHandler          0x0008251d    0x2  Code  Wk  irq.o [1]
+PendSV_Handler          0x000824fb    0x2  Code  Wk  irq.o [1]
+RSTC_IrqHandler         0x000824ff    0x2  Code  Wk  irq.o [1]
+RTC_IrqHandler          0x00082501    0x2  Code  Wk  irq.o [1]
+RTT_IrqHandler          0x00082503    0x2  Code  Wk  irq.o [1]
+Region$$Table$$Base     0x00082580          --   Gb  - Linker created -
+Region$$Table$$Limit    0x000825a4          --   Gb  - Linker created -
+RtcBcdToByte            0x00081567   0x18  Code  Lc  rtc.o [1]
+RtcByteToBcd            0x00081551   0x16  Code  Lc  rtc.o [1]
+RtcGet                  0x000813db   0x10  Code  Gb  rtc.o [1]
+RtcGetTm                0x000813ff    0xc  Code  Gb  rtc.o [1]
+RtcInit                 0x000813b1   0x2a  Code  Gb  rtc.o [1]
+RtcRegToTm              0x00081457   0x6c  Code  Lc  rtc.o [1]
+RtcSet                  0x000813eb   0x14  Code  Gb  rtc.o [1]
+RtcSetTm                0x0008140b   0x4c  Code  Gb  rtc.o [1]
+RtcTmToReg              0x000814c3   0x74  Code  Lc  rtc.o [1]
+SPI0_IrqHandler         0x00082515    0x2  Code  Wk  irq.o [1]
+SSC0_IrqHandler         0x00082517    0x2  Code  Wk  irq.o [1]
+SUPC_IrqHandler         0x000824fd    0x2  Code  Wk  irq.o [1]
+SVC_Handler             0x000824f7    0x2  Code  Wk  irq.o [1]
+SysTickInit             0x00082303   0x2c  Code  Gb  sysTick.o [1]
+SysTickInitMs           0x000822f1   0x12  Code  Gb  sysTick.o [1]
+SysTickStop             0x0008232f    0x8  Code  Gb  sysTick.o [1]
+SysTick_Handler         0x00082337    0xc  Code  Gb  sysTick.o [1]
+TC0_IrqHandler          0x00080e95   0x3a  Code  Gb  timer.o [1]
+TC1_IrqHandler          0x00082519    0x2  Code  Wk  irq.o [1]
+TC2_IrqHandler          0x0008251b    0x2  Code  Wk  irq.o [1]
+TWI0_IrqHandler         0x00080813    0xa  Code  Gb  i2c.o [1]
+TWI1_IrqHandler         0x00082513    0x2  Code  Wk  irq.o [1]
+TimerInit               0x00080cf9   0x80  Code  Gb  timer.o [1]
+TimerMsStopIfUnused     0x00080e63   0x1e  Code  Gb  timer.o [1]
+TimerTimeXMs            0x00080d79   0x12  Code  Gb  timer.o [1]
+TimerTimeXMsRestart     0x00080d8b   0x82  Code  Gb  timer.o [1]
+TimerWaitMsActive       0x00080e8d    0x8  Code  Lc  timer.o [1]
+TimerWaitXMs            0x00080e0d   0x3a  Code  Gb  timer.o [1]
+TimerWaitXMsCallback    0x00080e81    0xa  Code  Lc  timer.o [1]
+TimerWaitXUs            0x00080e47   0x1c  Code  Gb  timer.o [1]
+UDPD_IrqHandler         0x00082525    0x2  Code  Wk  irq.o [1]
+USART0_IrqHandler       0x000821fb    0xa  Code  Gb  usart.o [1]
+USART1_IrqHandler       0x00082205    0xa  Code  Gb  usart.o [1]
+USART2_IrqHandler       0x0008220f    0xa  Code  Gb  usart.o [1]
+USART3_IrqHandler       0x00082219    0xa  Code  Gb  usart.o [1]
+UsageFault_Handler      0x000824f5    0x2  Code  Wk  irq.o [1]
+UsartHandler            0x00082237   0x84  Code  Lc  usart.o [1]
+UsartRxRemain           0x00082223   0x14  Code  Lc  usart.o [1]
+VersionBuildTime        0x00081599   0x86  Code  Lc  version.o [1]
+VersionGetBuildTime     0x00081581   0x18  Code  Gb  version.o [1]
+WDT_IrqHandler          0x00082505    0x2  Code  Wk  irq.o [1]
+WdtInit                 0x00082495    0x8  Code  Gb  wdt.o [1]
+WdtKill                 0x0008249d    0xa  Code  Gb  wdt.o [1]
+_Getdst                 0x00081e11  0x140  Code  Gb  xgetdst.o [3]
+_Gettime                0x000819c3   0x42  Code  Gb  xgettime.o [3]
+_IsdstStr               0x20000038    0x4  Data  Gb  setlocale.o [3]
+_Isdst_olddst           0x20000040    0x4  Data  Lc  xisdst.o [3]
+_Isdst_rules            0x20000044    0x4  Data  Gb  xisdstData.o [3]
+_Localtime_oldzone      0x2000002c    0x4  Data  Lc  localtim.o [3]
+_Localtime_tzoff        0x20000030    0x4  Data  Lc  localtim.o [3]
 _Ttotm_ts               0x20000000   0x2c  Data  Lc  xttotm.o [3]
-_Tzoff                  0x00081efd   0x96  Code  Gb  localtim.o [3]
-_TzoneStr               0x20000048    0x4  Data  Gb  setlocale.o [3]
+_Tzoff                  0x00081715   0x96  Code  Gb  localtim.o [3]
+_TzoneStr               0x20000034    0x4  Data  Gb  setlocale.o [3]
 __ICFEDIT_intvec_start__ {Abs}
                         0x00080000          --   Gb  command line/config [2]
-__aeabi_errno_addr      0x0008251d    0x6  Code  Gb  errno.o [3]
-__aeabi_memset          0x00080b8d         Code  Gb  ABImemset.o [4]
-__cmain                 0x00082dfd         Code  Gb  cmain.o [4]
-__data_Aldata           0x20000424    0x8  Data  Gb  xxmemxmalloc.o [3]
-__data_GetMemChunk      0x000827c1   0x2c  Code  Gb  xgetmemchunk.o [3]
-__exit                  0x00082e3d   0x14  Code  Gb  exit.o [5]
-__getzone               0x000821a1    0x6  Code  Gb  getzone.o [3]
-__iar_Daysto32          0x00081fe9   0x3a  Code  Gb  xttotm.o [3]
-__iar_Errno             0x20000050    0x4  Data  Gb  errno.o [3]
-__iar_Isdst32           0x000823e9  0x134  Code  Gb  xisdst.o [3]
-__iar_Memchr            0x000805f9         Code  Gb  memchr.o [4]
-__iar_Memset            0x00080b8d         Code  Gb  ABImemset.o [4]
-__iar_Memset_word       0x00080b95         Code  Gb  ABImemset.o [4]
-__iar_Stolx             0x000821ed   0x86  Code  Gb  xstol.o [3]
-__iar_Stoul             0x00082393    0x4  Code  Gb  xstoul.o [3]
-__iar_Stoulx            0x00082275  0x118  Code  Gb  xstoul.o [3]
-__iar_Strchr            0x0008055d         Code  Gb  strchr.o [4]
-__iar_Ttotm32           0x00082023  0x110  Code  Gb  xttotm.o [3]
-__iar_TzoneStr_init     0x00082175   0x24  Code  Gb  setlocale.o [3]
-__iar_copy_init3        0x00080573   0x2e  Code  Gb  copy_init3.o [4]
-__iar_data_init3        0x00082db1   0x28  Code  Gb  data_init.o [4]
+__aeabi_errno_addr      0x00081d85    0x6  Code  Gb  errno.o [3]
+__aeabi_memset          0x000805f9         Code  Gb  ABImemset.o [4]
+__cmain                 0x000825a5         Code  Gb  cmain.o [4]
+__data_Aldata           0x200003f8    0x8  Data  Gb  xxmemxmalloc.o [3]
+__data_GetMemChunk      0x00082081   0x2c  Code  Gb  xgetmemchunk.o [3]
+__exit                  0x000825e5   0x14  Code  Gb  exit.o [5]
+__getzone               0x000819b9    0x6  Code  Gb  getzone.o [3]
+__iar_Daysto32          0x00081801   0x3a  Code  Gb  xttotm.o [3]
+__iar_Errno             0x2000003c    0x4  Data  Gb  errno.o [3]
+__iar_Isdst32           0x00081c01  0x134  Code  Gb  xisdst.o [3]
+__iar_Memchr            0x00081d91         Code  Gb  memchr.o [4]
+__iar_Memset            0x000805f9         Code  Gb  ABImemset.o [4]
+__iar_Memset_word       0x00080601         Code  Gb  ABImemset.o [4]
+__iar_Stolx             0x00081a05   0x86  Code  Gb  xstol.o [3]
+__iar_Stoul             0x00081bab    0x4  Code  Gb  xstoul.o [3]
+__iar_Stoulx            0x00081a8d  0x118  Code  Gb  xstoul.o [3]
+__iar_Strchr            0x00081d35         Code  Gb  strchr.o [4]
+__iar_Ttotm32           0x0008183b  0x110  Code  Gb  xttotm.o [3]
+__iar_TzoneStr_init     0x0008198d   0x24  Code  Gb  setlocale.o [3]
+__iar_copy_init3        0x0008065f   0x2e  Code  Gb  copy_init3.o [4]
+__iar_data_init3        0x00082559   0x28  Code  Gb  data_init.o [4]
 __iar_dlib_perthread_access
-                        0x00082171    0x2  Code  Gb  xtls.o [3]
-__iar_program_start     0x00082e7d         Code  Gb  cstartup_M.o [4]
+                        0x00081989    0x2  Code  Gb  xtls.o [3]
+__iar_program_start     0x00082625         Code  Gb  cstartup_M.o [4]
 __iar_unaligned___aeabi_memcpy
-                        0x00081889         Code  Gb  ABImemcpy_unaligned.o [4]
+                        0x000809e5         Code  Gb  ABImemcpy_unaligned.o [4]
 __iar_unaligned___aeabi_memcpy4
-                        0x000818a9         Code  Gb  ABImemcpy_unaligned.o [4]
+                        0x00080a05         Code  Gb  ABImemcpy_unaligned.o [4]
 __iar_unaligned___aeabi_memcpy8
-                        0x000818a9         Code  Gb  ABImemcpy_unaligned.o [4]
-__iar_unaligned_memcmp  0x00081801         Code  Gb  memcmp_unaligned.o [4]
-__iar_zero_init3        0x000805d7   0x22  Code  Gb  zero_init3.o [4]
-__localtime32           0x00081f9d   0x1a  Code  Gb  localtim.o [3]
-__low_level_init        0x00082e19   0x14  Code  Gb  board_cstartup_iar.o [1]
-__mktime32              0x00081e29   0xd4  Code  Gb  mktime.o [3]
+                        0x00080a05         Code  Gb  ABImemcpy_unaligned.o [4]
+__iar_unaligned_memcmp  0x00081129         Code  Gb  memcmp_unaligned.o [4]
+__iar_zero_init3        0x0008118b   0x22  Code  Gb  zero_init3.o [4]
+__localtime32           0x000817b5   0x1a  Code  Gb  localtim.o [3]
+__low_level_init        0x000825c1   0x14  Code  Gb  board_cstartup_iar.o [1]
+__mktime32              0x00081641   0xd4  Code  Gb  mktime.o [3]
 __vector_table          0x00080000   0xbc  Data  Gb  board_cstartup_iar.o [1]
-_call_main              0x00082e09         Code  Gb  cmain.o [4]
-_exit                   0x00082e31         Code  Gb  cexit.o [4]
-_main                   0x00082e13         Code  Gb  cmain.o [4]
-atoi                    0x00081fe1    0x8  Code  Gb  atoi.o [3]
-beeper                  0x2000042c    0x4  Data  Lc  beeper.o [1]
-btns                    0x20000354   0x50  Data  Lc  button.o [1]
-digits                  0x00082398   0x28  Data  Lc  xstoul.o [3]
-exit                    0x00082e2d    0x4  Code  Gb  exit.o [3]
-free                    0x00082691   0x7a  Code  Gb  xxmemxfree.o [3]
-getint                  0x00082529   0x28  Code  Lc  xgetdst.o [3]
-i2cDefs                 0x00082e60   0x10  Data  Lc  i2c.o [1]
-i2cDev                  0x200003a4   0x30  Data  Lc  i2c.o [1]
-isalpha                 0x0008186f    0xc  Code  Gb  textEditor.o [1]
-isprint                 0x000817d5   0x2a  Code  Gb  textEditor.o [1]
-ispunct                 0x0008187b    0xc  Code  Gb  textEditor.o [1]
-lcd                     0x20000144   0xbc  Data  Lc  lcd.o [1]
-lcdRowA                 0x20000404   0x14  Data  Gb  motorDemo.o [1]
-lcdRowB                 0x2000002c   0x14  Data  Gb  motorDemo.o [1]
-ledPins                 0x00082e70    0xc  Data  Lc  led.o [1]
-ledRgbState             0x20000418    0xc  Data  Lc  led.o [1]
-ledSinTable             0x00082bb8   0x80  Data  Lc  led.o [1]
-ledState                0x200002fc   0x58  Data  Lc  led.o [1]
-lmos                    0x00082140   0x18  Data  Lc  xttotm.o [3]
-main                    0x00082c95   0x2e  Code  Gb  main.o [1]
-malloc                  0x00082711   0xac  Code  Gb  xxmemxmalloc.o [3]
-memchr                  0x000805f9         Code  Gb  memchr.o [4]
-memcpy                  0x00081863    0xc  Code  Gb  memcpy.o [3]
-memset                  0x00080b79   0x14  Code  Gb  memset.o [3]
-mos                     0x00082158   0x18  Data  Lc  xttotm.o [3]
-ndigs                   0x000823c0   0x28  Data  Lc  xstoul.o [3]
-pGpioReg                0x00082e88    0x8  Data  Lc  gpio.o [1]
-pfnGpioIrqs             0x20000060   0xe4  Data  Lc  gpio.o [1]
-programId               0x00082d04   0x40  Data  Gb  version.o [1]
-rtc                     0x200003d4   0x30  Data  Lc  rtc.o [1]
-setpoint                0x2000005c    0x2  Data  Gb  motorDemo.o [1]
-sprintf                 0x00082af9   0x34  Code  Gb  sprintf.o [3]
-strchr                  0x0008055d         Code  Gb  strchr.o [4]
-strlen                  0x000805a1         Code  Gb  strlen.o [4]
-strncmp                 0x00081fb7   0x2a  Code  Gb  strncmp.o [3]
-sysTick                 0x20000430    0x4  Data  Lc  sysTick.o [1]
-timer                   0x2000028c   0x70  Data  Lc  timer.o [1]
-updateLcdRow            0x00082ad1   0x28  Code  Gb  motorDemo.o [1]
-usartCfg                0x20000200   0x8c  Data  Lc  usart.o [1]
-versionBuildTime        0x20000434    0x4  Data  Lc  version.o [1]
-vsnprintf               0x00081799   0x3c  Code  Gb  vsnprint.o [3]
+_call_main              0x000825b1         Code  Gb  cmain.o [4]
+_exit                   0x000825d9         Code  Gb  cexit.o [4]
+_main                   0x000825bb         Code  Gb  cmain.o [4]
+atoi                    0x000817f9    0x8  Code  Gb  atoi.o [3]
+beeper                  0x20000400    0x4  Data  Lc  beeper.o [1]
+btns                    0x2000033c   0x50  Data  Lc  button.o [1]
+digits                  0x00081bb0   0x28  Data  Lc  xstoul.o [3]
+exit                    0x000825d5    0x4  Code  Gb  exit.o [3]
+free                    0x00081f51   0x7a  Code  Gb  xxmemxfree.o [3]
+getint                  0x00081de9   0x28  Code  Lc  xgetdst.o [3]
+i2cDefs                 0x00082608   0x10  Data  Lc  i2c.o [1]
+i2cDev                  0x2000038c   0x30  Data  Lc  i2c.o [1]
+lcd                     0x2000012c   0xbc  Data  Lc  lcd.o [1]
+ledPins                 0x00082618    0xc  Data  Lc  led.o [1]
+ledRgbState             0x200003ec    0xc  Data  Lc  led.o [1]
+ledSinTable             0x0008235c   0x80  Data  Lc  led.o [1]
+ledState                0x200002e4   0x58  Data  Lc  led.o [1]
+lmos                    0x00081958   0x18  Data  Lc  xttotm.o [3]
+main                    0x00082439   0x2e  Code  Gb  main.o [1]
+malloc                  0x00081fd1   0xac  Code  Gb  xxmemxmalloc.o [3]
+memchr                  0x00081d91         Code  Gb  memchr.o [4]
+memcpy                  0x000809d9    0xc  Code  Gb  memcpy.o [3]
+memset                  0x000805e5   0x14  Code  Gb  memset.o [3]
+mos                     0x00081970   0x18  Data  Lc  xttotm.o [3]
+ndigs                   0x00081bd8   0x28  Data  Lc  xstoul.o [3]
+pGpioReg                0x00082630    0x8  Data  Lc  gpio.o [1]
+pfnGpioIrqs             0x20000048   0xe4  Data  Lc  gpio.o [1]
+programId               0x000824ac   0x40  Data  Gb  version.o [1]
+rtc                     0x200003bc   0x30  Data  Lc  rtc.o [1]
+strchr                  0x00081d35         Code  Gb  strchr.o [4]
+strlen                  0x00081d4d         Code  Gb  strlen.o [4]
+strncmp                 0x000817cf   0x2a  Code  Gb  strncmp.o [3]
+sysTick                 0x20000404    0x4  Data  Lc  sysTick.o [1]
+timer                   0x20000274   0x70  Data  Lc  timer.o [1]
+usartCfg                0x200001e8   0x8c  Data  Lc  usart.o [1]
+versionBuildTime        0x20000408    0x4  Data  Lc  version.o [1]
 
 
-[1] = C:\Users\Quinn\Documents\School\MPG\Motor Project\project\Debug\Obj
+[1] = C:\Users\Quinn\Documents\GitHub\motor-project\project\Debug\Obj
 [2] = command line
 [3] = dl7M_tln.a
 [4] = rt7M_tl.a
 [5] = shb_l.a
 
-  11 404 bytes of readonly  code memory
-     688 bytes of readonly  data memory
-   9 786 bytes of readwrite data memory
+  9 268 bytes of readonly  code memory
+    664 bytes of readonly  data memory
+  9 744 bytes of readwrite data memory
 
 Errors: none
 Warnings: none
