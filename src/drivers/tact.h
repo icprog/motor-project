@@ -1,14 +1,14 @@
 /*******************************************************************************************
-motorControl.h
+tactometer.h
 
 Description:
-Determines required frequency and voltage for given RPM input
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
 Quinn Miller
 ********************************************************************************************/
 
-#ifndef __MOTORCONTROL_H__
-#define __MOTORCONTROL_H__
+#ifndef __TACTOMETER_H__
+#define __TACTOMETER_H__
 
 #include "types.h"
 
@@ -22,7 +22,13 @@ Quinn Miller
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-void MotorControlInit(void);
-void MotorControlUpdate(void);
+void TactInit(void);
+void TactUpdate(void);
+
+int GetPeriod(void);
+int GetTimeSinceTick(void);
+float GetRPS(void);
+float GetRPM(void);
+
 
 #endif

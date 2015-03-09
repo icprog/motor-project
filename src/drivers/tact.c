@@ -1,23 +1,14 @@
 /*******************************************************************************************
-Demo Application
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
+Quinn Miller
 ********************************************************************************************/
 
-#include "demo.h"
-#include "led.h"
-#include "lcd.h"
-#include "button.h"
-#include "usart.h"
-#include "sd.h"
-#include "file.h"
+
+#include "tact.h"
 #include "gpio.h"
 #include "timer.h"
-#include "rtc.h"
 
 
 /**************************************************************************
@@ -26,47 +17,66 @@ Sheldon Patterson
 /**************************************************************************
  *                                  Types
  **************************************************************************/
-typedef struct
-{
-   char teBuf[100];
-   char usartRxBuf[32];
-   char usartTxBuf[32];
-   u32 tickCount;
-   time_t lastTm;
-}DEMO;
-
-
 /**************************************************************************
  *                                  Variables
  **************************************************************************/
-//static DEMO demo;
+int period;
+int lastTickTime;
+int sinceTickTime;
+int currTime;
 
-
+float freqRPS;
+float freqRPM;
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-//static void DemoTextEditorInit(void);
-
-
-
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
-void DemoInit(void)
-{
-   LedSequence(100);
-   LedRgbCycleSet(5000, UINT8_MAX, UINT8_MAX);
-// DemoTextEditorInit();
-// DemoUsartInit();
-// DemoSd();
+void TactInit() {
+  
+  // initailize variables
+  period = 0;
+  lastTickTime = 0;
+  sinceTickTime = 0;
+  currTime = 0;
+  
+  freqRPS = 0;
+  freqRPM = 0;
+  
+  // initialize interrupt
+  // GpioIrqInstall(GPIO_PIN_TACT, GPIO_IRQ_FALLING_EDGE, tactUpdate)
 }
 
-void DemoUpdate(void)
-{
-   //DemoClockUpdate();
+int GetPeriod() {
+  return period;
 }
 
+float GetRPS() {
+  return freqRPS;
+}
+
+float GetRPM() {
+  return freqRPM;
+}
+
+int GetTimeSinceTick() {
+  currTime = TimerMsGet();
+  sinceTickTime = currTime - lastTickTime;
+  
+  return sinceTickTime;
+}
 
 /**************************************************************************
  *                                 Private Functions
  **************************************************************************/
+
+void tactUpdate() {
+  period = GetTimeSinceTick();
+  freqRPS = 1/period;
+  freqRPM = 60/period;
+  
+  lastTickTime = TimerMsGet();
+}
+
+

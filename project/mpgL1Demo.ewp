@@ -1954,6 +1954,12 @@
       <name>$PROJ_DIR$\..\src\drivers\sd.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\src\drivers\solenoid.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\drivers\tact.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\src\drivers\timer.c</name>
     </file>
     <file>

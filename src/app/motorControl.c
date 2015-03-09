@@ -1,13 +1,14 @@
 /*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+Description:
+Determines required frequency and voltage for given RPM input
 
-Sheldon Patterson
+Quinn Miller
 ********************************************************************************************/
 
 
 #include "motorControl.h"
+#include "tact.h"
+#include "led.h"
 
 
 /**************************************************************************
@@ -30,7 +31,7 @@ void MotorControlInit () {
 }
 
 void MotorControlUpdate () {
-  
+  if (GetTimeSinceTick() > 20000) LedSet(LED_BLUE, true);
 }
 
 /**************************************************************************

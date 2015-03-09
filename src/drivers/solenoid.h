@@ -1,14 +1,14 @@
 /*******************************************************************************************
-motorControl.h
+solenoid.h
 
 Description:
-Determines required frequency and voltage for given RPM input
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
 Quinn Miller
 ********************************************************************************************/
 
-#ifndef __MOTORCONTROL_H__
-#define __MOTORCONTROL_H__
+#ifndef __SOLENOID_H__
+#define __SOLENOID_H__
 
 #include "types.h"
 
@@ -22,7 +22,7 @@ Quinn Miller
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-void MotorControlInit(void);
-void MotorControlUpdate(void);
+void SolenoidInit(void);
+void SolenoidUpdate(void);
 
 #endif

@@ -1,14 +1,14 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  14:31:36 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  14:40:28 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
 #    Endian       =  little                                                   #
-#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\mo #
-#                    torControl.c                                             #
-#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\mo #
-#                    torControl.c -D __SAM3U2C__ --preprocess=c               #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\tact.c                                                 #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\tact.c -D __SAM3U2C__ --preprocess=c                   #
 #                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
 #                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
 #                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
@@ -44,25 +44,25 @@
 #                    (x86)\IAR Systems\Embedded Workbench                     #
 #                    6.5\arm\CMSIS\Include\"                                  #
 #    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
-#                    bug\List\motorControl.lst                                #
+#                    bug\List\tact.lst                                        #
 #    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
-#                    bug\Obj\motorControl.o                                   #
+#                    bug\Obj\tact.o                                           #
 #                                                                             #
 #                                                                             #
 ###############################################################################
 
-C:\Users\Quinn\Documents\GitHub\motor-project\src\app\motorControl.c
+C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
       1          /*******************************************************************************************
       2          Description:
-      3          Determines required frequency and voltage for given RPM input
+      3          Determines revolution period (ms) and frequency (rev/sec and rev/min)
       4          
       5          Quinn Miller
       6          ********************************************************************************************/
       7          
       8          
-      9          #include "motorControl.h"
-     10          #include "tact.h"
-     11          #include "led.h"
+      9          #include "tact.h"
+     10          #include "gpio.h"
+     11          #include "timer.h"
      12          
      13          
      14          /**************************************************************************
@@ -74,48 +74,112 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\app\motorControl.c
      20          /**************************************************************************
      21           *                                  Variables
      22           **************************************************************************/
-     23          /**************************************************************************
-     24           *                                  Prototypes
-     25           **************************************************************************/
-     26          /**************************************************************************
-     27           *                                  Global Functions
-     28           **************************************************************************/
-     29          void MotorControlInit () {
-     30            
-     31          }
-     32          
-     33          void MotorControlUpdate () {
-     34            if (GetTimeSinceTick() > 20000) LedSet(LED_BLUE, true);
-     35          }
-     36          
-     37          /**************************************************************************
-     38           *                                 Private Functions
-     39           **************************************************************************/
-     40          
-     41          
-     42          
+     23          int period;
+     24          int lastTickTime;
+     25          int sinceTickTime;
+     26          int currTime;
+     27          
+     28          float freqRPS;
+     29          float freqRPM;
+     30          /**************************************************************************
+     31           *                                  Prototypes
+     32           **************************************************************************/
+     33          /**************************************************************************
+     34           *                                  Global Functions
+     35           **************************************************************************/
+     36          void TactInit() {
+     37            
+     38            // initailize variables
+     39            period = 0;
+     40            lastTickTime = 0;
+     41            sinceTickTime = 0;
+     42            currTime = 0;
+     43            
+     44            freqRPS = 0;
+     45            freqRPM = 0;
+     46            
+     47            // initialize interrupt
+     48            // GpioIrqInstall(GPIO_PIN_TACT, GPIO_IRQ_FALLING_EDGE, tactUpdate)
+     49          }
+     50          
+     51          int GetPeriod() {
+     52            return period;
+     53          }
+     54          
+     55          float GetRPS() {
+     56            return freqRPS;
+     57          }
+     58          
+     59          float GetRPM() {
+     60            return freqRPM;
+     61          }
+     62          
+     63          int GetTimeSinceTick() {
+     64            currTime = TimerMsGet();
+     65            sinceTickTime = currTime - lastTickTime;
+     66            
+     67            return sinceTickTime;
+     68          }
+     69          
+     70          /**************************************************************************
+     71           *                                 Private Functions
+     72           **************************************************************************/
+     73          
+     74          void tactUpdate() {
+     75            period = GetTimeSinceTick();
+     76            freqRPS = 1/period;
+     77            freqRPM = 60/period;
+     78            
+     79            lastTickTime = TimerMsGet();
+     80          }
+     81          
+     82          
 
    Maximum stack usage in bytes:
 
    .cstack Function
    ------- --------
-       0   MotorControlInit
-       8   MotorControlUpdate
+       0   GetPeriod
+       0   GetRPM
+       0   GetRPS
+       8   GetTimeSinceTick
+         8   -> TimerMsGet
+       0   TactInit
+       8   tactUpdate
          8   -> GetTimeSinceTick
-         8   -> LedSet
+         8   -> TimerMsGet
+         8   -> __aeabi_i2f
 
 
    Section sizes:
 
    Bytes  Function/Label
    -----  --------------
-       2  MotorControlInit
-      24  MotorControlUpdate
+       4  ??DataTable5
+       4  ??DataTable5_1
+       4  ??DataTable5_2
+       4  ??DataTable5_3
+       4  ??DataTable5_4
+       4  ??DataTable5_5
+       6  GetPeriod
+       6  GetRPM
+       6  GetRPS
+      30  GetTimeSinceTick
+      38  TactInit
+       4  currTime
+       4  freqRPM
+       4  freqRPS
+       4  lastTickTime
+       4  period
+       4  sinceTickTime
+      56  tactUpdate
 
  
- 26 bytes in section .text
+  24 bytes in section .bss
+ 166 bytes in section .text
  
- 26 bytes of CODE memory
+ 166 bytes of CODE memory
+  24 bytes of DATA memory
 
 Errors: none
 Warnings: none
