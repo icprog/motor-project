@@ -1,0 +1,117 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  14:12:10 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\solenoid.c                                             #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\solenoid.c -D __SAM3U2C__ --preprocess=c               #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\ --no_cse --no_unroll --no_inline                #
+#                    --no_code_motion --no_tbaa --no_clustering               #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I C:\Users\Quinn\Documents\GitHub\motor-project\ #
+#                    project\..\src\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\app\ -I C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\..\src\lib\utils\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\structures\src\ -I                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\ -I C:\Users\Quinn\Documents\GitHub\motor- #
+#                    project\project\..\src\lib\file\hooks\FatFs\ -I          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\disk\ -I C:\Users\Quinn\Documents\GitHub\m #
+#                    otor-project\project\..\src\lib\version\ -I              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\FatFs\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\config\ -I C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\..\src\drivers\ -I                         #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\utils\ -I C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\..\src\drivers\ -On -I "C:\Program Files    #
+#                    (x86)\IAR Systems\Embedded Workbench                     #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\solenoid.lst                                    #
+#    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\solenoid.o                                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\solenoid.c
+      1          /*******************************************************************************************
+      2          Description:
+      3          Determines revolution period (ms) and frequency (rev/sec and rev/min)
+      4          
+      5          Quinn Miller
+      6          ********************************************************************************************/
+      7          
+      8          
+      9          #include "solenoid.h"
+     10          
+     11          
+     12          /**************************************************************************
+     13           *                                  Constants
+     14           **************************************************************************/
+     15          /**************************************************************************
+     16           *                                  Types
+     17           **************************************************************************/
+     18          /**************************************************************************
+     19           *                                  Variables
+     20           **************************************************************************/
+     21          /**************************************************************************
+     22           *                                  Prototypes
+     23           **************************************************************************/
+     24          /**************************************************************************
+     25           *                                  Global Functions
+     26           **************************************************************************/
+     27          void SolenoidInit() {
+     28               
+     29          }
+     30          
+     31          void SolenoidUpdate() {
+     32            
+     33          }
+     34          
+     35          /**************************************************************************
+     36           *                                 Private Functions
+     37           **************************************************************************/
+     38          
+     39          
+     40          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   SolenoidInit
+       0   SolenoidUpdate
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  SolenoidInit
+       2  SolenoidUpdate
+
+ 
+ 4 bytes in section .text
+ 
+ 4 bytes of CODE memory
+
+Errors: none
+Warnings: none

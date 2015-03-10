@@ -1,65 +1,57 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      24/Mar/2014  18:32:52 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  18:20:56 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
 #    Endian       =  little                                                   #
-#    Source file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
-#                    Project\src\app\demo.c                                   #
-#    Command line =  "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\src\app\demo.c" -D __SAM3U2C__ --preprocess=c    #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\Debug\List\" -lcN                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\Debug\List\" --diag_suppress Pa050 -o    #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\Debug\Obj\" --no_cse --no_unroll         #
-#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\de #
+#                    mo.c                                                     #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\de #
+#                    mo.c -D __SAM3U2C__ --preprocess=c                       #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\ --no_cse --no_unroll --no_inline                #
+#                    --no_code_motion --no_tbaa --no_clustering               #
 #                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
 #                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
 #                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
-#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\End       #
-#                    Project\project\..\src\" -I                              #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\bsp\" -I                          #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\app\" -I                          #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\utils\" -I                    #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\structures\src\" -I           #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\file\" -I                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\file\hooks\FatFs\" -I         #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\file\disk\" -I                #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\version\" -I                  #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\lib\FatFs\" -I                    #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\bsp\" -I                          #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\config\" -I                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\drivers\" -I                      #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\utils\" -I                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\End                 #
-#                    Project\project\..\src\drivers\" -On -I "C:\Program      #
-#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    mal.h" -I C:\Users\Quinn\Documents\GitHub\motor-project\ #
+#                    project\..\src\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\app\ -I C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\..\src\lib\utils\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\structures\src\ -I                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\ -I C:\Users\Quinn\Documents\GitHub\motor- #
+#                    project\project\..\src\lib\file\hooks\FatFs\ -I          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\disk\ -I C:\Users\Quinn\Documents\GitHub\m #
+#                    otor-project\project\..\src\lib\version\ -I              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\FatFs\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\config\ -I C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\..\src\drivers\ -I                         #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\utils\ -I C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\..\src\drivers\ -On -I "C:\Program Files    #
+#                    (x86)\IAR Systems\Embedded Workbench                     #
 #                    6.5\arm\CMSIS\Include\"                                  #
-#    List file    =  C:\Users\Quinn\Documents\School\MPG\End                  #
-#                    Project\project\Debug\List\demo.lst                      #
-#    Object file  =  C:\Users\Quinn\Documents\School\MPG\End                  #
-#                    Project\project\Debug\Obj\demo.o                         #
+#    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\demo.lst                                        #
+#    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\demo.o                                           #
 #                                                                             #
 #                                                                             #
 ###############################################################################
 
-C:\Users\Quinn\Documents\School\MPG\End Project\src\app\demo.c
+C:\Users\Quinn\Documents\GitHub\motor-project\src\app\demo.c
       1          /*******************************************************************************************
       2          Demo Application
       3          
@@ -73,330 +65,87 @@ C:\Users\Quinn\Documents\School\MPG\End Project\src\app\demo.c
      11          #include "demo.h"
      12          #include "led.h"
      13          #include "lcd.h"
-     14          #include "songTwinkleTwinkle.h"
-     15          #include "button.h"
-     16          #include "textEditor.h"
-     17          #include "usart.h"
-     18          #include "sd.h"
-     19          #include "file.h"
-     20          #include "gpio.h"
-     21          #include "timer.h"
-     22          #include "rtc.h"
-     23          
-     24          
-     25          /**************************************************************************
-     26           *                                  Constants
-     27           **************************************************************************/
-     28          /**************************************************************************
-     29           *                                  Types
-     30           **************************************************************************/
-     31          typedef struct
-     32          {
-     33             char teBuf[100];
-     34             char usartRxBuf[32];
-     35             char usartTxBuf[32];
-     36             u32 tickCount;
-     37             time_t lastTm;
-     38          }DEMO;
-     39          
-     40          
-     41          /**************************************************************************
-     42           *                                  Variables
-     43           **************************************************************************/
-     44          static DEMO demo;
-     45          
-     46          
-     47          /**************************************************************************
-     48           *                                  Prototypes
-     49           **************************************************************************/
-     50          static void DemoTextEditorInit(void);
-     51          static void DemoTextEditorUpdate(void);
-     52          static TE_KEY DemoTeKeyFromButton(void);
-     53          static void DemoNameEntered(void);
-     54          static void DemoClockUpdate(void);
-     55          static void DemoUsartInit(void);
-     56          static void DemoUsartRxIsr(USART_DEV dev);
-     57          static void DemoSd(void);
-     58          static void DemoSdFind(void);
-     59          
-     60          
-     61          /**************************************************************************
-     62           *                                  Global Functions
-     63           **************************************************************************/
-     64          void DemoInit(void)
+     14          #include "button.h"
+     15          #include "usart.h"
+     16          #include "sd.h"
+     17          #include "file.h"
+     18          #include "gpio.h"
+     19          #include "timer.h"
+     20          #include "rtc.h"
+     21          
+     22          
+     23          /**************************************************************************
+     24           *                                  Constants
+     25           **************************************************************************/
+     26          /**************************************************************************
+     27           *                                  Types
+     28           **************************************************************************/
+     29          typedef struct
+     30          {
+     31             char teBuf[100];
+     32             char usartRxBuf[32];
+     33             char usartTxBuf[32];
+     34             u32 tickCount;
+     35             time_t lastTm;
+     36          }DEMO;
+     37          
+     38          
+     39          /**************************************************************************
+     40           *                                  Variables
+     41           **************************************************************************/
+     42          //static DEMO demo;
+     43          
+     44          
+     45          /**************************************************************************
+     46           *                                  Prototypes
+     47           **************************************************************************/
+     48          //static void DemoTextEditorInit(void);
+     49          
+     50          
+     51          
+     52          /**************************************************************************
+     53           *                                  Global Functions
+     54           **************************************************************************/
+     55          void DemoInit(void)
+     56          {
+     57             LedSequence(100);
+     58             LedRgbCycleSet(5000, UINT8_MAX, UINT8_MAX);
+     59          // DemoTextEditorInit();
+     60          // DemoUsartInit();
+     61          // DemoSd();
+     62          }
+     63          
+     64          void DemoUpdate(void)
      65          {
-     66             LedSequence(100);
-     67             LedRgbCycleSet(5000, UINT8_MAX, UINT8_MAX);
-     68          // DemoTextEditorInit();
-     69          // DemoUsartInit();
-     70          // DemoSd();
-     71          }
-     72          
-     73          void DemoUpdate(void)
-     74          {
-     75             DemoClockUpdate();
-     76          // DemoTextEditorUpdate();
-     77          // if (!TextEditorStatus()->finished)
-     78             {
-     79                MusicPlaySong(&TwinkleTwinkle, 50, 30);
-     80             }
-     81          }
-     82          
-     83          
-     84          /**************************************************************************
-     85           *                                 Private Functions
-     86           **************************************************************************/
-     87          static void DemoTextEditorInit(void)
-     88          {
-     89             LCD_CFG lcdCfg =
-     90             {
-     91                .on = true,
-     92                .cursorOn = true,
-     93                .blinkOn = false,
-     94                .doubleHeight = false,
-     95                .autoUpdate = false,
-     96                .contrast = LcdConfigGet()->contrast,  //lint !e446 (leave at default)
-     97             };
-     98             LcdConfigSet(&lcdCfg);
-     99          
-    100             TE_CFG teCfg =
-    101             {
-    102                .pStrBuf = demo.teBuf,
-    103                .strBufSize = sizeof(demo.teBuf),
-    104                .lcdPos = 0,
-    105                .editStartIndex = 12,    /* Change to UINT16_MAX to make read-only */
-    106                .editEndIndex = sizeof(demo.teBuf),
-    107                .numLcdRows = LCD_NUM_LINES,
-    108                .numLcdCols = LCD_NUM_CHARS_PER_LINE,
-    109                .mode = TE_MODE_ALPHA,
-    110             };
-    111             strcpy(demo.teBuf, "Enter Name:\n ");
-    112             TextEditorInit(&teCfg, 0);
-    113          }
-    114          
-    115          static void DemoTextEditorUpdate(void)
-    116          {
-    117             if (!TextEditorStatus()->finished)
-    118             {
-    119                TextEditorUpdate(DemoTeKeyFromButton());
-    120                if (TextEditorStatus()->finished)
-    121                {
-    122                   DemoNameEntered();
-    123                }
-    124             }
-    125          }
-    126          
-    127          static TE_KEY DemoTeKeyFromButton(void)
-    128          {
-    129             static const TE_KEY KeyFromPress[BTN_COUNT] =
-    130             {
-    131                [BTN_L]  = TE_KEY_DOWN,
-    132                [BTN_LM] = TE_KEY_UP,
-    133                [BTN_RM] = TE_KEY_LEFT,
-    134                [BTN_R]  = TE_KEY_RIGHT,
-    135             };
-    136             static const TE_KEY KeyFromHold[BTN_COUNT] =
-    137             {
-    138                [BTN_L]  = TE_KEY_DOWN,
-    139                [BTN_LM] = TE_KEY_UP,
-    140                [BTN_RM] = TE_KEY_BKSPACE,
-    141                [BTN_R]  = TE_KEY_ENTER,
-    142             };
-    143             static u32 buttonHoldMs[BTN_COUNT] = {0,0,0,0};
-    144          
-    145             TE_KEY key = TE_KEY_NONE;
-    146             for (BUTTONS btn = (BUTTONS)0; (btn < BTN_COUNT) && (key == TE_KEY_NONE); btn++)
-    147             {
-    148                if (ButtonWasPressed(btn))
-    149                {
-    150                   ButtonPressAck(btn);
-    151                   key = KeyFromPress[btn];
-    152                }
-    153                if (!ButtonIsPressed(btn))
-    154                   buttonHoldMs[btn] = 500;
-    155                else if ((key == TE_KEY_NONE) &&
-    156                         ButtonIsHeldXMs(btn, buttonHoldMs[btn]))
-    157                {
-    158                   key = KeyFromHold[btn];
-    159                   if ((key == TE_KEY_BKSPACE) || (key == TE_KEY_ENTER))
-    160                   {
-    161                      ButtonHoldAck(btn);
-    162                   }
-    163                   else
-    164                   {
-    165                      buttonHoldMs[btn] += 50;
-    166                   }
-    167                }
-    168             }
-    169             return key;
-    170          }
-    171          
-    172          static void DemoNameEntered(void)
-    173          {
-    174             MusicStop();
-    175             LedSequence(30);
-    176             LcdClear();
-    177             LcdPrintf("Hello %s!\nWelcome to MPG!", &demo.teBuf[TextEditorCfg()->editStartIndex]);
-    178          
-    179          }
-    180          
-    181          
-    182          static void DemoClockUpdate(void)
-    183          {
-    184             if (demo.tickCount++ > MS_TO_TICKS(100))
-    185             {
-    186                demo.tickCount = 0;
-    187                time_t t = time(NULL);
-    188                if (t != demo.lastTm)
-    189                {
-    190                   LcdClear();
-    191                   struct tm *rtc = localtime(&t);
-    192                   LcdPrintf("%04d/%02d/%02d %02d:%02d:%02d",
-    193                            rtc->tm_year + 1900, rtc->tm_mon + 1, rtc->tm_mday,
-    194                            rtc->tm_hour, rtc->tm_min, rtc->tm_sec);
-    195                }
-    196             }
-    197          }
-    198          
-    199          
-    200          static void DemoUsartInit(void)
-    201          {
-    202             USART_SETUP usartSetup =
-    203             {
-    204                .baud = 115200,
-    205                .lsbFirst = true,
-    206                .mode = USART_MODE_ASYNC,
-    207                .parity = USART_PARITY_NONE,
-    208                .dataBits = 8,
-    209                .stopBits = USART_STOP_BITS_1,
-    210                .spiMode = SPI_MODE0,   // don't care for UART mode
-    211             };
-    212             UsartOpen(USART0, &usartSetup);
-    213          
-    214             USART_CBS cbs =
-    215             {
-    216                .pfnRxDoneOrTimeout = (PFN_USART_CB)DemoUsartRxIsr,
-    217                .pfnRxErr = NULL,
-    218                .pfnTxDone = NULL,
-    219             };
-    220             UsartIoctl(USART0, USART_IOCTL_INSTALL_CBS, (u32)&cbs);
-    221             strcpy(demo.usartTxBuf, "MPG USART echo(echo)\r\n");
-    222             UsartWrite(USART0, demo.usartTxBuf, (s32)strlen(demo.usartTxBuf));
-    223             UsartRead(USART0, demo.usartRxBuf, (s32)sizeof(demo.usartRxBuf));
-    224          }
-    225          
-    226          static void DemoUsartRxIsr(USART_DEV dev)
-    227          {
-    228             u32 len = (u32)UsartIoctl(dev, USART_IOCTL_STATUS, USART_STATUS_RX_REMAIN);
-    229             len = MIN(len, sizeof(demo.usartRxBuf));
-    230             memcpy(demo.usartTxBuf, demo.usartRxBuf, len);
-    231             UsartWrite(dev, demo.usartTxBuf, (s32)len);
-    232             UsartRead(dev, demo.usartRxBuf, (s32)sizeof(demo.usartRxBuf));
-    233          }
-    234          
-    235          static void DemoSd(void)
-    236          {
-    237             if (GpioIsSet(GPIO_PIN_SD_DETECT))
-    238                return;
-    239          
-    240          	#define SD_TEST_FILE		FILE_SD "test.txt"
-    241          	#define SD_TEST_STR		"Testing file write..."
-    242             SdInit();
-    243          	if (FileDevIsMounted(FDISK_SD))
-    244          	{
-    245          		FDISK_STATS sdStats;
-    246          		FileDevInfo(FDISK_SD, &sdStats);
-    247          		if (sdStats.sectorFreeCount > 0)
-    248          		{
-    249          			FFILE fil = FileOpen(SD_TEST_FILE, FOPEN_WRITE_PLUS);
-    250          			if (fil)
-    251          			{
-    252          				if (FilePuts(fil, SD_TEST_STR) > 0)
-    253          				{
-    254          					char readBuf[64];
-    255          					memset(readBuf, 0, sizeof(readBuf));
-    256          					FileSeek(fil, 0, FSEEK_SET);
-    257          					if (FileGets(fil, readBuf, sizeof(readBuf)) != NULL)
-    258          					{
-    259          						if (strcmp(readBuf, SD_TEST_STR) == STR_CMP_MATCH)
-    260          						{
-    261          							FileClose(fil);
-    262          							DemoSdFind();
-    263          							return;
-    264          						}
-    265          					}
-    266          				}
-    267          				FileClose(fil);
-    268          			}
-    269          		}
-    270          	}
-    271          }
-    272          
-    273          
-    274          static void DemoSdFind(void)
-    275          {
-    276          	int res;
-    277          	FFIND find;
-    278          	if (FileFindFirst(FILE_SD "*.*", TRUE, &find) == FERR_NONE)
-    279          	{
-    280          		do
-    281          		{
-    282          			LcdClear();
-    283          			LcdPuts(find.fileName);
-    284                   LcdUpdate();
-    285          			do{} while (!ButtonIsPressed(BTN_L));
-    286          			TimerWaitXMs(25);
-    287          			do{} while (ButtonIsPressed(BTN_L));
-    288          			TimerWaitXMs(25);
-    289          			res = FileFindNext(&find);
-    290          		} while ((res == FERR_NONE) && (find.foundType != FFIND_TYPE_DONE));
-    291          	}
-    292          	LcdClear();
-    293          
-    294          	// Example remove mask (CAUTION: will delete all files on the disk!)
-    295          	// FileRemove(FILE_SD "*");
-    296          }
-    297          
-    298          
+     66             //DemoClockUpdate();
+     67          }
+     68          
+     69          
+     70          /**************************************************************************
+     71           *                                 Private Functions
+     72           **************************************************************************/
 
    Maximum stack usage in bytes:
 
    .cstack Function
    ------- --------
-      32   DemoClockUpdate
-        32   -> LcdClear
-        32   -> LcdPrintf
-        32   -> __localtime32
-        32   -> __time32
        8   DemoInit
          8   -> LedRgbCycleSet
          8   -> LedSequence
-       8   DemoUpdate
-         8   -> DemoClockUpdate
-         8   -> MusicPlaySong
+       0   DemoUpdate
 
 
    Section sizes:
 
    Bytes  Function/Label
    -----  --------------
-      32  ?<Constant "%04d/%02d/%02d %02d:%...">
-       4  ??DataTable1
-       4  ??DataTable1_1
-       4  ??DataTable1_2
-     100  DemoClockUpdate
       22  DemoInit
-      18  DemoUpdate
-     172  demo
+       2  DemoUpdate
 
  
- 172 bytes in section .bss
-  32 bytes in section .rodata
- 152 bytes in section .text
+ 24 bytes in section .text
  
- 152 bytes of CODE  memory
-  32 bytes of CONST memory
- 172 bytes of DATA  memory
+ 24 bytes of CODE memory
 
 Errors: none
-Warnings: 4
+Warnings: none

@@ -1,41 +1,18 @@
 /*******************************************************************************************
-Demo Application
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-/*******************************************************************************************
-Demo App
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
+Quinn Miller
 ********************************************************************************************/
 
 
 /*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+tactometer.h
 
-Sheldon Patterson
-********************************************************************************************/
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
-
-/*******************************************************************************************
-Configures the Application build
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
+Quinn Miller
 ********************************************************************************************/
 
 
@@ -1994,6 +1971,55 @@ typedef uint_fast64_t   UINT64F;
 
 
 /**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+void TactInit(void);
+void TactUpdate(void);
+
+int GetPeriod(void);
+int GetTimeSinceTick(void);
+float GetRPS(void);
+float GetRPM(void);
+
+
+/*******************************************************************************************
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+/*******************************************************************************************
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+/*******************************************************************************************
+Configures the Application build
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
  *                                  Major compile options:
  **************************************************************************/
 
@@ -3399,896 +3425,6 @@ char * FutilsUpDir(char *pPath);	//lint -esym(534, FutilsUpDir) Strip last folde
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-void DemoInit(void);
-void DemoUpdate(void);
-
-/*******************************************************************************************
-LED driver with manual PWM control
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-/*******************************************************************************************
-Red Green Blue (RGB) common colors
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-// Standard RGB colors (as defined in .NET System.Drawing.Color):
-typedef enum
-{
-   COLOR_AliceBlue            = (0xF0F8FFuL),
-   COLOR_AntiqueWhite         = (0xFAEBD7uL),
-   COLOR_Aqua                 = (0x00FFFFuL),
-   COLOR_Aquamarine           = (0x7FFFD4uL),
-   COLOR_Azure                = (0xF0FFFFuL),
-   COLOR_Beige                = (0xF5F5DCuL),
-   COLOR_Bisque               = (0xFFE4C4uL),
-   COLOR_Black                = (0x000000uL),
-   COLOR_BlanchedAlmond       = (0xFFEBCDuL),
-   COLOR_Blue                 = (0x0000FFuL),
-   COLOR_BlueViolet           = (0x8A2BE2uL),
-   COLOR_Brown                = (0xA52A2AuL),
-   COLOR_BurlyWood            = (0xDEB887uL),
-   COLOR_CadetBlue            = (0x5F9EA0uL),
-   COLOR_Chartreuse           = (0x7FFF00uL),
-   COLOR_Chocolate            = (0xD2691EuL),
-   COLOR_Coral                = (0xFF7F50uL),
-   COLOR_CornflowerBlue       = (0x6495EDuL),
-   COLOR_Cornsilk             = (0xFFF8DCuL),
-   COLOR_Crimson              = (0xDC143CuL),
-   COLOR_Cyan                 = (0x00FFFFuL),
-   COLOR_DarkBlue             = (0x00008BuL),
-   COLOR_DarkCyan             = (0x008B8BuL),
-   COLOR_DarkGoldenrod        = (0xB8860BuL),
-   COLOR_DarkGray             = (0xA9A9A9uL),
-   COLOR_DarkGreen            = (0x006400uL),
-   COLOR_DarkKhaki            = (0xBDB76BuL),
-   COLOR_DarkMagenta          = (0x8B008BuL),
-   COLOR_DarkOliveGreen       = (0x556B2FuL),
-   COLOR_DarkOrange           = (0xFF8C00uL),
-   COLOR_DarkOrchid           = (0x9932CCuL),
-   COLOR_DarkRed              = (0x8B0000uL),
-   COLOR_DarkSalmon           = (0xE9967AuL),
-   COLOR_DarkSeaGreen         = (0x8FBC8BuL),
-   COLOR_DarkSlateBlue        = (0x483D8BuL),
-   COLOR_DarkSlateGray        = (0x2F4F4FuL),
-   COLOR_DarkTurquoise        = (0x00CED1uL),
-   COLOR_DarkViolet           = (0x9400D3uL),
-   COLOR_DeepPink             = (0xFF1493uL),
-   COLOR_DeepSkyBlue          = (0x00BFFFuL),
-   COLOR_DimGray              = (0x696969uL),
-   COLOR_DodgerBlue           = (0x1E90FFuL),
-   COLOR_Firebrick            = (0xB22222uL),
-   COLOR_FloralWhite          = (0xFFFAF0uL),
-   COLOR_ForestGreen          = (0x228B22uL),
-   COLOR_Fuchsia              = (0xFF00FFuL),
-   COLOR_Gainsboro            = (0xDCDCDCuL),
-   COLOR_GhostWhite           = (0xF8F8FFuL),
-   COLOR_Gold                 = (0xFFD700uL),
-   COLOR_Goldenrod            = (0xDAA520uL),
-   COLOR_Gray                 = (0x808080uL),
-   COLOR_Green                = (0x008000uL),
-   COLOR_GreenYellow          = (0xADFF2FuL),
-   COLOR_Honeydew             = (0xF0FFF0uL),
-   COLOR_HotPink              = (0xFF69B4uL),
-   COLOR_IndianRed            = (0xCD5C5CuL),
-   COLOR_Indigo               = (0x4B0082uL),
-   COLOR_Ivory                = (0xFFFFF0uL),
-   COLOR_Khaki                = (0xF0E68CuL),
-   COLOR_Lavender             = (0xE6E6FAuL),
-   COLOR_LavenderBlush        = (0xFFF0F5uL),
-   COLOR_LawnGreen            = (0x7CFC00uL),
-   COLOR_LemonChiffon         = (0xFFFACDuL),
-   COLOR_LightBlue            = (0xADD8E6uL),
-   COLOR_LightCoral           = (0xF08080uL),
-   COLOR_LightCyan            = (0xE0FFFFuL),
-   COLOR_LightGoldenrodYellow = (0xFAFAD2uL),
-   COLOR_LightGray            = (0xD3D3D3uL),
-   COLOR_LightGreen           = (0x90EE90uL),
-   COLOR_LightPink            = (0xFFB6C1uL),
-   COLOR_LightSalmon          = (0xFFA07AuL),
-   COLOR_LightSeaGreen        = (0x20B2AAuL),
-   COLOR_LightSkyBlue         = (0x87CEFAuL),
-   COLOR_LightSlateGray       = (0x778899uL),
-   COLOR_LightSteelBlue       = (0xB0C4DEuL),
-   COLOR_LightYellow          = (0xFFFFE0uL),
-   COLOR_Lime                 = (0x00FF00uL),
-   COLOR_LimeGreen            = (0x32CD32uL),
-   COLOR_Linen                = (0xFAF0E6uL),
-   COLOR_Magenta              = (0xFF00FFuL),
-   COLOR_Maroon               = (0x800000uL),
-   COLOR_MediumAquamarine     = (0x66CDAAuL),
-   COLOR_MediumBlue           = (0x0000CDuL),
-   COLOR_MediumOrchid         = (0xBA55D3uL),
-   COLOR_MediumPurple         = (0x9370DBuL),
-   COLOR_MediumSeaGreen       = (0x3CB371uL),
-   COLOR_MediumSlateBlue      = (0x7B68EEuL),
-   COLOR_MediumSpringGreen    = (0x00FA9AuL),
-   COLOR_MediumTurquoise      = (0x48D1CCuL),
-   COLOR_MediumVioletRed      = (0xC71585uL),
-   COLOR_MidnightBlue         = (0x191970uL),
-   COLOR_MintCream            = (0xF5FFFAuL),
-   COLOR_MistyRose            = (0xFFE4E1uL),
-   COLOR_Moccasin             = (0xFFE4B5uL),
-   COLOR_NavajoWhite          = (0xFFDEADuL),
-   COLOR_Navy                 = (0x000080uL),
-   COLOR_OldLace              = (0xFDF5E6uL),
-   COLOR_Olive                = (0x808000uL),
-   COLOR_OliveDrab            = (0x6B8E23uL),
-   COLOR_Orange               = (0xFFA500uL),
-   COLOR_OrangeRed            = (0xFF4500uL),
-   COLOR_Orchid               = (0xDA70D6uL),
-   COLOR_PaleGoldenrod        = (0xEEE8AAuL),
-   COLOR_PaleGreen            = (0x98FB98uL),
-   COLOR_PaleTurquoise        = (0xAFEEEEuL),
-   COLOR_PaleVioletRed        = (0xDB7093uL),
-   COLOR_PapayaWhip           = (0xFFEFD5uL),
-   COLOR_PeachPuff            = (0xFFDAB9uL),
-   COLOR_Peru                 = (0xCD853FuL),
-   COLOR_Pink                 = (0xFFC0CBuL),
-   COLOR_Plum                 = (0xDDA0DDuL),
-   COLOR_PowderBlue           = (0xB0E0E6uL),
-   COLOR_Purple               = (0x800080uL),
-   COLOR_Red                  = (0xFF0000uL),
-   COLOR_RosyBrown            = (0xBC8F8FuL),
-   COLOR_RoyalBlue            = (0x4169E1uL),
-   COLOR_SaddleBrown          = (0x8B4513uL),
-   COLOR_Salmon               = (0xFA8072uL),
-   COLOR_SandyBrown           = (0xF4A460uL),
-   COLOR_SeaGreen             = (0x2E8B57uL),
-   COLOR_SeaShell             = (0xFFF5EEuL),
-   COLOR_Sienna               = (0xA0522DuL),
-   COLOR_Silver               = (0xC0C0C0uL),
-   COLOR_SkyBlue              = (0x87CEEBuL),
-   COLOR_SlateBlue            = (0x6A5ACDuL),
-   COLOR_SlateGray            = (0x708090uL),
-   COLOR_Snow                 = (0xFFFAFAuL),
-   COLOR_SpringGreen          = (0x00FF7FuL),
-   COLOR_SteelBlue            = (0x4682B4uL),
-   COLOR_Tan                  = (0xD2B48CuL),
-   COLOR_Teal                 = (0x008080uL),
-   COLOR_Thistle              = (0xD8BFD8uL),
-   COLOR_Tomato               = (0xFF6347uL),
-   COLOR_Transparent          = (0xFFFFFFuL),
-   COLOR_Turquoise            = (0x40E0D0uL),
-   COLOR_Violet               = (0xEE82EEuL),
-   COLOR_Wheat                = (0xF5DEB3uL),
-   COLOR_White                = (0xFFFFFFuL),
-   COLOR_WhiteSmoke           = (0xF5F5F5uL),
-   COLOR_Yellow               = (0xFFFF00uL),
-   COLOR_YellowGreen          = (0x9ACD32uL),
-}COLOR;
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-
-/*   NOTE: this affects the PWM frequency for brightness/RGB coloring
-           --> videos range from 23.97 to 60 Hz. LED flickering is almost unnoticeable above 50 Hz
-     NOTE: The LED_UPDATE_RATE_MS must be fast enough to allow PWM resolution at the update rate
-*/
-
-/* RGB Color Gradient:
-There are a few common ways to cycle through RGB colors:
-0) Change one RGB component at a time
-	a) R=255, G=0, B=0
-	b) ramp up B to 255
-	c) ramp down R to 0
-	d) ramp up G to 255
-	e) ramp down B to 0
-	f) ramp up R to 255
-   g) ramp down G to 0
-   --> Tends to "hang" at magenta, cyan and yellow
-
-1) HSB/HSL hue cycling
-	HSB = "Hue", "Saturation" Brightness"
-	a) Set saturation and brightness as desired
-	b) Increment Hue (0-359) around the color wheel
-	c) Convert HSB to RGB values
-
-2) Sine-Wave trefoil (aka 3-phase sine wave similar to 3-phase motor control)
-	This is similar to HSB/HSL using 3-phase motor-like control. Essentially,
-	it uses a sine wave to set each RGB component, with each component phase-shifted
-	by 120 degress (same frequency and amplitude).
-	a) Store sine table
-	b) Lookup each component value, keeping them 120 degrees apart
-	c) Add any base offset for brightness
-*/
-
-// Define one of the algorithms for RGB color cycling:
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-typedef enum
-{
-   LED_WHITE,
-	LED_PURPLE,
-	LED_BLUE,
-   LED_CYAN,
-	LED_GREEN,
-	LED_YELLOW,
-   LED_ORANGE,
-	LED_RED,
-	LED_RGB_RED,
-	LED_RGB_GREEN,
-	LED_RGB_BLUE,
-   LED_COUNT,
-} LEDS;
-
-
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-// Core LED functions:
-void LedOn(LEDS led);
-void LedOff(LEDS led);
-void LedToggle(LEDS led);
-void LedSet(LEDS led, _Bool isOn);
-void LedSetPwm(LEDS led, u8 dutyPercent);
-void LedBlink(LEDS led, u16 onMs, u16 offMs);
-void LedBlinkPwm(LEDS led, u16 onMs, u16 offMs, u8 dutyPercent);
-void LedSequence(u16 cycleRateMs);
-
-// RGB functions:
-void LedRgbSet(COLOR rgb);
-
-/* cycleTimeMs = total time that it will take to cycle all colors
-   saturation = amount of color to show (0 = no color, 255 = full color)
-	brightness = LED intensity (0 = off, 255 = max) */
-void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness);
-
-// Application level init and update functions
-void LedInit(void);
-void LedUpdate(void);	// Must be called every 1ms
-
-/*******************************************************************************************
-NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD driver
-2x20 characters, I2C, FSTN
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-typedef struct
-{
-   _Bool on;
-   _Bool cursorOn;
-   _Bool blinkOn;
-   _Bool doubleHeight;
-   _Bool autoUpdate;
-   u8 contrast;
-}LCD_CFG;
-
-
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-void LcdInit(void);
-void LcdConfigSet(LCD_CFG const *pConfig);
-LCD_CFG const * LcdConfigGet(void);
-
-void LcdSetPos(u8 row, u8 col);
-void LcdClear(void);
-void LcdPutc(char c);
-void LcdPuts(char const *pSrc);
-void LcdPrintf(char const *pSrc, ...);
-void LcdWrite(void const *pSrc, u8 len);
-
-void LcdUpdate(void);
-
-/*******************************************************************************************
-Button Driver
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-typedef enum
-{
-   BTN_L,
-   BTN_LM,
-   BTN_RM,
-   BTN_R,
-   BTN_COUNT
-}BUTTONS;
-
-typedef void (*PFN_BTN_EVENT)(BUTTONS);
-typedef struct
-{
-   PFN_BTN_EVENT pfnBtnPressed;
-   PFN_BTN_EVENT pfnBtnReleased;
-   PFN_BTN_EVENT pfnBtnHeld;
-}BTN_EVENTS;
-
-
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-void ButtonInit(void);
-void ButtonUpdate(void);
-void ButtonNotify(BUTTONS btn, BTN_EVENTS const *pBtnEvents);
-
-_Bool ButtonIsPressed(BUTTONS btn);
-_Bool ButtonWasPressed(BUTTONS btn);
-_Bool ButtonIsHeld(BUTTONS btn);
-_Bool ButtonIsHeldXMs(BUTTONS btn, u32 ms);
-void ButtonPressAck(BUTTONS btn);
-void ButtonHoldAck(BUTTONS btn);
-
-/*******************************************************************************************
-ATSAM3U2C USART Driver
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-/*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-typedef enum
-{                // CPOL	CPHA
-   SPI_MODE0,    // 0     0
-   SPI_MODE1,    // 0     1
-   SPI_MODE2,    // 1     0
-   SPI_MODE3,    // 1     1
-   NUM_SPI_MODES
-} SPI_MODE;
-
-typedef void (*PFN_SPI_SEL)(_Bool);	// Select Chip (TRUE) or deselect (FALSE)
-typedef struct
-{
-   PFN_SPI_SEL pfnSelect;
-   PFV pfnDone;
-} SPI_CBS;
-
-typedef struct
-{
-   SPI_CBS  cbs;
-   u32      clockRateHz;
-   SPI_MODE mode;
-   _Bool     lsbFirst;
-} SPI_SETUP;
-
-
-typedef struct
-{
-   u8 const *pTxSrc;
-   u8 *pRxDest;
-   u16 txLen;
-   u16 rxLen;
-} SPI_TRANSFER_PARAMS;
-
-
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-typedef enum
-{
-   USART0,
-   USART1,
-   USART2,
-   USART3,
-   UART0,   // asynchronous UART only
-   USART_COUNT
-}USART_DEV;
-
-typedef enum
-{
-   USART_IOCTL_SETUP,         // arg = UART_SETUP const *
-   USART_IOCTL_INSTALL_CBS,   // arg = UART_CBS const *
-   USART_IOCTL_SPI_SINGLE,    // arg = txByte, response = received val;
-   USART_IOCTL_SPI_WR_RD,     // arg = USART_TRANSFER_PARAMS const *
-   USART_IOCTL_STOP_TXFR,     // arg = USART_TXFR_FLAG(s)
-   USART_IOCTL_STATUS,        // arg = USART_STATUS
-} USART_IOCTL_CMD;
-
-typedef enum
-{
-   USART_PARITY_EVEN,
-   USART_PARITY_ODD,
-   USART_PARITY_ZERO,   // aka 'space'
-   USART_PARITY_ONE,    // aka 'mark'
-   USART_PARITY_NONE,
-   USART_PARITY_MULTIDROP,
-} USART_PARITY;
-
-typedef enum
-{
-   USART_STOP_BITS_1,
-   USART_STOP_BITS_1_5,
-   USART_STOP_BITS_2
-} USART_STOP_BITS;
-
-typedef enum
-{
-   USART_MODE_ASYNC,
-   USART_MODE_SPI,
-   USART_MODE_COUNT
-}USART_MODE;
-
-typedef enum
-{
-   USART_TXFR_FLAG_RD = ((UINT8)0x01),
-   USART_TXFR_FLAG_WR = ((UINT8)0x02),
-}USART_TXFR_FLAG;
-
-typedef enum
-{
-   USART_STATUS_REG,
-   USART_STATUS_BAUD,
-   USART_STATUS_RX_REMAIN,
-   USART_STATUS_TX_REMAIN,
-}USART_STATUS;
-
-typedef struct
-{
-   u32 baud;
-   _Bool lsbFirst;
-   USART_MODE mode;
-
-   // USART_MODE_ASYNC:
-   USART_PARITY parity;
-   u8 dataBits;
-   USART_STOP_BITS stopBits;
-
-   // USART_MODE_SPI:
-   SPI_MODE spiMode;
-} USART_SETUP;
-
-typedef void (*PFN_USART_CB)(s32);	// USART_DEV
-typedef struct
-{
-   PFN_USART_CB pfnRxDoneOrTimeout;
-   PFN_USART_CB pfnTxDone;
-   PFN_USART_CB pfnRxErr;
-} USART_CBS;
-
-typedef struct
-{
-   void	const *pTxData;
-   void	*pRxData;
-   u32 len;
-} USART_TRANSFER_PARAMS;
-
-
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-//lint -esym(534, UsartOpen, UsartClose, UsartIoctl, UsartRead, UsartWrite)
-s32 UsartOpen (s32 usart, USART_SETUP const *pSetup);
-s32 UsartClose(s32 usart);
-s32 UsartRead (s32 usart, void *pDest, s32 len);      // sets next PDC transfer
-s32 UsartWrite(s32 usart, const void *pSrc, s32 len); // sets next PDC transfer
-s32 UsartIoctl(s32 usart, s32 cmd, u32 arg);
-
-void DBGU_IrqHandler(void);
-void USART0_IrqHandler(void);
-void USART1_IrqHandler(void);
-void USART2_IrqHandler(void);
-void USART3_IrqHandler(void);
-
-/*******************************************************************************************
-Secure Digital (SD) Card (SDv3/SDv1/SDv2 and MMC) SPI Driver
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-//define SD_DEBUG_TYPE		// If not defined, debug messages are disabled
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-
-void SdInit(void);
-void SdKill(void);
-
-/*******************************************************************************************
-Top-Level FILE API
-
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
-
-
-/* time.h standard header */
-/* Copyright 2003-2010 IAR Systems AB. */
-
-  #pragma system_include
-
-/* ycheck.h internal checking header file. */
-/* Copyright 2005-2010 IAR Systems AB. */
-
-/* Note that there is no include guard for this header. This is intentional. */
-
-  #pragma system_include
-
-/* __INTRINSIC
- *
- * Note: Redefined each time ycheck.h is included, i.e. for each
- * system header, to ensure that intrinsic support could be turned off
- * individually for each file.
- */
-
-
-/* __AEABI_PORTABILITY_INTERNAL_LEVEL
- *
- * Note: Redefined each time ycheck.h is included, i.e. for each
- * system header, to ensure that ABI support could be turned off/on
- * individually for each file.
- *
- * Possible values for this preprocessor symbol:
- *
- * 0 - ABI portability mode is disabled.
- *
- * 1 - ABI portability mode (version 1) is enabled.
- *
- * All other values are reserved for future use.
- */
-
-
-
-
-/* ysizet.h internal header file. */
-/* Copyright 2003-2010 IAR Systems AB.  */
-
-
-
-
-
-
-
-
-    typedef unsigned int __time32_t;
-    typedef unsigned int clock_t;
-
-  #pragma language=save
-  #pragma language=extended
-  typedef signed long long __time64_t;
-  #pragma language=restore
-
-
-  typedef __time32_t time_t;
-
-struct tm
-{       /* date and time components */
-  int tm_sec;
-  int tm_min;
-  int tm_hour;
-  int tm_mday;
-  int tm_mon;
-  int tm_year;
-  int tm_wday;
-  int tm_yday;
-  int tm_isdst;
-  int __BSD_bug_filler1;
-  int __BSD_bug_filler2;
-};
-
-
-
-       /* low-level functions */
-__intrinsic __nounwind time_t time(time_t *);
-__intrinsic __nounwind __time32_t __time32(__time32_t *);
-  __intrinsic __nounwind __time64_t __time64(__time64_t *);
-
-
-     /* declarations */
-__intrinsic __nounwind char * asctime(const struct tm *);
-__intrinsic __nounwind clock_t clock(void);
-__intrinsic __nounwind char * ctime(const time_t *);
-_Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind double difftime(time_t, time_t);
-__intrinsic __nounwind struct tm * gmtime(const time_t *);
-__intrinsic __nounwind struct tm * localtime(const time_t *);
-__intrinsic __nounwind time_t mktime(struct tm *);
-
-__intrinsic __nounwind char * __ctime32(const __time32_t *);
-_Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind double __difftime32(__time32_t, __time32_t);
-__intrinsic __nounwind struct tm * __gmtime32(const __time32_t *);
-__intrinsic __nounwind struct tm * __localtime32(const __time32_t *);
-__intrinsic __nounwind __time32_t __mktime32(struct tm *);
-  __intrinsic __nounwind char * __ctime64(const __time64_t *);
-  _Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind double __difftime64(__time64_t, __time64_t);
-  __intrinsic __nounwind struct tm * __gmtime64(const __time64_t *);
-  __intrinsic __nounwind struct tm * __localtime64(const __time64_t *);
-  __intrinsic __nounwind __time64_t __mktime64(struct tm *);
-__intrinsic __nounwind size_t strftime(char *, size_t, const char *,
-                             const struct tm *);
-
-
-/* C inline definitions */
-
-  #pragma inline=forced
-  time_t time(time_t *p)
-  {
-      return __time32(p);
-  }
-
-  #pragma inline=forced
-  char * ctime(const time_t *p)
-  {
-      return __ctime32(p);
-  }
-
-  #pragma inline=forced
-  double difftime(time_t t1, time_t t2)
-  {
-      return __difftime32(t1, t2);
-  }
-
-  #pragma inline=forced
-  struct tm * gmtime(const time_t *p)
-  {
-      return __gmtime32(p);
-  }
-
-  #pragma inline=forced
-  struct tm * localtime(const time_t *p)
-  {
-      return __localtime32(p);
-  }
-
-  #pragma inline=forced
-  time_t mktime(struct tm *p)
-  {
-      return __mktime32(p);
-  }
-
-
-
-
-
-
-/*
- * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
- * Consult your license regarding permissions and restrictions.
-V5.04:0576 */
-
-
-/**************************************************************************
- *                                  Constants
- **************************************************************************/
-
-
-
-/**************************************************************************
- *                                  Types
- **************************************************************************/
-typedef unsigned int FFILE;
-typedef unsigned int FDIR;
-
-typedef enum
-{
-	FDISK_SD,
-	FDISK_COUNT
-}FDISK_NUM;
-
-typedef struct
-{
-	FDISK_NUM	diskNum;
-	BOOL			isMounted;
-	UINT32		blockSize;
-	UINT32		sectorSize;
-	UINT32		sectorCount;
-	UINT32		sectorFreeCount;
-}FDISK_STATS;
-
-typedef enum
-{
-	FOPEN_READ,				// "r" file must exist.
-	FOPEN_WRITE,			// "w" creates/erases file.
-	FOPEN_APPEND,			// "a" appends. Creates file if doesn't exist
-	FOPEN_READ_PLUS,		// "r+" reading & writing. File must exist.
-	FOPEN_WRITE_PLUS,		// "w+" creates/erases file for reading & writing
-	FOPEN_APPEND_PLUS,	// "a+" opens file for r/w, seeks to end. Creates file if it doesn't exist
-	FOPEN_END
-}FOPEN_MODE;
-
-typedef enum
-{
-	FSEEK_SET,		// aka "beginning of file"
-	FSEEK_CUR,		// aka "current position of file"
-	FSEEK_END,		// End of file
-}FSEEK_ORIGIN;
-
-typedef enum
-{
-	FFIND_TYPE_DIR,
-	FFIND_TYPE_FILE,
-	FFIND_TYPE_DONE
-}FFIND_TYPE;
-
-typedef struct
-{
-	FDIR		handle;
-	FFIND_TYPE foundType;
-	BOOL		readOnly;
-	UINT32	fileSize;
-	time_t	createTime;
-	time_t	lastModifyTime;
-	char		fileName[(255)];
-}FFIND;
-
-
-typedef int FATTRIB;
-
-typedef struct
-{
-	FATTRIB	st_mode;		// attributes
-	int		st_size;		// Total size (bytes)
-	time_t	st_ctime;	// Time of creation
-	time_t	st_mtime;	// Time of last modification
-}FSTAT;
-
-typedef enum
-{
-	FERR_NONE = 0,
-	FERR_DISK = -1,
-	FERR_NO_FILE = -2,
-	FERR_INVALID = -3,
-	FERR_ACCESS = -4,
-	FERR_FORMAT = -5,
-	FERR_TOO_MANY = -6,
-	FERR_UNKNOWN = -7,
-	FERR_CODE_END = -8,
-} FERR;
-
-
-/**************************************************************************
- *                                  Prototypes
- **************************************************************************/
-BOOL FileDevIsMounted(FDISK_NUM disk);
-void FileDevInfo(FDISK_NUM disk, FDISK_STATS *pDest);
-
-//lint -esym(534, FileClose, FileGets, FilePutc, FilePuts, FilePrintf, FileSeek, FileFlush)
-FFILE FileOpen(char const *pName, FOPEN_MODE openMode);
-int FileClose(FFILE file);
-
-int FileRead(FFILE file, void *pDest, int len);
-char * FileGets(FFILE file, char *pStr, int maxLen);
-long FileSeek(FFILE file, long offset, FSEEK_ORIGIN origin);
-long FileTell(FFILE file);
-int FileEof(FFILE file);
-int FileFStat(FFILE file, FSTAT *pDest);
-int FileStat(char const *pName, FSTAT *pDest);
-
-int FileWrite(FFILE file, void const *pSrc, int len);
-int FilePutc(FFILE file, char character);
-int FilePuts(FFILE file, char const *pString);
-int FilePrintf(FFILE file, const char *pFormat, ...);
-
-int FileFlush(FFILE file);
-int FileRename(char const *pOld, char const *pNew);
-int FileRemove(char const *pName);
-
-int FileMkDir(char const *pName);
-
-int FileFindFirst(char const *pName, BOOL shouldRecurse, FFIND *pFind);
-int FileFindNext(FFIND *pFind);
-int FileFindClose(FFIND *pFind);
-
-/*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
-
-Sheldon Patterson
-********************************************************************************************/
 
 
 /*******************************************************************************************
@@ -6613,8 +5749,10 @@ void TimerMsStopIfUnused(void);
 
 extern void TC0_IrqHandler(void);
 
+
+/* Testing */
 /*******************************************************************************************
-Atmel SAM3U RTC driver
+LED driver with manual PWM control
 
 This is free, public domain software and there is NO WARRANTY.
 No restriction on use. You can use, modify and redistribute it for
@@ -6624,36 +5762,262 @@ Sheldon Patterson
 ********************************************************************************************/
 
 
-/* time.h standard header */
-/* Copyright 2003-2010 IAR Systems AB. */
+/*******************************************************************************************
+Red Green Blue (RGB) common colors
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
 
 
-/*
- * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
- * Consult your license regarding permissions and restrictions.
-V5.04:0576 */
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+// Standard RGB colors (as defined in .NET System.Drawing.Color):
+typedef enum
+{
+   COLOR_AliceBlue            = (0xF0F8FFuL),
+   COLOR_AntiqueWhite         = (0xFAEBD7uL),
+   COLOR_Aqua                 = (0x00FFFFuL),
+   COLOR_Aquamarine           = (0x7FFFD4uL),
+   COLOR_Azure                = (0xF0FFFFuL),
+   COLOR_Beige                = (0xF5F5DCuL),
+   COLOR_Bisque               = (0xFFE4C4uL),
+   COLOR_Black                = (0x000000uL),
+   COLOR_BlanchedAlmond       = (0xFFEBCDuL),
+   COLOR_Blue                 = (0x0000FFuL),
+   COLOR_BlueViolet           = (0x8A2BE2uL),
+   COLOR_Brown                = (0xA52A2AuL),
+   COLOR_BurlyWood            = (0xDEB887uL),
+   COLOR_CadetBlue            = (0x5F9EA0uL),
+   COLOR_Chartreuse           = (0x7FFF00uL),
+   COLOR_Chocolate            = (0xD2691EuL),
+   COLOR_Coral                = (0xFF7F50uL),
+   COLOR_CornflowerBlue       = (0x6495EDuL),
+   COLOR_Cornsilk             = (0xFFF8DCuL),
+   COLOR_Crimson              = (0xDC143CuL),
+   COLOR_Cyan                 = (0x00FFFFuL),
+   COLOR_DarkBlue             = (0x00008BuL),
+   COLOR_DarkCyan             = (0x008B8BuL),
+   COLOR_DarkGoldenrod        = (0xB8860BuL),
+   COLOR_DarkGray             = (0xA9A9A9uL),
+   COLOR_DarkGreen            = (0x006400uL),
+   COLOR_DarkKhaki            = (0xBDB76BuL),
+   COLOR_DarkMagenta          = (0x8B008BuL),
+   COLOR_DarkOliveGreen       = (0x556B2FuL),
+   COLOR_DarkOrange           = (0xFF8C00uL),
+   COLOR_DarkOrchid           = (0x9932CCuL),
+   COLOR_DarkRed              = (0x8B0000uL),
+   COLOR_DarkSalmon           = (0xE9967AuL),
+   COLOR_DarkSeaGreen         = (0x8FBC8BuL),
+   COLOR_DarkSlateBlue        = (0x483D8BuL),
+   COLOR_DarkSlateGray        = (0x2F4F4FuL),
+   COLOR_DarkTurquoise        = (0x00CED1uL),
+   COLOR_DarkViolet           = (0x9400D3uL),
+   COLOR_DeepPink             = (0xFF1493uL),
+   COLOR_DeepSkyBlue          = (0x00BFFFuL),
+   COLOR_DimGray              = (0x696969uL),
+   COLOR_DodgerBlue           = (0x1E90FFuL),
+   COLOR_Firebrick            = (0xB22222uL),
+   COLOR_FloralWhite          = (0xFFFAF0uL),
+   COLOR_ForestGreen          = (0x228B22uL),
+   COLOR_Fuchsia              = (0xFF00FFuL),
+   COLOR_Gainsboro            = (0xDCDCDCuL),
+   COLOR_GhostWhite           = (0xF8F8FFuL),
+   COLOR_Gold                 = (0xFFD700uL),
+   COLOR_Goldenrod            = (0xDAA520uL),
+   COLOR_Gray                 = (0x808080uL),
+   COLOR_Green                = (0x008000uL),
+   COLOR_GreenYellow          = (0xADFF2FuL),
+   COLOR_Honeydew             = (0xF0FFF0uL),
+   COLOR_HotPink              = (0xFF69B4uL),
+   COLOR_IndianRed            = (0xCD5C5CuL),
+   COLOR_Indigo               = (0x4B0082uL),
+   COLOR_Ivory                = (0xFFFFF0uL),
+   COLOR_Khaki                = (0xF0E68CuL),
+   COLOR_Lavender             = (0xE6E6FAuL),
+   COLOR_LavenderBlush        = (0xFFF0F5uL),
+   COLOR_LawnGreen            = (0x7CFC00uL),
+   COLOR_LemonChiffon         = (0xFFFACDuL),
+   COLOR_LightBlue            = (0xADD8E6uL),
+   COLOR_LightCoral           = (0xF08080uL),
+   COLOR_LightCyan            = (0xE0FFFFuL),
+   COLOR_LightGoldenrodYellow = (0xFAFAD2uL),
+   COLOR_LightGray            = (0xD3D3D3uL),
+   COLOR_LightGreen           = (0x90EE90uL),
+   COLOR_LightPink            = (0xFFB6C1uL),
+   COLOR_LightSalmon          = (0xFFA07AuL),
+   COLOR_LightSeaGreen        = (0x20B2AAuL),
+   COLOR_LightSkyBlue         = (0x87CEFAuL),
+   COLOR_LightSlateGray       = (0x778899uL),
+   COLOR_LightSteelBlue       = (0xB0C4DEuL),
+   COLOR_LightYellow          = (0xFFFFE0uL),
+   COLOR_Lime                 = (0x00FF00uL),
+   COLOR_LimeGreen            = (0x32CD32uL),
+   COLOR_Linen                = (0xFAF0E6uL),
+   COLOR_Magenta              = (0xFF00FFuL),
+   COLOR_Maroon               = (0x800000uL),
+   COLOR_MediumAquamarine     = (0x66CDAAuL),
+   COLOR_MediumBlue           = (0x0000CDuL),
+   COLOR_MediumOrchid         = (0xBA55D3uL),
+   COLOR_MediumPurple         = (0x9370DBuL),
+   COLOR_MediumSeaGreen       = (0x3CB371uL),
+   COLOR_MediumSlateBlue      = (0x7B68EEuL),
+   COLOR_MediumSpringGreen    = (0x00FA9AuL),
+   COLOR_MediumTurquoise      = (0x48D1CCuL),
+   COLOR_MediumVioletRed      = (0xC71585uL),
+   COLOR_MidnightBlue         = (0x191970uL),
+   COLOR_MintCream            = (0xF5FFFAuL),
+   COLOR_MistyRose            = (0xFFE4E1uL),
+   COLOR_Moccasin             = (0xFFE4B5uL),
+   COLOR_NavajoWhite          = (0xFFDEADuL),
+   COLOR_Navy                 = (0x000080uL),
+   COLOR_OldLace              = (0xFDF5E6uL),
+   COLOR_Olive                = (0x808000uL),
+   COLOR_OliveDrab            = (0x6B8E23uL),
+   COLOR_Orange               = (0xFFA500uL),
+   COLOR_OrangeRed            = (0xFF4500uL),
+   COLOR_Orchid               = (0xDA70D6uL),
+   COLOR_PaleGoldenrod        = (0xEEE8AAuL),
+   COLOR_PaleGreen            = (0x98FB98uL),
+   COLOR_PaleTurquoise        = (0xAFEEEEuL),
+   COLOR_PaleVioletRed        = (0xDB7093uL),
+   COLOR_PapayaWhip           = (0xFFEFD5uL),
+   COLOR_PeachPuff            = (0xFFDAB9uL),
+   COLOR_Peru                 = (0xCD853FuL),
+   COLOR_Pink                 = (0xFFC0CBuL),
+   COLOR_Plum                 = (0xDDA0DDuL),
+   COLOR_PowderBlue           = (0xB0E0E6uL),
+   COLOR_Purple               = (0x800080uL),
+   COLOR_Red                  = (0xFF0000uL),
+   COLOR_RosyBrown            = (0xBC8F8FuL),
+   COLOR_RoyalBlue            = (0x4169E1uL),
+   COLOR_SaddleBrown          = (0x8B4513uL),
+   COLOR_Salmon               = (0xFA8072uL),
+   COLOR_SandyBrown           = (0xF4A460uL),
+   COLOR_SeaGreen             = (0x2E8B57uL),
+   COLOR_SeaShell             = (0xFFF5EEuL),
+   COLOR_Sienna               = (0xA0522DuL),
+   COLOR_Silver               = (0xC0C0C0uL),
+   COLOR_SkyBlue              = (0x87CEEBuL),
+   COLOR_SlateBlue            = (0x6A5ACDuL),
+   COLOR_SlateGray            = (0x708090uL),
+   COLOR_Snow                 = (0xFFFAFAuL),
+   COLOR_SpringGreen          = (0x00FF7FuL),
+   COLOR_SteelBlue            = (0x4682B4uL),
+   COLOR_Tan                  = (0xD2B48CuL),
+   COLOR_Teal                 = (0x008080uL),
+   COLOR_Thistle              = (0xD8BFD8uL),
+   COLOR_Tomato               = (0xFF6347uL),
+   COLOR_Transparent          = (0xFFFFFFuL),
+   COLOR_Turquoise            = (0x40E0D0uL),
+   COLOR_Violet               = (0xEE82EEuL),
+   COLOR_Wheat                = (0xF5DEB3uL),
+   COLOR_White                = (0xFFFFFFuL),
+   COLOR_WhiteSmoke           = (0xF5F5F5uL),
+   COLOR_Yellow               = (0xFFFF00uL),
+   COLOR_YellowGreen          = (0x9ACD32uL),
+}COLOR;
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+
 
 
 /**************************************************************************
  *                                  Constants
  **************************************************************************/
 
+/*   NOTE: this affects the PWM frequency for brightness/RGB coloring
+           --> videos range from 23.97 to 60 Hz. LED flickering is almost unnoticeable above 50 Hz
+     NOTE: The LED_UPDATE_RATE_MS must be fast enough to allow PWM resolution at the update rate
+*/
+
+/* RGB Color Gradient:
+There are a few common ways to cycle through RGB colors:
+0) Change one RGB component at a time
+	a) R=255, G=0, B=0
+	b) ramp up B to 255
+	c) ramp down R to 0
+	d) ramp up G to 255
+	e) ramp down B to 0
+	f) ramp up R to 255
+   g) ramp down G to 0
+   --> Tends to "hang" at magenta, cyan and yellow
+
+1) HSB/HSL hue cycling
+	HSB = "Hue", "Saturation" Brightness"
+	a) Set saturation and brightness as desired
+	b) Increment Hue (0-359) around the color wheel
+	c) Convert HSB to RGB values
+
+2) Sine-Wave trefoil (aka 3-phase sine wave similar to 3-phase motor control)
+	This is similar to HSB/HSL using 3-phase motor-like control. Essentially,
+	it uses a sine wave to set each RGB component, with each component phase-shifted
+	by 120 degress (same frequency and amplitude).
+	a) Store sine table
+	b) Lookup each component value, keeping them 120 degrees apart
+	c) Add any base offset for brightness
+*/
+
+// Define one of the algorithms for RGB color cycling:
+
 
 /**************************************************************************
  *                                  Types
  **************************************************************************/
+typedef enum
+{
+   LED_WHITE,
+	LED_PURPLE,
+	LED_BLUE,
+   LED_CYAN,
+	LED_GREEN,
+	LED_YELLOW,
+   LED_ORANGE,
+	LED_RED,
+	LED_RGB_RED,
+	LED_RGB_GREEN,
+	LED_RGB_BLUE,
+   LED_COUNT,
+} LEDS;
 
 
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-void RtcInit(void);
-_Bool RtcIsValid(void);
-time_t RtcGet(void);
-void RtcSet(time_t newTime);
-struct tm * RtcGetTm(void);
-void RtcSetTm(struct tm const *pTm);
+// Core LED functions:
+void LedOn(LEDS led);
+void LedOff(LEDS led);
+void LedToggle(LEDS led);
+void LedSet(LEDS led, _Bool isOn);
+void LedSetPwm(LEDS led, u8 dutyPercent);
+void LedBlink(LEDS led, u16 onMs, u16 offMs);
+void LedBlinkPwm(LEDS led, u16 onMs, u16 offMs, u8 dutyPercent);
+void LedSequence(u16 cycleRateMs);
 
+// RGB functions:
+void LedRgbSet(COLOR rgb);
+
+/* cycleTimeMs = total time that it will take to cycle all colors
+   saturation = amount of color to show (0 = no color, 255 = full color)
+	brightness = LED intensity (0 = off, 255 = max) */
+void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness);
+
+// Application level init and update functions
+void LedInit(void);
+void LedUpdate(void);	// Must be called every 1ms
+
+/* Testing */
 
 
 /**************************************************************************
@@ -6662,47 +6026,70 @@ void RtcSetTm(struct tm const *pTm);
 /**************************************************************************
  *                                  Types
  **************************************************************************/
-typedef struct
-{
-   char teBuf[100];
-   char usartRxBuf[32];
-   char usartTxBuf[32];
-   u32 tickCount;
-   time_t lastTm;
-}DEMO;
-
-
 /**************************************************************************
  *                                  Variables
  **************************************************************************/
-//static DEMO demo;
+int period;
+int lastTickTime;
+int sinceTickTime;
+int currTime;
 
-
+float freqRPS;
+float freqRPM;
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-//static void DemoTextEditorInit(void);
-
-
-
+void tactUpdate(GPIO_PIN pin);
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
-void DemoInit(void)
-{
-   LedSequence(100);
-   LedRgbCycleSet(5000, 0xff, 0xff);
-// DemoTextEditorInit();
-// DemoUsartInit();
-// DemoSd();
+void TactInit() {
+  
+  // initailize variables
+  period = 0;
+  lastTickTime = 0;
+  sinceTickTime = 0;
+  currTime = 0;
+  
+  freqRPS = 0;
+  freqRPM = 0;
+  
+  // initialize interrupt
+  GpioIrqInstall(GPIO_PIN_BUTTON0, GPIO_IRQ_FALLING_EDGE, tactUpdate);
 }
 
-void DemoUpdate(void)
-{
-   //DemoClockUpdate();
+int GetPeriod() {
+  return period;
 }
 
+float GetRPS() {
+  int freq = (int)freqRPS;
+  return freq;
+}
+
+float GetRPM() {
+  int freq = (int)freqRPM;
+  return freq;
+}
+
+int GetTimeSinceTick() {
+  currTime = TimerMsGet();
+  sinceTickTime = currTime - lastTickTime;
+  
+  return sinceTickTime;
+}
 
 /**************************************************************************
  *                                 Private Functions
  **************************************************************************/
+
+void tactUpdate(GPIO_PIN pin) {
+  period = GetTimeSinceTick();
+  freqRPS = 1000/period;
+  freqRPM = 60000/period;
+  
+  lastTickTime = TimerMsGet();
+  LedToggle(LED_RED);
+}
+
+

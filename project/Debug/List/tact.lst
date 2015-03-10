@@ -1,0 +1,199 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  18:26:39 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\tact.c                                                 #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\tact.c -D __SAM3U2C__ --preprocess=c                   #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\ --no_cse --no_unroll --no_inline                #
+#                    --no_code_motion --no_tbaa --no_clustering               #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I C:\Users\Quinn\Documents\GitHub\motor-project\ #
+#                    project\..\src\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\app\ -I C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\..\src\lib\utils\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\structures\src\ -I                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\ -I C:\Users\Quinn\Documents\GitHub\motor- #
+#                    project\project\..\src\lib\file\hooks\FatFs\ -I          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\disk\ -I C:\Users\Quinn\Documents\GitHub\m #
+#                    otor-project\project\..\src\lib\version\ -I              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\FatFs\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\config\ -I C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\..\src\drivers\ -I                         #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\utils\ -I C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\..\src\drivers\ -On -I "C:\Program Files    #
+#                    (x86)\IAR Systems\Embedded Workbench                     #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\tact.lst                                        #
+#    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\tact.o                                           #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
+      1          /*******************************************************************************************
+      2          Description:
+      3          Determines revolution period (ms) and frequency (rev/sec and rev/min)
+      4          
+      5          Quinn Miller
+      6          ********************************************************************************************/
+      7          
+      8          
+      9          #include "tact.h"
+     10          #include "gpio.h"
+     11          #include "timer.h"
+     12          
+     13          /* Testing */
+     14          #include "led.h"
+     15          /* Testing */
+     16          
+     17          
+     18          /**************************************************************************
+     19           *                                  Constants
+     20           **************************************************************************/
+     21          /**************************************************************************
+     22           *                                  Types
+     23           **************************************************************************/
+     24          /**************************************************************************
+     25           *                                  Variables
+     26           **************************************************************************/
+     27          int period;
+     28          int lastTickTime;
+     29          int sinceTickTime;
+     30          int currTime;
+     31          
+     32          float freqRPS;
+     33          float freqRPM;
+     34          /**************************************************************************
+     35           *                                  Prototypes
+     36           **************************************************************************/
+     37          void tactUpdate(GPIO_PIN pin);
+     38          /**************************************************************************
+     39           *                                  Global Functions
+     40           **************************************************************************/
+     41          void TactInit() {
+     42            
+     43            // initailize variables
+     44            period = 0;
+     45            lastTickTime = 0;
+     46            sinceTickTime = 0;
+     47            currTime = 0;
+     48            
+     49            freqRPS = 0;
+     50            freqRPM = 0;
+     51            
+     52            // initialize interrupt
+     53            GpioIrqInstall(GPIO_PIN_BUTTON0, GPIO_IRQ_FALLING_EDGE, tactUpdate);
+     54          }
+     55          
+     56          int GetPeriod() {
+     57            return period;
+     58          }
+     59          
+     60          float GetRPS() {
+     61            int freq = (int)freqRPS;
+     62            return freq;
+     63          }
+     64          
+     65          float GetRPM() {
+     66            int freq = (int)freqRPM;
+     67            return freq;
+     68          }
+     69          
+     70          int GetTimeSinceTick() {
+     71            currTime = TimerMsGet();
+     72            sinceTickTime = currTime - lastTickTime;
+     73            
+     74            return sinceTickTime;
+     75          }
+     76          
+     77          /**************************************************************************
+     78           *                                 Private Functions
+     79           **************************************************************************/
+     80          
+     81          void tactUpdate(GPIO_PIN pin) {
+     82            period = GetTimeSinceTick();
+     83            freqRPS = 1000/period;
+     84            freqRPM = 60000/period;
+     85            
+     86            lastTickTime = TimerMsGet();
+     87            LedToggle(LED_RED);
+     88          }
+     89          
+     90          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   GetPeriod
+       8   GetRPM
+         8   -> __aeabi_f2iz
+         8   -> __aeabi_i2f
+       8   GetRPS
+         8   -> __aeabi_f2iz
+         8   -> __aeabi_i2f
+       8   GetTimeSinceTick
+         8   -> TimerMsGet
+       8   TactInit
+         8   -> GpioIrqInstall
+       8   tactUpdate
+         8   -> GetTimeSinceTick
+         8   -> LedToggle
+         8   -> TimerMsGet
+         8   -> __aeabi_i2f
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable5
+       4  ??DataTable5_1
+       4  ??DataTable5_2
+       4  ??DataTable5_3
+       4  ??DataTable5_4
+       4  ??DataTable5_5
+       6  GetPeriod
+      16  GetRPM
+      16  GetRPS
+      30  GetTimeSinceTick
+      52  TactInit
+       4  currTime
+       4  freqRPM
+       4  freqRPS
+       4  lastTickTime
+       4  period
+       4  sinceTickTime
+      68  tactUpdate
+
+ 
+  24 bytes in section .bss
+ 212 bytes in section .text
+ 
+ 212 bytes of CODE memory
+  24 bytes of DATA memory
+
+Errors: none
+Warnings: none

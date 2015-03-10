@@ -1,0 +1,134 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  18:20:58 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\mo #
+#                    torControl.c                                             #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\app\mo #
+#                    torControl.c -D __SAM3U2C__ --preprocess=c               #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\ --no_cse --no_unroll --no_inline                #
+#                    --no_code_motion --no_tbaa --no_clustering               #
+#                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
+#                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
+#                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
+#                    mal.h" -I C:\Users\Quinn\Documents\GitHub\motor-project\ #
+#                    project\..\src\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\app\ -I C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\..\src\lib\utils\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\structures\src\ -I                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\ -I C:\Users\Quinn\Documents\GitHub\motor- #
+#                    project\project\..\src\lib\file\hooks\FatFs\ -I          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\disk\ -I C:\Users\Quinn\Documents\GitHub\m #
+#                    otor-project\project\..\src\lib\version\ -I              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\FatFs\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\config\ -I C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\..\src\drivers\ -I                         #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\utils\ -I C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\..\src\drivers\ -On -I "C:\Program Files    #
+#                    (x86)\IAR Systems\Embedded Workbench                     #
+#                    6.5\arm\CMSIS\Include\"                                  #
+#    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\motorControl.lst                                #
+#    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\motorControl.o                                   #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+C:\Users\Quinn\Documents\GitHub\motor-project\src\app\motorControl.c
+      1          /*******************************************************************************************
+      2          Description:
+      3          Determines required frequency and voltage for given RPM input
+      4          
+      5          Quinn Miller
+      6          ********************************************************************************************/
+      7          
+      8          
+      9          #include "motorControl.h"
+     10          #include "tact.h"
+     11          #include "led.h"
+     12          #include "lcd.h"
+     13          
+     14          
+     15          /**************************************************************************
+     16           *                                  Constants
+     17           **************************************************************************/
+     18          /**************************************************************************
+     19           *                                  Types
+     20           **************************************************************************/
+     21          /**************************************************************************
+     22           *                                  Variables
+     23           **************************************************************************/
+     24          /**************************************************************************
+     25           *                                  Prototypes
+     26           **************************************************************************/
+     27          /**************************************************************************
+     28           *                                  Global Functions
+     29           **************************************************************************/
+     30          void MotorControlInit () {
+     31            TactInit();
+     32          }
+     33          
+     34          void MotorControlUpdate () {
+     35            if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
+     36            
+     37            LcdSetPos(0,0);
+     38            LcdPrintf("%d \n", (int)GetRPM());
+     39          }
+     40          
+     41          /**************************************************************************
+     42           *                                 Private Functions
+     43           **************************************************************************/
+     44          
+     45          
+     46          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   MotorControlInit
+         8   -> TactInit
+       8   MotorControlUpdate
+         8   -> GetRPM
+         8   -> GetTimeSinceTick
+         8   -> LcdPrintf
+         8   -> LcdSetPos
+         8   -> LedSet
+         8   -> __aeabi_f2iz
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       8  ?<Constant "%d \n">
+       4  ??DataTable0
+       8  MotorControlInit
+      46  MotorControlUpdate
+
+ 
+  8 bytes in section .rodata
+ 58 bytes in section .text
+ 
+ 58 bytes of CODE  memory
+  8 bytes of CONST memory
+
+Errors: none
+Warnings: none

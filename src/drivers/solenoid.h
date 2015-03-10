@@ -1,31 +1,28 @@
 /*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+solenoid.h
 
-Sheldon Patterson
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
+
+Quinn Miller
 ********************************************************************************************/
 
-#ifndef __MOTORDEMO_H__
-#define __MOTORDEMO_H__
+#ifndef __SOLENOID_H__
+#define __SOLENOID_H__
 
-#include "includes.h"
+#include "types.h"
 
 
 /**************************************************************************
  *                                  Constants
  **************************************************************************/
-
-
 /**************************************************************************
  *                                  Types
  **************************************************************************/
-
-
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-void MotorDemoInit();
-void MotorDemoUpdate();
+void SolenoidInit(void);
+void SolenoidUpdate(void);
 
 #endif

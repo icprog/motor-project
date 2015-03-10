@@ -1900,22 +1900,7 @@
       <name>$PROJ_DIR$\..\src\app\demo.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\src\app\ledShow.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\app\motorDemo.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\app\music.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\app\musicPlayer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\app\songTwinkleTwinkle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\src\app\textEditor.c</name>
+      <name>$PROJ_DIR$\..\src\app\motorControl.c</name>
     </file>
   </group>
   <group>
@@ -1967,6 +1952,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\drivers\sd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\drivers\solenoid.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\src\drivers\tact.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\src\drivers\timer.c</name>

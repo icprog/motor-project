@@ -19,9 +19,7 @@ Sheldon Patterson
 #include "button.h"
 #include "rtc.h"
 #include "demo.h"
-#include "music.h"
-#include "songTwinkleTwinkle.h"
-#include "motorDemo.h"
+#include "motorControl.h"
 
 
 /**************************************************************************
@@ -44,8 +42,7 @@ static void MainInit(void);
 void main(void)
 {
    MainInit();
-   //DemoInit();
-   MotorDemoInit();
+   MotorControlInit();
 
    for (;;)
    {
@@ -55,13 +52,11 @@ void main(void)
       LcdUpdate();
 
       // Application
-      // DemoUpdate();
-      MotorDemoUpdate();
+      MotorControlUpdate();
 
       // Heartbeat
       GpioSet(GPIO_PIN_HEARTBEAT);   // active low
       TimerWaitXMs(SYS_TICK_RATE_MS);
-      //SysTickWait();
       GpioClear(GPIO_PIN_HEARTBEAT);
       
    }

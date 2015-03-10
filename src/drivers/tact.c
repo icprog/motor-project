@@ -1,73 +1,90 @@
 /*******************************************************************************************
-Demonstrate LCD, Tact, LED and button functionality
-
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
 Quinn Miller
 ********************************************************************************************/
 
 
-#include "MotorDemo.h"
-#include "button.h"
-#include "lcd.h"
-#include "led.h"
+#include "tact.h"
+#include "gpio.h"
 #include "timer.h"
+
+/* Testing */
+#include "led.h"
+/* Testing */
 
 
 /**************************************************************************
  *                                  Constants
  **************************************************************************/
-char lcdRowB[20] = "STOP  UP   DWN  POKE";
 /**************************************************************************
  *                                  Types
  **************************************************************************/
 /**************************************************************************
  *                                  Variables
  **************************************************************************/
+int period;
+int lastTickTime;
+int sinceTickTime;
+int currTime;
 
-char lcdRowA[19];
-char setpointChar[3];
-
-u16 setpoint = 1000;
-u8 pokePerMin = 0;
-
+float freqRPS;
+float freqRPM;
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-void updateLcdRow(char *pRowA, char *pRowB);
+void tactUpdate(GPIO_PIN pin);
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
-void MotorDemoInit()
-{
-  LcdClear();
-  LedRgbSet(0x000000FF);
+void TactInit() {
+  
+  // initailize variables
+  period = 0;
+  lastTickTime = 0;
+  sinceTickTime = 0;
+  currTime = 0;
+  
+  freqRPS = 0;
+  freqRPM = 0;
+  
+  // initialize interrupt
+  GpioIrqInstall(GPIO_PIN_BUTTON0, GPIO_IRQ_FALLING_EDGE, tactUpdate);
 }
 
-void MotorDemoUpdate()
-{
+int GetPeriod() {
+  return period;
+}
+
+float GetRPS() {
+  int freq = (int)freqRPS;
+  return freq;
+}
+
+float GetRPM() {
+  int freq = (int)freqRPM;
+  return freq;
+}
+
+int GetTimeSinceTick() {
+  currTime = TimerMsGet();
+  sinceTickTime = currTime - lastTickTime;
   
-  if( ButtonWasPressed(BTN_LM)) {
-    ButtonPressAck(BTN_LM);
-    setpoint+=50;
-  }
-  if( ButtonWasPressed(BTN_RM)) {
-    ButtonPressAck(BTN_RM);
-    if( setpoint>0) setpoint-=50;
-  }
-  
-  sprintf(lcdRowA,"%d",setpoint);  
-  
-  updateLcdRow(&lcdRowA[0], &lcdRowB[0]);
+  return sinceTickTime;
 }
 
 /**************************************************************************
  *                                 Private Functions
  **************************************************************************/
-void updateLcdRow(char *pRowA, char *pRowB) {
-  LcdClear();
-  LcdSetPos(1,0);
-  LcdPrintf(pRowB);
-  LcdSetPos(0,0);
-  LcdPrintf(pRowA);
+
+void tactUpdate(GPIO_PIN pin) {
+  period = GetTimeSinceTick();
+  freqRPS = 1000/period;
+  freqRPM = 60000/period;
+  
+  lastTickTime = TimerMsGet();
+  LedToggle(LED_RED);
 }
+
 

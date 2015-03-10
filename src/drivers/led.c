@@ -99,6 +99,12 @@ void LedOff(LEDS led)
 	ledState[led].blinkOnTicks = 0;
 }
 
+void LedToggle(LEDS led)
+{
+  if(GpioIsSet(ledPins[led])) LedOff(led);
+  else LedOn(led);
+}
+
 void LedSet(LEDS led, bool isOn)
 {
 	if (isOn)

@@ -1,64 +1,57 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      17/Mar/2014  18:12:36 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  18:23:22 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
 #    Endian       =  little                                                   #
-#    Source file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
-#                    Server\src\drivers\led.c                                 #
-#    Command line =  "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\src\drivers\led.c" -D __SAM3U2C__ --preprocess=c  #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\Debug\List\" -lcN                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\Debug\List\" --diag_suppress Pa050 -o     #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\Debug\Obj\" --no_cse --no_unroll          #
-#                    --no_inline --no_code_motion --no_tbaa --no_clustering   #
+#    Source file  =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\led.c                                                  #
+#    Command line =  C:\Users\Quinn\Documents\GitHub\motor-project\src\driver #
+#                    s\led.c -D __SAM3U2C__ --preprocess=c                    #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\ -lcN C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\Debug\List\ --diag_suppress Pa050 -o        #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\ --no_cse --no_unroll --no_inline                #
+#                    --no_code_motion --no_tbaa --no_clustering               #
 #                    --no_scheduling --debug --endian=little --cpu=Cortex-M3  #
 #                    -e --fpu=None --dlib_config "C:\Program Files (x86)\IAR  #
 #                    Systems\Embedded Workbench 6.5\arm\INC\c\DLib_Config_Nor #
-#                    mal.h" -I "C:\Users\Quinn\Documents\School\MPG\SVN       #
-#                    Server\project\..\src\" -I "C:\Users\Quinn\Documents\Sch #
-#                    ool\MPG\SVN Server\project\..\src\bsp\" -I               #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\app\" -I                           #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\utils\" -I                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\structures\src\" -I            #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\file\" -I                      #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\file\hooks\FatFs\" -I          #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\file\disk\" -I                 #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\version\" -I                   #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\lib\FatFs\" -I                     #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\bsp\" -I                           #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\config\" -I                        #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\drivers\" -I                       #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\utils\" -I                         #
-#                    "C:\Users\Quinn\Documents\School\MPG\SVN                 #
-#                    Server\project\..\src\drivers\" -On -I "C:\Program       #
-#                    Files (x86)\IAR Systems\Embedded Workbench               #
+#                    mal.h" -I C:\Users\Quinn\Documents\GitHub\motor-project\ #
+#                    project\..\src\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\app\ -I C:\Users\Quinn\Documents\GitHub\motor-proje #
+#                    ct\project\..\src\lib\utils\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\structures\src\ -I                              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\ -I C:\Users\Quinn\Documents\GitHub\motor- #
+#                    project\project\..\src\lib\file\hooks\FatFs\ -I          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\file\disk\ -I C:\Users\Quinn\Documents\GitHub\m #
+#                    otor-project\project\..\src\lib\version\ -I              #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\lib\FatFs\ -I C:\Users\Quinn\Documents\GitHub\motor #
+#                    -project\project\..\src\bsp\ -I                          #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\config\ -I C:\Users\Quinn\Documents\GitHub\motor-pr #
+#                    oject\project\..\src\drivers\ -I                         #
+#                    C:\Users\Quinn\Documents\GitHub\motor-project\project\.. #
+#                    \src\utils\ -I C:\Users\Quinn\Documents\GitHub\motor-pro #
+#                    ject\project\..\src\drivers\ -On -I "C:\Program Files    #
+#                    (x86)\IAR Systems\Embedded Workbench                     #
 #                    6.5\arm\CMSIS\Include\"                                  #
-#    List file    =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
-#                    Server\project\Debug\List\led.lst                        #
-#    Object file  =  C:\Users\Quinn\Documents\School\MPG\SVN                  #
-#                    Server\project\Debug\Obj\led.o                           #
+#    List file    =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\List\led.lst                                         #
+#    Object file  =  C:\Users\Quinn\Documents\GitHub\motor-project\project\De #
+#                    bug\Obj\led.o                                            #
 #                                                                             #
 #                                                                             #
 ###############################################################################
 
-C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\led.c
+C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\led.c
       1          /*******************************************************************************************
       2          LED driver with manual PWM control
       3          
@@ -160,288 +153,294 @@ C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\led.c
      99          	ledState[led].blinkOnTicks = 0;
     100          }
     101          
-    102          void LedSet(LEDS led, bool isOn)
+    102          void LedToggle(LEDS led)
     103          {
-    104          	if (isOn)
-    105          	{
-    106          		LedOn(led);
-    107          	}
-    108          	else
-    109          	{
-    110          		LedOff(led);
-    111          	}
-    112          }
-    113          
-    114          void LedSetPwm(LEDS led, u8 dutyPercent)
-    115          {
-    116          	ledState[led].duty = dutyPercent;
-    117          	ledState[led].cycleCount = 0;
-    118          
-    119          	if (IN_RANGE((u8f)led, LED_RGB_RED, LED_RGB_BLUE))
-    120          	{
-    121          		ledRgbState.cycleRateTicks = 0;
-    122          	}
-    123          }
+    104            if(GpioIsSet(ledPins[led])) LedOff(led);
+    105            else LedOn(led);
+    106          }
+    107          
+    108          void LedSet(LEDS led, bool isOn)
+    109          {
+    110          	if (isOn)
+    111          	{
+    112          		LedOn(led);
+    113          	}
+    114          	else
+    115          	{
+    116          		LedOff(led);
+    117          	}
+    118          }
+    119          
+    120          void LedSetPwm(LEDS led, u8 dutyPercent)
+    121          {
+    122          	ledState[led].duty = dutyPercent;
+    123          	ledState[led].cycleCount = 0;
     124          
-    125          void LedBlink(LEDS led, u16 onMs, u16 offMs)
-    126          {
-    127             ledState[led].duty = 100;
-    128             ledState[led].blinkOnTicks = onMs / LED_UPDATE_RATE_MS;
-    129             ledState[led].blinkOffTicks = offMs / LED_UPDATE_RATE_MS;
-    130             ledState[led].blinkTickCount = 0;
-    131          }
-    132          
-    133          void LedBlinkPwm(LEDS led, u16 onMs, u16 offMs, u8 dutyPercent)
-    134          {
-    135          	LedBlink(led, onMs, offMs);
-    136          	LedSetPwm(led, dutyPercent);
+    125          	if (IN_RANGE((u8f)led, LED_RGB_RED, LED_RGB_BLUE))
+    126          	{
+    127          		ledRgbState.cycleRateTicks = 0;
+    128          	}
+    129          }
+    130          
+    131          void LedBlink(LEDS led, u16 onMs, u16 offMs)
+    132          {
+    133             ledState[led].duty = 100;
+    134             ledState[led].blinkOnTicks = onMs / LED_UPDATE_RATE_MS;
+    135             ledState[led].blinkOffTicks = offMs / LED_UPDATE_RATE_MS;
+    136             ledState[led].blinkTickCount = 0;
     137          }
     138          
-    139          void LedSequence(u16 cycleRateMs)
+    139          void LedBlinkPwm(LEDS led, u16 onMs, u16 offMs, u8 dutyPercent)
     140          {
-    141             u16 cycleRateTicks = (cycleRateMs / LED_UPDATE_RATE_MS);
-    142             cycleRateMs *= (u16)LED_RED;  // number of LEDs
-    143             for (LEDS led = (LEDS)0; led <= LED_RED; led++)
-    144             {
-    145                LedBlink(led, cycleRateMs, cycleRateMs);
-    146                ledState[led].blinkTickCount = (led == (LEDS)0)
-    147                   ? 0
-    148                   : (u16)(cycleRateTicks * (u16)((u16)LED_RED + ((u16)LED_RED - (u16)led)));
-    149             }
-    150          }
-    151          
-    152          
-    153          // RGB functions:
-    154          void LedRgbSet(COLOR rgb)
-    155          {
-    156          	LedSetPwm(LED_RGB_RED,	(u8)((u32)rgb >> 16));	// bits 23-16
-    157          	LedSetPwm(LED_RGB_GREEN,(u8)((u32)rgb >>  8));	// bits 15-8
-    158          	LedSetPwm(LED_RGB_BLUE, (u8)((u32)rgb      ));	// bits  7-0
-    159          }
-    160          
-    161          void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness)
-    162          {
-    163             u32 cycleTimeTicks = cycleTimeMs / LED_UPDATE_RATE_MS;
-    164          	if (saturation == 0)
-    165          	{
-    166          		LedRgbSet(COLOR_Black);
-    167          	}
-    168          	else if (cycleTimeTicks > 0)
-    169          	{
-    170          		u32 numSteps;
-    171          #if LED_COLOR_MODE == LED_COLOR_MODE_RGB
-    172          		numSteps = (u32)((brightness - (UINT8_MAX - saturation)) + 1) * 6;	// (6 = up + down for each RGB)
-    173          #elif LED_COLOR_MODE == LED_COLOR_MODE_HSB
-    174          		numSteps = 360;		// 360 degrees in a circle
-    175          #elif LED_COLOR_MODE == LED_COLOR_MODE_SINE
-    176          		numSteps = sizeof(ledSinTable);
-    177          		// saturation isn't used
-    178          		// SINE wave is scaled from 0-32, so we can multiply that by 8
-    179          		brightness = (u8)(((u32)brightness * 8uL) / 256);
-    180          #endif
-    181          		if (cycleTimeTicks >= numSteps)
-    182          		{
-    183          			// small steps at some slow rate
-    184          			ledRgbState.cycleRateTicks = (u16)(cycleTimeTicks / numSteps);
-    185          			ledRgbState.stepSize = 1;
-    186          		}
-    187          		else
+    141          	LedBlink(led, onMs, offMs);
+    142          	LedSetPwm(led, dutyPercent);
+    143          }
+    144          
+    145          void LedSequence(u16 cycleRateMs)
+    146          {
+    147             u16 cycleRateTicks = (cycleRateMs / LED_UPDATE_RATE_MS);
+    148             cycleRateMs *= (u16)LED_RED;  // number of LEDs
+    149             for (LEDS led = (LEDS)0; led <= LED_RED; led++)
+    150             {
+    151                LedBlink(led, cycleRateMs, cycleRateMs);
+    152                ledState[led].blinkTickCount = (led == (LEDS)0)
+    153                   ? 0
+    154                   : (u16)(cycleRateTicks * (u16)((u16)LED_RED + ((u16)LED_RED - (u16)led)));
+    155             }
+    156          }
+    157          
+    158          
+    159          // RGB functions:
+    160          void LedRgbSet(COLOR rgb)
+    161          {
+    162          	LedSetPwm(LED_RGB_RED,	(u8)((u32)rgb >> 16));	// bits 23-16
+    163          	LedSetPwm(LED_RGB_GREEN,(u8)((u32)rgb >>  8));	// bits 15-8
+    164          	LedSetPwm(LED_RGB_BLUE, (u8)((u32)rgb      ));	// bits  7-0
+    165          }
+    166          
+    167          void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness)
+    168          {
+    169             u32 cycleTimeTicks = cycleTimeMs / LED_UPDATE_RATE_MS;
+    170          	if (saturation == 0)
+    171          	{
+    172          		LedRgbSet(COLOR_Black);
+    173          	}
+    174          	else if (cycleTimeTicks > 0)
+    175          	{
+    176          		u32 numSteps;
+    177          #if LED_COLOR_MODE == LED_COLOR_MODE_RGB
+    178          		numSteps = (u32)((brightness - (UINT8_MAX - saturation)) + 1) * 6;	// (6 = up + down for each RGB)
+    179          #elif LED_COLOR_MODE == LED_COLOR_MODE_HSB
+    180          		numSteps = 360;		// 360 degrees in a circle
+    181          #elif LED_COLOR_MODE == LED_COLOR_MODE_SINE
+    182          		numSteps = sizeof(ledSinTable);
+    183          		// saturation isn't used
+    184          		// SINE wave is scaled from 0-32, so we can multiply that by 8
+    185          		brightness = (u8)(((u32)brightness * 8uL) / 256);
+    186          #endif
+    187          		if (cycleTimeTicks >= numSteps)
     188          		{
-    189          			// bigger steps at faster rate
-    190          			ledRgbState.cycleRateTicks = 1;
-    191          			ledRgbState.stepSize = (u8)(numSteps / cycleTimeTicks);
+    189          			// small steps at some slow rate
+    190          			ledRgbState.cycleRateTicks = (u16)(cycleTimeTicks / numSteps);
+    191          			ledRgbState.stepSize = 1;
     192          		}
-    193          		ledRgbState.cycleCountTicks = 0;
-    194          		ledRgbState.saturation = saturation;
-    195          		ledRgbState.brightness = brightness;
-    196          		ledRgbState.state = 0;
-    197          	}
-    198          	else
-    199          	{
-    200          		ledRgbState.cycleRateTicks = 0;
-    201          	}
-    202          }
-    203          
-    204          
-    205          // Application level init and update functions
-    206          void LedInit(void)
-    207          {
-    208          	memset(ledState, 0, sizeof(ledState));
-    209          	memset(&ledRgbState, 0, sizeof(ledRgbState));
-    210          	for (LEDS led = (LEDS)0; led < LED_COUNT; led++)
-    211             {
-    212                LedIoSetState(led, false);
-    213             }
-    214          }
-    215          
-    216          void LedUpdate(void)
-    217          {
-    218          	if ((ledRgbState.cycleRateTicks > 0) &&
-    219          		 (++ledRgbState.cycleCountTicks > ledRgbState.cycleRateTicks))
-    220          	{
-    221          			ledRgbState.cycleCountTicks = 0;
-    222          			LedRgbUpdate();
-    223          	}
-    224          
-    225          	for (LEDS led = (LEDS)0; led < LED_COUNT; led++)
+    193          		else
+    194          		{
+    195          			// bigger steps at faster rate
+    196          			ledRgbState.cycleRateTicks = 1;
+    197          			ledRgbState.stepSize = (u8)(numSteps / cycleTimeTicks);
+    198          		}
+    199          		ledRgbState.cycleCountTicks = 0;
+    200          		ledRgbState.saturation = saturation;
+    201          		ledRgbState.brightness = brightness;
+    202          		ledRgbState.state = 0;
+    203          	}
+    204          	else
+    205          	{
+    206          		ledRgbState.cycleRateTicks = 0;
+    207          	}
+    208          }
+    209          
+    210          
+    211          // Application level init and update functions
+    212          void LedInit(void)
+    213          {
+    214          	memset(ledState, 0, sizeof(ledState));
+    215          	memset(&ledRgbState, 0, sizeof(ledRgbState));
+    216          	for (LEDS led = (LEDS)0; led < LED_COUNT; led++)
+    217             {
+    218                LedIoSetState(led, false);
+    219             }
+    220          }
+    221          
+    222          void LedUpdate(void)
+    223          {
+    224          	if ((ledRgbState.cycleRateTicks > 0) &&
+    225          		 (++ledRgbState.cycleCountTicks > ledRgbState.cycleRateTicks))
     226          	{
-    227          		LED_STATE *pLed = &ledState[led];
-    228          
-    229          		// blinking control first:
-    230          		if (pLed->blinkTickCount++ > pLed->blinkOnTicks)
-    231          		{
-    232          			// off-cycle of blinking
-    233          			if (pLed->blinkTickCount > (pLed->blinkOnTicks + pLed->blinkOffTicks))
-    234          			{
-    235          				pLed->blinkTickCount = 0;
-    236          			}
-    237          			LedIoSetState(led, false);
-    238          		}
-    239          		else
-    240          		{
-    241          			// on-cycle of blinking
-    242          			if (pLed->blinkOnTicks == 0)
-    243          			{
-    244          				pLed->blinkTickCount = 0;
-    245          			}
-    246          
-    247          			// PWM control during on-cycle of blinking:
-    248          			pLed->cycleCount += LED_DUTY_RESOLUTION;
-    249          			if (pLed->cycleCount >= (101 - LED_DUTY_RESOLUTION))
-    250          			{
-    251          				pLed->cycleCount = 0;
-    252          			}
-    253          			LedIoSetState(led, (bool)(pLed->duty > pLed->cycleCount));
-    254          		}
-    255          	}
-    256          }
-    257          
-    258          
-    259          
-    260          /**************************************************************************
-    261           *                                 Private Functions
-    262           **************************************************************************/
-    263          static void LedRgbUpdate(void)
-    264          {
-    265          #if LED_COLOR_MODE == LED_COLOR_MODE_RGB
-    266          	u8 stepsRemaining = ledRgbState.stepSize;
-    267          
-    268          	// RGB sequence: R down, G up, B down, R up, G down, B up
-    269          	// --> Can be reduced to RGB,RGB (alternating down/up)
-    270          	do
-    271          	{
-    272          		// NOTE: This works because the enum has RGB defined first (in that order)
-    273          		LEDS led = (LEDS)ledRgbState.state;
-    274          		if ((u8f)led > (u8f)LED_RGB_BLUE)
-    275          			led = (LEDS)((u8f)led - 3);
-    276          
-    277          		// alternate between decrementing and incrementing values
-    278          		if (ledRgbState.state & BIT0)
-    279          		{
-    280          			u16 newDuty = (u16)ledState[led].duty + (u16)stepsRemaining;
-    281          			if (newDuty >= (u16)ledRgbState.brightness)
-    282          			{
-    283          				// max'd out. Continue with the next LED...
-    284          				stepsRemaining = (u8)(newDuty - (u16)ledRgbState.brightness);
-    285          				ledState[led].duty = ledRgbState.brightness;
-    286          				ledRgbState.state++;
-    287          				if (ledRgbState.state >= 6)
-    288          				{
-    289          					ledRgbState.state = 0;
-    290          				}
-    291          			}
-    292          			else
-    293          			{
-    294          				stepsRemaining = 0;
-    295          				ledState[led].duty = (u8)newDuty;
-    296          			}
-    297          		}
-    298          		else
-    299          		{
-    300          			u8 newDuty = ledState[led].duty >= stepsRemaining?
-    301          				(u8)(ledState[led].duty - stepsRemaining) : 0;
-    302          			u8 minBrightness = (u8)(UINT8_MAX - ledRgbState.saturation);
-    303          			if (newDuty <= minBrightness)
-    304          			{
-    305          				// min'd out. Continue with the next LED...
-    306          				stepsRemaining = (u8)(minBrightness - newDuty);
-    307          				ledState[led].duty = minBrightness;
-    308          				ledRgbState.state++;
-    309          			}
-    310          			else
-    311          			{
-    312          				stepsRemaining = 0;
-    313          				ledState[led].duty = (u8)newDuty;
-    314          			}
-    315          		}
-    316          
-    317          	} while ((stepsRemaining > 0) && (stepsRemaining < ledRgbState.stepSize));
-    318          
-    319          #elif LED_COLOR_MODE == LED_COLOR_MODE_HSB
-    320          	u32 r,g,b;
-    321          	u32 val = (u32)ledRgbState.brightness;
-    322          	u32 base = (u32)(((255uL - (u32)ledRgbState.saturation) * val) >> 8);
-    323          	u32 hue;
-    324          	ledRgbState.state += ledRgbState.stepSize;
-    325          	if (ledRgbState.state >= 360)
-    326          		ledRgbState.state = 0;
-    327          	hue = ledRgbState.state;
-    328          
-    329          	switch(hue / 60)
-    330          	{
-    331          	default:
-    332          	case 0:
-    333          		r = val;
-    334          		g = (((val - base) * hue) / 60) + base;
-    335          		b = base;
-    336          		break;
-    337          	case 1:
-    338          		r = (((val - base) * (60 - (hue % 60))) / 60) + base;
-    339          		g = val;
-    340          		b = base;
-    341          		break;
-    342          	case 2:
-    343          		r = base;
-    344          		g = val;
-    345          		b = (((val - base) * (hue % 60)) / 60) + base;
-    346          		break;
-    347          	case 3:
-    348          		r = base;
-    349          		g = (((val - base) * (60 - (hue % 60))) / 60) + base;
-    350          		b = val;
-    351          		break;
-    352          	case 4:
-    353          		r = (((val - base) * (hue % 60)) / 60) + base;
-    354          		g = base;
-    355          		b = val;
-    356          		break;
-    357          	case 5:
-    358          		r = val;
-    359          		g = base;
-    360          		b = (((val - base) *(60 - (hue % 60))) / 60) + base;
-    361          		break;
-    362          	}
-    363          	ledState[LED_RGB_RED].duty = (u8)r;
-    364          	ledState[LED_RGB_GREEN].duty = (u8)g;
-    365          	ledState[LED_RGB_BLUE].duty = (u8)b;
-    366          
-    367          #elif LED_COLOR_MODE == LED_COLOR_MODE_SINE
-    368          	u8 brightness = ledRgbState.brightness;
-    369          	ledRgbState.state += ledRgbState.stepSize;
-    370          	// Note: each LED is 120 degress out of phase.
-    371          	ledState[LED_RGB_RED].duty = (u8)(ledSinTable[ledRgbState.state & 0x7F] * brightness);
-    372          	ledState[LED_RGB_GREEN].duty = (u8)(ledSinTable[(ledRgbState.state+0x55) & 0x7F] * brightness);
-    373          	ledState[LED_RGB_BLUE].duty = (u8)(ledSinTable[(ledRgbState.state+0xAA) & 0x7F] * brightness);
-    374          #endif
-    375          }
-    376          
-    377          
-    378          static void LedIoSetState(LEDS led, bool isOn)
-    379          {
-    380             // NOTE: all LEDs are active high
-    381             GpioSetState(ledPins[led], isOn);
-    382          }
+    227          			ledRgbState.cycleCountTicks = 0;
+    228          			LedRgbUpdate();
+    229          	}
+    230          
+    231          	for (LEDS led = (LEDS)0; led < LED_COUNT; led++)
+    232          	{
+    233          		LED_STATE *pLed = &ledState[led];
+    234          
+    235          		// blinking control first:
+    236          		if (pLed->blinkTickCount++ > pLed->blinkOnTicks)
+    237          		{
+    238          			// off-cycle of blinking
+    239          			if (pLed->blinkTickCount > (pLed->blinkOnTicks + pLed->blinkOffTicks))
+    240          			{
+    241          				pLed->blinkTickCount = 0;
+    242          			}
+    243          			LedIoSetState(led, false);
+    244          		}
+    245          		else
+    246          		{
+    247          			// on-cycle of blinking
+    248          			if (pLed->blinkOnTicks == 0)
+    249          			{
+    250          				pLed->blinkTickCount = 0;
+    251          			}
+    252          
+    253          			// PWM control during on-cycle of blinking:
+    254          			pLed->cycleCount += LED_DUTY_RESOLUTION;
+    255          			if (pLed->cycleCount >= (101 - LED_DUTY_RESOLUTION))
+    256          			{
+    257          				pLed->cycleCount = 0;
+    258          			}
+    259          			LedIoSetState(led, (bool)(pLed->duty > pLed->cycleCount));
+    260          		}
+    261          	}
+    262          }
+    263          
+    264          
+    265          
+    266          /**************************************************************************
+    267           *                                 Private Functions
+    268           **************************************************************************/
+    269          static void LedRgbUpdate(void)
+    270          {
+    271          #if LED_COLOR_MODE == LED_COLOR_MODE_RGB
+    272          	u8 stepsRemaining = ledRgbState.stepSize;
+    273          
+    274          	// RGB sequence: R down, G up, B down, R up, G down, B up
+    275          	// --> Can be reduced to RGB,RGB (alternating down/up)
+    276          	do
+    277          	{
+    278          		// NOTE: This works because the enum has RGB defined first (in that order)
+    279          		LEDS led = (LEDS)ledRgbState.state;
+    280          		if ((u8f)led > (u8f)LED_RGB_BLUE)
+    281          			led = (LEDS)((u8f)led - 3);
+    282          
+    283          		// alternate between decrementing and incrementing values
+    284          		if (ledRgbState.state & BIT0)
+    285          		{
+    286          			u16 newDuty = (u16)ledState[led].duty + (u16)stepsRemaining;
+    287          			if (newDuty >= (u16)ledRgbState.brightness)
+    288          			{
+    289          				// max'd out. Continue with the next LED...
+    290          				stepsRemaining = (u8)(newDuty - (u16)ledRgbState.brightness);
+    291          				ledState[led].duty = ledRgbState.brightness;
+    292          				ledRgbState.state++;
+    293          				if (ledRgbState.state >= 6)
+    294          				{
+    295          					ledRgbState.state = 0;
+    296          				}
+    297          			}
+    298          			else
+    299          			{
+    300          				stepsRemaining = 0;
+    301          				ledState[led].duty = (u8)newDuty;
+    302          			}
+    303          		}
+    304          		else
+    305          		{
+    306          			u8 newDuty = ledState[led].duty >= stepsRemaining?
+    307          				(u8)(ledState[led].duty - stepsRemaining) : 0;
+    308          			u8 minBrightness = (u8)(UINT8_MAX - ledRgbState.saturation);
+    309          			if (newDuty <= minBrightness)
+    310          			{
+    311          				// min'd out. Continue with the next LED...
+    312          				stepsRemaining = (u8)(minBrightness - newDuty);
+    313          				ledState[led].duty = minBrightness;
+    314          				ledRgbState.state++;
+    315          			}
+    316          			else
+    317          			{
+    318          				stepsRemaining = 0;
+    319          				ledState[led].duty = (u8)newDuty;
+    320          			}
+    321          		}
+    322          
+    323          	} while ((stepsRemaining > 0) && (stepsRemaining < ledRgbState.stepSize));
+    324          
+    325          #elif LED_COLOR_MODE == LED_COLOR_MODE_HSB
+    326          	u32 r,g,b;
+    327          	u32 val = (u32)ledRgbState.brightness;
+    328          	u32 base = (u32)(((255uL - (u32)ledRgbState.saturation) * val) >> 8);
+    329          	u32 hue;
+    330          	ledRgbState.state += ledRgbState.stepSize;
+    331          	if (ledRgbState.state >= 360)
+    332          		ledRgbState.state = 0;
+    333          	hue = ledRgbState.state;
+    334          
+    335          	switch(hue / 60)
+    336          	{
+    337          	default:
+    338          	case 0:
+    339          		r = val;
+    340          		g = (((val - base) * hue) / 60) + base;
+    341          		b = base;
+    342          		break;
+    343          	case 1:
+    344          		r = (((val - base) * (60 - (hue % 60))) / 60) + base;
+    345          		g = val;
+    346          		b = base;
+    347          		break;
+    348          	case 2:
+    349          		r = base;
+    350          		g = val;
+    351          		b = (((val - base) * (hue % 60)) / 60) + base;
+    352          		break;
+    353          	case 3:
+    354          		r = base;
+    355          		g = (((val - base) * (60 - (hue % 60))) / 60) + base;
+    356          		b = val;
+    357          		break;
+    358          	case 4:
+    359          		r = (((val - base) * (hue % 60)) / 60) + base;
+    360          		g = base;
+    361          		b = val;
+    362          		break;
+    363          	case 5:
+    364          		r = val;
+    365          		g = base;
+    366          		b = (((val - base) *(60 - (hue % 60))) / 60) + base;
+    367          		break;
+    368          	}
+    369          	ledState[LED_RGB_RED].duty = (u8)r;
+    370          	ledState[LED_RGB_GREEN].duty = (u8)g;
+    371          	ledState[LED_RGB_BLUE].duty = (u8)b;
+    372          
+    373          #elif LED_COLOR_MODE == LED_COLOR_MODE_SINE
+    374          	u8 brightness = ledRgbState.brightness;
+    375          	ledRgbState.state += ledRgbState.stepSize;
+    376          	// Note: each LED is 120 degress out of phase.
+    377          	ledState[LED_RGB_RED].duty = (u8)(ledSinTable[ledRgbState.state & 0x7F] * brightness);
+    378          	ledState[LED_RGB_GREEN].duty = (u8)(ledSinTable[(ledRgbState.state+0x55) & 0x7F] * brightness);
+    379          	ledState[LED_RGB_BLUE].duty = (u8)(ledSinTable[(ledRgbState.state+0xAA) & 0x7F] * brightness);
+    380          #endif
+    381          }
+    382          
     383          
+    384          static void LedIoSetState(LEDS led, bool isOn)
+    385          {
+    386             // NOTE: all LEDs are active high
+    387             GpioSetState(ledPins[led], isOn);
+    388          }
+    389          
 
    Maximum stack usage in bytes:
 
@@ -469,6 +468,10 @@ C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\led.c
         16   -> LedOff
         16   -> LedOn
        0   LedSetPwm
+       8   LedToggle
+         8   -> GpioIsSet
+         8   -> LedOff
+         8   -> LedOn
       16   LedUpdate
         16   -> LedIoSetState
         16   -> LedRgbUpdate
@@ -478,10 +481,10 @@ C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\led.c
 
    Bytes  Function/Label
    -----  --------------
-       4  ??DataTable9
-       4  ??DataTable9_1
-       4  ??DataTable9_2
-       4  ??DataTable9_3
+       4  ??DataTable10
+       4  ??DataTable10_1
+       4  ??DataTable10_2
+       4  ??DataTable10_3
       64  LedBlink
       40  LedBlinkPwm
       46  LedInit
@@ -494,6 +497,7 @@ C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\led.c
       76  LedSequence
       32  LedSet
       40  LedSetPwm
+      38  LedToggle
      154  LedUpdate
       12  ledPins
       12  ledRgbState
@@ -503,9 +507,9 @@ C:\Users\Quinn\Documents\School\MPG\SVN Server\src\drivers\led.c
  
  100 bytes in section .bss
  140 bytes in section .rodata
- 776 bytes in section .text
+ 814 bytes in section .text
  
- 776 bytes of CODE  memory
+ 814 bytes of CODE  memory
  140 bytes of CONST memory
  100 bytes of DATA  memory
 

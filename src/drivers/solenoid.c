@@ -1,13 +1,12 @@
 /*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
 
-Sheldon Patterson
+Quinn Miller
 ********************************************************************************************/
 
 
-#include "musicPlayer.h"
+#include "solenoid.h"
 
 
 /**************************************************************************
@@ -25,13 +24,11 @@ Sheldon Patterson
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
-void MusicPlayerInit()
-{
-  
+void SolenoidInit() {
+     
 }
 
-void MusicPlayerUpdate()
-{
+void SolenoidUpdate() {
   
 }
 

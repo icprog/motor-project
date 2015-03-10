@@ -1,21 +1,17 @@
 /*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+tactometer.h
 
-Sheldon Patterson
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
+
+Quinn Miller
 ********************************************************************************************/
 
-#ifndef __MENU_H__
-#define __MENU_H__
+#ifndef __TACTOMETER_H__
+#define __TACTOMETER_H__
 
 #include "types.h"
-#include "lcd.h"
-#include "led.h"
-#include "button.h"
-#include "ledShow.h"
-#include "musicPlayer.h"
-#include "includes.h"
+
 
 /**************************************************************************
  *                                  Constants
@@ -23,17 +19,16 @@ Sheldon Patterson
 /**************************************************************************
  *                                  Types
  **************************************************************************/
-struct menu {
-  u8 prevMenu;
-  u8 numLinks;
-  u8 nextMenu[6];       // must be declared to have enough room for menu links
-  char menuLink[6][20];     // same as above
-};
-
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
-void MenuInit();
-void MenuUpdate();
+void TactInit(void);
+void TactUpdate(void);
+
+int GetPeriod(void);
+int GetTimeSinceTick(void);
+float GetRPS(void);
+float GetRPM(void);
+
 
 #endif

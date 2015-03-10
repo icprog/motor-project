@@ -3637,6 +3637,7 @@ typedef enum
 // Core LED functions:
 void LedOn(LEDS led);
 void LedOff(LEDS led);
+void LedToggle(LEDS led);
 void LedSet(LEDS led, _Bool isOn);
 void LedSetPwm(LEDS led, u8 dutyPercent);
 void LedBlink(LEDS led, u16 onMs, u16 offMs);
@@ -6016,6 +6017,12 @@ void LedOff(LEDS led)
 	{if (!((u8)led < (u8)LED_COUNT)) return;};
 	ledState[led].duty = 0;
 	ledState[led].blinkOnTicks = 0;
+}
+
+void LedToggle(LEDS led)
+{
+  if(GpioIsSet(ledPins[led])) LedOff(led);
+  else LedOn(led);
 }
 
 void LedSet(LEDS led, _Bool isOn)

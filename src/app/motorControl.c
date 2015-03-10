@@ -1,13 +1,15 @@
 /*******************************************************************************************
-This is free, public domain software and there is NO WARRANTY.
-No restriction on use. You can use, modify and redistribute it for
-personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+Description:
+Determines required frequency and voltage for given RPM input
 
-Sheldon Patterson
+Quinn Miller
 ********************************************************************************************/
 
 
-#include "ledShow.h"
+#include "motorControl.h"
+#include "tact.h"
+#include "led.h"
+#include "lcd.h"
 
 
 /**************************************************************************
@@ -25,14 +27,15 @@ Sheldon Patterson
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
-void LedShowInit()
-{
-  
+void MotorControlInit () {
+  TactInit();
 }
 
-void LedShowUpdate()
-{
+void MotorControlUpdate () {
+  if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
   
+  LcdSetPos(0,0);
+  LcdPrintf("%d \n", (int)GetRPM());
 }
 
 /**************************************************************************
