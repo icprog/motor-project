@@ -5750,6 +5750,275 @@ void TimerMsStopIfUnused(void);
 extern void TC0_IrqHandler(void);
 
 
+/* Testing */
+/*******************************************************************************************
+LED driver with manual PWM control
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+/*******************************************************************************************
+Red Green Blue (RGB) common colors
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+// Standard RGB colors (as defined in .NET System.Drawing.Color):
+typedef enum
+{
+   COLOR_AliceBlue            = (0xF0F8FFuL),
+   COLOR_AntiqueWhite         = (0xFAEBD7uL),
+   COLOR_Aqua                 = (0x00FFFFuL),
+   COLOR_Aquamarine           = (0x7FFFD4uL),
+   COLOR_Azure                = (0xF0FFFFuL),
+   COLOR_Beige                = (0xF5F5DCuL),
+   COLOR_Bisque               = (0xFFE4C4uL),
+   COLOR_Black                = (0x000000uL),
+   COLOR_BlanchedAlmond       = (0xFFEBCDuL),
+   COLOR_Blue                 = (0x0000FFuL),
+   COLOR_BlueViolet           = (0x8A2BE2uL),
+   COLOR_Brown                = (0xA52A2AuL),
+   COLOR_BurlyWood            = (0xDEB887uL),
+   COLOR_CadetBlue            = (0x5F9EA0uL),
+   COLOR_Chartreuse           = (0x7FFF00uL),
+   COLOR_Chocolate            = (0xD2691EuL),
+   COLOR_Coral                = (0xFF7F50uL),
+   COLOR_CornflowerBlue       = (0x6495EDuL),
+   COLOR_Cornsilk             = (0xFFF8DCuL),
+   COLOR_Crimson              = (0xDC143CuL),
+   COLOR_Cyan                 = (0x00FFFFuL),
+   COLOR_DarkBlue             = (0x00008BuL),
+   COLOR_DarkCyan             = (0x008B8BuL),
+   COLOR_DarkGoldenrod        = (0xB8860BuL),
+   COLOR_DarkGray             = (0xA9A9A9uL),
+   COLOR_DarkGreen            = (0x006400uL),
+   COLOR_DarkKhaki            = (0xBDB76BuL),
+   COLOR_DarkMagenta          = (0x8B008BuL),
+   COLOR_DarkOliveGreen       = (0x556B2FuL),
+   COLOR_DarkOrange           = (0xFF8C00uL),
+   COLOR_DarkOrchid           = (0x9932CCuL),
+   COLOR_DarkRed              = (0x8B0000uL),
+   COLOR_DarkSalmon           = (0xE9967AuL),
+   COLOR_DarkSeaGreen         = (0x8FBC8BuL),
+   COLOR_DarkSlateBlue        = (0x483D8BuL),
+   COLOR_DarkSlateGray        = (0x2F4F4FuL),
+   COLOR_DarkTurquoise        = (0x00CED1uL),
+   COLOR_DarkViolet           = (0x9400D3uL),
+   COLOR_DeepPink             = (0xFF1493uL),
+   COLOR_DeepSkyBlue          = (0x00BFFFuL),
+   COLOR_DimGray              = (0x696969uL),
+   COLOR_DodgerBlue           = (0x1E90FFuL),
+   COLOR_Firebrick            = (0xB22222uL),
+   COLOR_FloralWhite          = (0xFFFAF0uL),
+   COLOR_ForestGreen          = (0x228B22uL),
+   COLOR_Fuchsia              = (0xFF00FFuL),
+   COLOR_Gainsboro            = (0xDCDCDCuL),
+   COLOR_GhostWhite           = (0xF8F8FFuL),
+   COLOR_Gold                 = (0xFFD700uL),
+   COLOR_Goldenrod            = (0xDAA520uL),
+   COLOR_Gray                 = (0x808080uL),
+   COLOR_Green                = (0x008000uL),
+   COLOR_GreenYellow          = (0xADFF2FuL),
+   COLOR_Honeydew             = (0xF0FFF0uL),
+   COLOR_HotPink              = (0xFF69B4uL),
+   COLOR_IndianRed            = (0xCD5C5CuL),
+   COLOR_Indigo               = (0x4B0082uL),
+   COLOR_Ivory                = (0xFFFFF0uL),
+   COLOR_Khaki                = (0xF0E68CuL),
+   COLOR_Lavender             = (0xE6E6FAuL),
+   COLOR_LavenderBlush        = (0xFFF0F5uL),
+   COLOR_LawnGreen            = (0x7CFC00uL),
+   COLOR_LemonChiffon         = (0xFFFACDuL),
+   COLOR_LightBlue            = (0xADD8E6uL),
+   COLOR_LightCoral           = (0xF08080uL),
+   COLOR_LightCyan            = (0xE0FFFFuL),
+   COLOR_LightGoldenrodYellow = (0xFAFAD2uL),
+   COLOR_LightGray            = (0xD3D3D3uL),
+   COLOR_LightGreen           = (0x90EE90uL),
+   COLOR_LightPink            = (0xFFB6C1uL),
+   COLOR_LightSalmon          = (0xFFA07AuL),
+   COLOR_LightSeaGreen        = (0x20B2AAuL),
+   COLOR_LightSkyBlue         = (0x87CEFAuL),
+   COLOR_LightSlateGray       = (0x778899uL),
+   COLOR_LightSteelBlue       = (0xB0C4DEuL),
+   COLOR_LightYellow          = (0xFFFFE0uL),
+   COLOR_Lime                 = (0x00FF00uL),
+   COLOR_LimeGreen            = (0x32CD32uL),
+   COLOR_Linen                = (0xFAF0E6uL),
+   COLOR_Magenta              = (0xFF00FFuL),
+   COLOR_Maroon               = (0x800000uL),
+   COLOR_MediumAquamarine     = (0x66CDAAuL),
+   COLOR_MediumBlue           = (0x0000CDuL),
+   COLOR_MediumOrchid         = (0xBA55D3uL),
+   COLOR_MediumPurple         = (0x9370DBuL),
+   COLOR_MediumSeaGreen       = (0x3CB371uL),
+   COLOR_MediumSlateBlue      = (0x7B68EEuL),
+   COLOR_MediumSpringGreen    = (0x00FA9AuL),
+   COLOR_MediumTurquoise      = (0x48D1CCuL),
+   COLOR_MediumVioletRed      = (0xC71585uL),
+   COLOR_MidnightBlue         = (0x191970uL),
+   COLOR_MintCream            = (0xF5FFFAuL),
+   COLOR_MistyRose            = (0xFFE4E1uL),
+   COLOR_Moccasin             = (0xFFE4B5uL),
+   COLOR_NavajoWhite          = (0xFFDEADuL),
+   COLOR_Navy                 = (0x000080uL),
+   COLOR_OldLace              = (0xFDF5E6uL),
+   COLOR_Olive                = (0x808000uL),
+   COLOR_OliveDrab            = (0x6B8E23uL),
+   COLOR_Orange               = (0xFFA500uL),
+   COLOR_OrangeRed            = (0xFF4500uL),
+   COLOR_Orchid               = (0xDA70D6uL),
+   COLOR_PaleGoldenrod        = (0xEEE8AAuL),
+   COLOR_PaleGreen            = (0x98FB98uL),
+   COLOR_PaleTurquoise        = (0xAFEEEEuL),
+   COLOR_PaleVioletRed        = (0xDB7093uL),
+   COLOR_PapayaWhip           = (0xFFEFD5uL),
+   COLOR_PeachPuff            = (0xFFDAB9uL),
+   COLOR_Peru                 = (0xCD853FuL),
+   COLOR_Pink                 = (0xFFC0CBuL),
+   COLOR_Plum                 = (0xDDA0DDuL),
+   COLOR_PowderBlue           = (0xB0E0E6uL),
+   COLOR_Purple               = (0x800080uL),
+   COLOR_Red                  = (0xFF0000uL),
+   COLOR_RosyBrown            = (0xBC8F8FuL),
+   COLOR_RoyalBlue            = (0x4169E1uL),
+   COLOR_SaddleBrown          = (0x8B4513uL),
+   COLOR_Salmon               = (0xFA8072uL),
+   COLOR_SandyBrown           = (0xF4A460uL),
+   COLOR_SeaGreen             = (0x2E8B57uL),
+   COLOR_SeaShell             = (0xFFF5EEuL),
+   COLOR_Sienna               = (0xA0522DuL),
+   COLOR_Silver               = (0xC0C0C0uL),
+   COLOR_SkyBlue              = (0x87CEEBuL),
+   COLOR_SlateBlue            = (0x6A5ACDuL),
+   COLOR_SlateGray            = (0x708090uL),
+   COLOR_Snow                 = (0xFFFAFAuL),
+   COLOR_SpringGreen          = (0x00FF7FuL),
+   COLOR_SteelBlue            = (0x4682B4uL),
+   COLOR_Tan                  = (0xD2B48CuL),
+   COLOR_Teal                 = (0x008080uL),
+   COLOR_Thistle              = (0xD8BFD8uL),
+   COLOR_Tomato               = (0xFF6347uL),
+   COLOR_Transparent          = (0xFFFFFFuL),
+   COLOR_Turquoise            = (0x40E0D0uL),
+   COLOR_Violet               = (0xEE82EEuL),
+   COLOR_Wheat                = (0xF5DEB3uL),
+   COLOR_White                = (0xFFFFFFuL),
+   COLOR_WhiteSmoke           = (0xF5F5F5uL),
+   COLOR_Yellow               = (0xFFFF00uL),
+   COLOR_YellowGreen          = (0x9ACD32uL),
+}COLOR;
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+/*   NOTE: this affects the PWM frequency for brightness/RGB coloring
+           --> videos range from 23.97 to 60 Hz. LED flickering is almost unnoticeable above 50 Hz
+     NOTE: The LED_UPDATE_RATE_MS must be fast enough to allow PWM resolution at the update rate
+*/
+
+/* RGB Color Gradient:
+There are a few common ways to cycle through RGB colors:
+0) Change one RGB component at a time
+	a) R=255, G=0, B=0
+	b) ramp up B to 255
+	c) ramp down R to 0
+	d) ramp up G to 255
+	e) ramp down B to 0
+	f) ramp up R to 255
+   g) ramp down G to 0
+   --> Tends to "hang" at magenta, cyan and yellow
+
+1) HSB/HSL hue cycling
+	HSB = "Hue", "Saturation" Brightness"
+	a) Set saturation and brightness as desired
+	b) Increment Hue (0-359) around the color wheel
+	c) Convert HSB to RGB values
+
+2) Sine-Wave trefoil (aka 3-phase sine wave similar to 3-phase motor control)
+	This is similar to HSB/HSL using 3-phase motor-like control. Essentially,
+	it uses a sine wave to set each RGB component, with each component phase-shifted
+	by 120 degress (same frequency and amplitude).
+	a) Store sine table
+	b) Lookup each component value, keeping them 120 degrees apart
+	c) Add any base offset for brightness
+*/
+
+// Define one of the algorithms for RGB color cycling:
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+typedef enum
+{
+   LED_WHITE,
+	LED_PURPLE,
+	LED_BLUE,
+   LED_CYAN,
+	LED_GREEN,
+	LED_YELLOW,
+   LED_ORANGE,
+	LED_RED,
+	LED_RGB_RED,
+	LED_RGB_GREEN,
+	LED_RGB_BLUE,
+   LED_COUNT,
+} LEDS;
+
+
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+// Core LED functions:
+void LedOn(LEDS led);
+void LedOff(LEDS led);
+void LedToggle(LEDS led);
+void LedSet(LEDS led, _Bool isOn);
+void LedSetPwm(LEDS led, u8 dutyPercent);
+void LedBlink(LEDS led, u16 onMs, u16 offMs);
+void LedBlinkPwm(LEDS led, u16 onMs, u16 offMs, u8 dutyPercent);
+void LedSequence(u16 cycleRateMs);
+
+// RGB functions:
+void LedRgbSet(COLOR rgb);
+
+/* cycleTimeMs = total time that it will take to cycle all colors
+   saturation = amount of color to show (0 = no color, 255 = full color)
+	brightness = LED intensity (0 = off, 255 = max) */
+void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness);
+
+// Application level init and update functions
+void LedInit(void);
+void LedUpdate(void);	// Must be called every 1ms
+
+/* Testing */
+
 
 /**************************************************************************
  *                                  Constants
@@ -5770,6 +6039,7 @@ float freqRPM;
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
+void tactUpdate(GPIO_PIN pin);
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
@@ -5785,7 +6055,7 @@ void TactInit() {
   freqRPM = 0;
   
   // initialize interrupt
-  // GpioIrqInstall(GPIO_PIN_TACT, GPIO_IRQ_FALLING_EDGE, tactUpdate)
+  GpioIrqInstall(GPIO_PIN_BUTTON0, GPIO_IRQ_FALLING_EDGE, tactUpdate);
 }
 
 int GetPeriod() {
@@ -5793,11 +6063,13 @@ int GetPeriod() {
 }
 
 float GetRPS() {
-  return freqRPS;
+  int freq = (int)freqRPS;
+  return freq;
 }
 
 float GetRPM() {
-  return freqRPM;
+  int freq = (int)freqRPM;
+  return freq;
 }
 
 int GetTimeSinceTick() {
@@ -5811,12 +6083,13 @@ int GetTimeSinceTick() {
  *                                 Private Functions
  **************************************************************************/
 
-void tactUpdate() {
+void tactUpdate(GPIO_PIN pin) {
   period = GetTimeSinceTick();
-  freqRPS = 1/period;
-  freqRPM = 60/period;
+  freqRPS = 1000/period;
+  freqRPM = 60000/period;
   
   lastTickTime = TimerMsGet();
+  LedToggle(LED_RED);
 }
 
 

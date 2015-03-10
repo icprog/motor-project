@@ -3689,6 +3689,7 @@ typedef enum
 // Core LED functions:
 void LedOn(LEDS led);
 void LedOff(LEDS led);
+void LedToggle(LEDS led);
 void LedSet(LEDS led, _Bool isOn);
 void LedSetPwm(LEDS led, u8 dutyPercent);
 void LedBlink(LEDS led, u16 onMs, u16 offMs);
@@ -3706,6 +3707,55 @@ void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness);
 // Application level init and update functions
 void LedInit(void);
 void LedUpdate(void);	// Must be called every 1ms
+
+/*******************************************************************************************
+NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD driver
+2x20 characters, I2C, FSTN
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+typedef struct
+{
+   _Bool on;
+   _Bool cursorOn;
+   _Bool blinkOn;
+   _Bool doubleHeight;
+   _Bool autoUpdate;
+   u8 contrast;
+}LCD_CFG;
+
+
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+void LcdInit(void);
+void LcdConfigSet(LCD_CFG const *pConfig);
+LCD_CFG const * LcdConfigGet(void);
+
+void LcdSetPos(u8 row, u8 col);
+void LcdClear(void);
+void LcdPutc(char c);
+void LcdPuts(char const *pSrc);
+void LcdPrintf(char const *pSrc, ...);
+void LcdWrite(void const *pSrc, u8 len);
+
+void LcdUpdate(void);
 
 
 
@@ -3725,11 +3775,14 @@ void LedUpdate(void);	// Must be called every 1ms
  *                                  Global Functions
  **************************************************************************/
 void MotorControlInit () {
-  
+  TactInit();
 }
 
 void MotorControlUpdate () {
-  if (GetTimeSinceTick() > 20000) LedSet(LED_BLUE, 1);
+  if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, 1);
+  
+  LcdSetPos(0,0);
+  LcdPrintf("%d \n", (int)GetRPM());
 }
 
 /**************************************************************************

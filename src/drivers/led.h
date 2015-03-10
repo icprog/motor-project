@@ -94,6 +94,7 @@ typedef enum
 // Core LED functions:
 void LedOn(LEDS led);
 void LedOff(LEDS led);
+void LedToggle(LEDS led);
 void LedSet(LEDS led, bool isOn);
 void LedSetPwm(LEDS led, u8 dutyPercent);
 void LedBlink(LEDS led, u16 onMs, u16 offMs);

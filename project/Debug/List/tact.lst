@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  14:40:28 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  18:26:39 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -64,89 +64,103 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
      10          #include "gpio.h"
      11          #include "timer.h"
      12          
-     13          
-     14          /**************************************************************************
-     15           *                                  Constants
-     16           **************************************************************************/
-     17          /**************************************************************************
-     18           *                                  Types
-     19           **************************************************************************/
-     20          /**************************************************************************
-     21           *                                  Variables
-     22           **************************************************************************/
-     23          int period;
-     24          int lastTickTime;
-     25          int sinceTickTime;
-     26          int currTime;
-     27          
-     28          float freqRPS;
-     29          float freqRPM;
-     30          /**************************************************************************
-     31           *                                  Prototypes
-     32           **************************************************************************/
-     33          /**************************************************************************
-     34           *                                  Global Functions
-     35           **************************************************************************/
-     36          void TactInit() {
-     37            
-     38            // initailize variables
-     39            period = 0;
-     40            lastTickTime = 0;
-     41            sinceTickTime = 0;
-     42            currTime = 0;
-     43            
-     44            freqRPS = 0;
-     45            freqRPM = 0;
-     46            
-     47            // initialize interrupt
-     48            // GpioIrqInstall(GPIO_PIN_TACT, GPIO_IRQ_FALLING_EDGE, tactUpdate)
-     49          }
-     50          
-     51          int GetPeriod() {
-     52            return period;
-     53          }
-     54          
-     55          float GetRPS() {
-     56            return freqRPS;
-     57          }
-     58          
-     59          float GetRPM() {
-     60            return freqRPM;
-     61          }
-     62          
-     63          int GetTimeSinceTick() {
-     64            currTime = TimerMsGet();
-     65            sinceTickTime = currTime - lastTickTime;
-     66            
-     67            return sinceTickTime;
+     13          /* Testing */
+     14          #include "led.h"
+     15          /* Testing */
+     16          
+     17          
+     18          /**************************************************************************
+     19           *                                  Constants
+     20           **************************************************************************/
+     21          /**************************************************************************
+     22           *                                  Types
+     23           **************************************************************************/
+     24          /**************************************************************************
+     25           *                                  Variables
+     26           **************************************************************************/
+     27          int period;
+     28          int lastTickTime;
+     29          int sinceTickTime;
+     30          int currTime;
+     31          
+     32          float freqRPS;
+     33          float freqRPM;
+     34          /**************************************************************************
+     35           *                                  Prototypes
+     36           **************************************************************************/
+     37          void tactUpdate(GPIO_PIN pin);
+     38          /**************************************************************************
+     39           *                                  Global Functions
+     40           **************************************************************************/
+     41          void TactInit() {
+     42            
+     43            // initailize variables
+     44            period = 0;
+     45            lastTickTime = 0;
+     46            sinceTickTime = 0;
+     47            currTime = 0;
+     48            
+     49            freqRPS = 0;
+     50            freqRPM = 0;
+     51            
+     52            // initialize interrupt
+     53            GpioIrqInstall(GPIO_PIN_BUTTON0, GPIO_IRQ_FALLING_EDGE, tactUpdate);
+     54          }
+     55          
+     56          int GetPeriod() {
+     57            return period;
+     58          }
+     59          
+     60          float GetRPS() {
+     61            int freq = (int)freqRPS;
+     62            return freq;
+     63          }
+     64          
+     65          float GetRPM() {
+     66            int freq = (int)freqRPM;
+     67            return freq;
      68          }
      69          
-     70          /**************************************************************************
-     71           *                                 Private Functions
-     72           **************************************************************************/
-     73          
-     74          void tactUpdate() {
-     75            period = GetTimeSinceTick();
-     76            freqRPS = 1/period;
-     77            freqRPM = 60/period;
-     78            
-     79            lastTickTime = TimerMsGet();
-     80          }
-     81          
-     82          
+     70          int GetTimeSinceTick() {
+     71            currTime = TimerMsGet();
+     72            sinceTickTime = currTime - lastTickTime;
+     73            
+     74            return sinceTickTime;
+     75          }
+     76          
+     77          /**************************************************************************
+     78           *                                 Private Functions
+     79           **************************************************************************/
+     80          
+     81          void tactUpdate(GPIO_PIN pin) {
+     82            period = GetTimeSinceTick();
+     83            freqRPS = 1000/period;
+     84            freqRPM = 60000/period;
+     85            
+     86            lastTickTime = TimerMsGet();
+     87            LedToggle(LED_RED);
+     88          }
+     89          
+     90          
 
    Maximum stack usage in bytes:
 
    .cstack Function
    ------- --------
        0   GetPeriod
-       0   GetRPM
-       0   GetRPS
+       8   GetRPM
+         8   -> __aeabi_f2iz
+         8   -> __aeabi_i2f
+       8   GetRPS
+         8   -> __aeabi_f2iz
+         8   -> __aeabi_i2f
        8   GetTimeSinceTick
          8   -> TimerMsGet
-       0   TactInit
+       8   TactInit
+         8   -> GpioIrqInstall
        8   tactUpdate
          8   -> GetTimeSinceTick
+         8   -> LedToggle
          8   -> TimerMsGet
          8   -> __aeabi_i2f
 
@@ -162,23 +176,23 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
        4  ??DataTable5_4
        4  ??DataTable5_5
        6  GetPeriod
-       6  GetRPM
-       6  GetRPS
+      16  GetRPM
+      16  GetRPS
       30  GetTimeSinceTick
-      38  TactInit
+      52  TactInit
        4  currTime
        4  freqRPM
        4  freqRPS
        4  lastTickTime
        4  period
        4  sinceTickTime
-      56  tactUpdate
+      68  tactUpdate
 
  
   24 bytes in section .bss
- 166 bytes in section .text
+ 212 bytes in section .text
  
- 166 bytes of CODE memory
+ 212 bytes of CODE memory
   24 bytes of DATA memory
 
 Errors: none

@@ -10,6 +10,10 @@ Quinn Miller
 #include "gpio.h"
 #include "timer.h"
 
+/* Testing */
+#include "led.h"
+/* Testing */
+
 
 /**************************************************************************
  *                                  Constants
@@ -30,6 +34,7 @@ float freqRPM;
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
+void tactUpdate(GPIO_PIN pin);
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
@@ -45,7 +50,7 @@ void TactInit() {
   freqRPM = 0;
   
   // initialize interrupt
-  // GpioIrqInstall(GPIO_PIN_TACT, GPIO_IRQ_FALLING_EDGE, tactUpdate)
+  GpioIrqInstall(GPIO_PIN_BUTTON0, GPIO_IRQ_FALLING_EDGE, tactUpdate);
 }
 
 int GetPeriod() {
@@ -53,11 +58,13 @@ int GetPeriod() {
 }
 
 float GetRPS() {
-  return freqRPS;
+  int freq = (int)freqRPS;
+  return freq;
 }
 
 float GetRPM() {
-  return freqRPM;
+  int freq = (int)freqRPM;
+  return freq;
 }
 
 int GetTimeSinceTick() {
@@ -71,12 +78,13 @@ int GetTimeSinceTick() {
  *                                 Private Functions
  **************************************************************************/
 
-void tactUpdate() {
+void tactUpdate(GPIO_PIN pin) {
   period = GetTimeSinceTick();
-  freqRPS = 1/period;
-  freqRPM = 60/period;
+  freqRPS = 1000/period;
+  freqRPM = 60000/period;
   
   lastTickTime = TimerMsGet();
+  LedToggle(LED_RED);
 }
 
 
