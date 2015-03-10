@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      09/Mar/2015  18:26:39 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      10/Mar/2015  10:49:27 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -112,36 +112,31 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
      58          }
      59          
      60          float GetRPS() {
-     61            int freq = (int)freqRPS;
-     62            return freq;
-     63          }
-     64          
-     65          float GetRPM() {
-     66            int freq = (int)freqRPM;
-     67            return freq;
-     68          }
-     69          
-     70          int GetTimeSinceTick() {
-     71            currTime = TimerMsGet();
-     72            sinceTickTime = currTime - lastTickTime;
-     73            
-     74            return sinceTickTime;
-     75          }
-     76          
-     77          /**************************************************************************
-     78           *                                 Private Functions
-     79           **************************************************************************/
-     80          
-     81          void tactUpdate(GPIO_PIN pin) {
-     82            period = GetTimeSinceTick();
-     83            freqRPS = 1000/period;
-     84            freqRPM = 60000/period;
-     85            
-     86            lastTickTime = TimerMsGet();
-     87            LedToggle(LED_RED);
-     88          }
-     89          
-     90          
+     61            return (int)freqRPS;
+     62          }
+     63          
+     64          float GetRPM() {
+     65            return (int)freqRPM;
+     66          }
+     67          
+     68          int GetTimeSinceTick() {
+     69            return TimerMsGet() - lastTickTime;
+     70          }
+     71          
+     72          /**************************************************************************
+     73           *                                 Private Functions
+     74           **************************************************************************/
+     75          
+     76          void tactUpdate(GPIO_PIN pin) {
+     77            period = GetTimeSinceTick();
+     78            freqRPS = 1000/period;
+     79            freqRPM = 60000/period;
+     80            
+     81            lastTickTime = TimerMsGet();
+     82            LedToggle(LED_RED);
+     83          }
+     84          
+     85          
 
    Maximum stack usage in bytes:
 
@@ -178,7 +173,7 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
        6  GetPeriod
       16  GetRPM
       16  GetRPS
-      30  GetTimeSinceTick
+      14  GetTimeSinceTick
       52  TactInit
        4  currTime
        4  freqRPM
@@ -190,9 +185,9 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\tact.c
 
  
   24 bytes in section .bss
- 212 bytes in section .text
+ 196 bytes in section .text
  
- 212 bytes of CODE memory
+ 196 bytes of CODE memory
   24 bytes of DATA memory
 
 Errors: none

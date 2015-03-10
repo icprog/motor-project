@@ -24,5 +24,6 @@ Quinn Miller
  **************************************************************************/
 void SolenoidInit(void);
 void SolenoidUpdate(void);
+void SetSolenoidParam(int volts, int periodMs);
 
 #endif

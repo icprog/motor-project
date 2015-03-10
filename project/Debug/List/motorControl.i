@@ -3779,10 +3779,14 @@ void MotorControlInit () {
 }
 
 void MotorControlUpdate () {
-  if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, 1);
   
+  
+  
+  /* Testing123 TactDriver *
+  if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
   LcdSetPos(0,0);
   LcdPrintf("%d \n", (int)GetRPM());
+  /* Testing123 TactDriver */
 }
 
 /**************************************************************************

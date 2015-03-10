@@ -6063,20 +6063,15 @@ int GetPeriod() {
 }
 
 float GetRPS() {
-  int freq = (int)freqRPS;
-  return freq;
+  return (int)freqRPS;
 }
 
 float GetRPM() {
-  int freq = (int)freqRPM;
-  return freq;
+  return (int)freqRPM;
 }
 
 int GetTimeSinceTick() {
-  currTime = TimerMsGet();
-  sinceTickTime = currTime - lastTickTime;
-  
-  return sinceTickTime;
+  return TimerMsGet() - lastTickTime;
 }
 
 /**************************************************************************
