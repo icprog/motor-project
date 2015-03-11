@@ -8,6 +8,7 @@ Quinn Miller
 
 #include "motorControl.h"
 #include "tact.h"
+#include "solenoid.h"
 #include "led.h"
 #include "lcd.h"
 
@@ -29,13 +30,20 @@ Quinn Miller
  **************************************************************************/
 void MotorControlInit () {
   TactInit();
+  SolenoidInit();
 }
 
 void MotorControlUpdate () {
-  if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
   
+  
+  
+  /* Testing123 TactDriver *
+  if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
   LcdSetPos(0,0);
   LcdPrintf("%d \n", (int)GetRPM());
+  /* Testing123 TactDriver */
+  
+  SolenoidUpdate();
 }
 
 /**************************************************************************

@@ -1,6 +1,6 @@
 /*******************************************************************************************
 Description:
-Determines revolution period (ms) and frequency (rev/sec and rev/min)
+Controls the timing of the solenoids based on a given period and voltage
 
 Quinn Miller
 ********************************************************************************************/
@@ -1981,6 +1981,17 @@ typedef uint_fast64_t   UINT64F;
  **************************************************************************/
 void SolenoidInit(void);
 void SolenoidUpdate(void);
+void SetSolenoidParam(int volts, int periodMs);
+
+/*******************************************************************************************
+tactometer.h
+
+Description:
+Determines revolution period (ms) and frequency (rev/sec and rev/min)
+
+Quinn Miller
+********************************************************************************************/
+
 
 
 
@@ -1991,25 +2002,1834 @@ void SolenoidUpdate(void);
  *                                  Types
  **************************************************************************/
 /**************************************************************************
- *                                  Variables
+ *                                  Prototypes
+ **************************************************************************/
+void TactInit(void);
+void TactUpdate(void);
+
+int GetPeriod(void);
+int GetTimeSinceTick(void);
+float GetRPS(void);
+float GetRPM(void);
+
+
+
+/* Testing123 */
+/*******************************************************************************************
+LED driver with manual PWM control
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+/*******************************************************************************************
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+/*******************************************************************************************
+Configures the Application build
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
+ *                                  Major compile options:
+ **************************************************************************/
+
+
+
+/**************************************************************************
+ *                                  Driver Constants
+ **************************************************************************/
+
+
+// Interrupt priorities (0-15, 0 = highest)
+
+
+/**************************************************************************
+ *                                  Application Constants
+ **************************************************************************/
+// File System:
+
+
+/**************************************************************************
+ *                                  Printf Defines:
+ **************************************************************************/
+
+
+
+/* ctype.h standard header */
+/* Copyright 2003-2010 IAR Systems AB. */
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+
+
+
+/* xlocale.h internal header file */
+/* Copyright 2003-2010 IAR Systems AB.  */
+
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+
+/* xtls.h internal header */
+/* Copyright 2003-2010 IAR Systems AB. */
+
+  #pragma system_include
+
+/* xmtx.h internal header */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+
+/* stdlib.h standard header */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+/* ysizet.h internal header file. */
+/* Copyright 2003-2010 IAR Systems AB.  */
+
+
+
+
+/* Module consistency. */
+#pragma rtmodel="__dlib_full_locale_support",   "0"
+
+
+
+
+extern int __aeabi_MB_CUR_MAX(void);
+
+
+
+
+
+                /* MACROS */
+
+
+
+                /* TYPE DEFINITIONS */
+
+typedef struct
+{       /* result of int divide */
+  int quot;
+  int rem;
+} div_t;
+
+typedef struct
+{       /* result of long divide */
+  long quot;
+  long rem;
+} ldiv_t;
+
+    #pragma language=save
+    #pragma language=extended
+    typedef struct
+    {     /* result of long long divide */
+      _Longlong quot;
+      _Longlong rem;
+    } lldiv_t;
+    #pragma language=restore
+
+                /* DECLARATIONS */
+ /* low-level functions */
+__intrinsic __nounwind int atexit(void (*)(void));
+  __intrinsic __noreturn __nounwind void _Exit(int) ;
+__intrinsic __noreturn __nounwind void exit(int) ;
+__intrinsic __nounwind char * getenv(const char *);
+__intrinsic __nounwind int system(const char *);
+
+
+
+             __intrinsic __noreturn __nounwind void abort(void) ;
+_Pragma("function_effects = no_state, no_errno")     __intrinsic __nounwind int abs(int);
+             __intrinsic __nounwind void * calloc(size_t, size_t);
+_Pragma("function_effects = no_state, no_errno")     __intrinsic __nounwind div_t div(int, int);
+             __intrinsic __nounwind void free(void *);
+_Pragma("function_effects = no_state, no_errno")     __intrinsic __nounwind long labs(long);
+_Pragma("function_effects = no_state, no_errno")     __intrinsic __nounwind ldiv_t ldiv(long, long);
+    #pragma language=save
+    #pragma language=extended
+    _Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind long long llabs(long long);
+    _Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind lldiv_t lldiv(long long, long long);
+    #pragma language=restore
+             __intrinsic __nounwind void * malloc(size_t);
+_Pragma("function_effects = no_write(1)")    __intrinsic __nounwind int mblen(const char *, size_t);
+_Pragma("function_effects = no_read(1), no_write(2)") __intrinsic __nounwind size_t mbstowcs(wchar_t *, 
+                                          const char *, size_t);
+_Pragma("function_effects = no_read(1), no_write(2)") __intrinsic __nounwind int mbtowc(wchar_t *, const char *, 
+                                     size_t);
+             __intrinsic __nounwind int rand(void);
+             __intrinsic __nounwind void srand(unsigned int);
+             __intrinsic __nounwind void * realloc(void *, size_t);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind long strtol(const char *, 
+                                      char **, int);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind unsigned long strtoul(const char *, char **, int);
+_Pragma("function_effects = no_read(1), no_write(2)") __intrinsic __nounwind size_t wcstombs(char *, 
+                                          const wchar_t *, size_t);
+_Pragma("function_effects = no_read(1)")    __intrinsic __nounwind int wctomb(char *, wchar_t);
+    #pragma language=save
+    #pragma language=extended
+    _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind long long strtoll(const char *, char **, int);
+    _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind unsigned long long strtoull(const char *, 
+                                                          char **, int);
+    #pragma language=restore
+
+
+
+
+
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind unsigned long __iar_Stoul(const char *, char **, 
+                                                    int);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind float         __iar_Stof(const char *, char **, long);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind double        __iar_Stod(const char *, char **, long);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind long double   __iar_Stold(const char *, char **, 
+                                                      long);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind long          __iar_Stolx(const char *, char **, int, 
+                                                    int *);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind unsigned long __iar_Stoulx(const char *, char **,
+                                                     int, int *);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind float         __iar_Stofx(const char *, char **, 
+                                                    long, int *);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind double        __iar_Stodx(const char *, char **, 
+                                                    long, int *);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind long double   __iar_Stoldx(const char *, char **, 
+                                                     long, int *);
+  #pragma language=save
+  #pragma language=extended
+  _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind _Longlong   __iar_Stoll(const char *, char **, 
+                                                    int);
+  _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind _ULonglong   __iar_Stoull(const char *, char **, 
+                                                      int);
+  _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind _Longlong    __iar_Stollx(const char *, char **, 
+                                                      int, int *);
+  _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind _ULonglong   __iar_Stoullx(const char *, char **, 
+                                                       int, int *);
+  #pragma language=restore
+
+
+typedef int _Cmpfun(const void *, const void *);
+
+_Pragma("function_effects = no_write(1,2)") __intrinsic void * bsearch(const void *, 
+                                                   const void *, size_t,
+                                                   size_t, _Cmpfun *);
+             __intrinsic void qsort(void *, size_t, size_t, 
+                                               _Cmpfun *);
+             __intrinsic void __qsortbbl(void *, size_t, size_t, 
+                                                    _Cmpfun *);
+_Pragma("function_effects = no_write(1)")    __intrinsic __nounwind double atof(const char *);
+_Pragma("function_effects = no_write(1)")    __intrinsic __nounwind int atoi(const char *);
+_Pragma("function_effects = no_write(1)")    __intrinsic __nounwind long atol(const char *);
+    #pragma language=save
+    #pragma language=extended
+    _Pragma("function_effects = no_write(1)") __intrinsic __nounwind long long atoll(const char *);
+    #pragma language=restore
+  _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind float strtof(const char *, 
+                                         char **);
+  _Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind long double strtold(const char *, char **);
+_Pragma("function_effects = no_write(1), no_read(2)") __intrinsic __nounwind double strtod(const char *, 
+                                        char **);
+             __intrinsic __nounwind size_t __iar_Mbcurmax(void);
+
+_Pragma("function_effects = no_state, no_errno")     __intrinsic __nounwind int __iar_DLib_library_version(void);
+
+
+
+
+  
+  typedef void _Atexfun(void);
+  
+
+                /* INLINES, FOR C and C++ */
+    #pragma inline=no_body
+    double atof(const char *_S)
+    {      /* convert string to double */
+      return (__iar_Stod(_S, 0, 0));
+    }
+
+    #pragma inline=no_body
+    int atoi(const char *_S)
+    {      /* convert string to int */
+      return ((int)__iar_Stoul(_S, 0, 10));
+    }
+
+    #pragma inline=no_body
+    long atol(const char *_S)
+    {      /* convert string to long */
+      return ((long)__iar_Stoul(_S, 0, 10));
+    }
+
+        #pragma language=save
+        #pragma language=extended
+        #pragma inline=no_body
+        long long atoll(const char *_S)
+        {      /* convert string to long long */
+            return ((long long)__iar_Stoull(_S, 0, 10));
+        }
+        #pragma language=restore
+
+    #pragma inline=no_body
+    double strtod(const char * _S, char ** _Endptr)
+    {      /* convert string to double, with checking */
+      return (__iar_Stod(_S, _Endptr, 0));
+    }
+
+      #pragma inline=no_body
+      float strtof(const char * _S, char ** _Endptr)
+      {      /* convert string to float, with checking */
+        return (__iar_Stof(_S, _Endptr, 0));
+      }
+
+      #pragma inline=no_body
+      long double strtold(const char * _S, char ** _Endptr)
+      {      /* convert string to long double, with checking */
+        return (__iar_Stold(_S, _Endptr, 0));
+      }
+
+    #pragma inline=no_body
+    long strtol(const char * _S, char ** _Endptr, 
+                int _Base)
+    {      /* convert string to unsigned long, with checking */
+      return (__iar_Stolx(_S, _Endptr, _Base, 0));
+    }
+
+    #pragma inline=no_body
+    unsigned long strtoul(const char * _S, char ** _Endptr, 
+                          int _Base)
+    {      /* convert string to unsigned long, with checking */
+      return (__iar_Stoul(_S, _Endptr, _Base));
+    }
+
+        #pragma language=save
+        #pragma language=extended
+        #pragma inline=no_body
+        long long strtoll(const char * _S, char ** _Endptr,
+                          int _Base)
+        {      /* convert string to long long, with checking */
+            return (__iar_Stoll(_S, _Endptr, _Base));
+        }
+
+        #pragma inline=no_body
+        unsigned long long strtoull(const char * _S, 
+                                    char ** _Endptr, int _Base)
+        {      /* convert string to unsigned long long, with checking */
+            return (__iar_Stoull(_S, _Endptr, _Base));
+        }
+        #pragma language=restore
+
+
+  #pragma inline=no_body
+  int abs(int i)
+  {      /* compute absolute value of int argument */
+    return (i < 0 ? -i : i);
+  }
+
+  #pragma inline=no_body
+  long labs(long i)
+  {      /* compute absolute value of long argument */
+    return (i < 0 ? -i : i);
+  }
+
+      #pragma language=save
+      #pragma language=extended
+      #pragma inline=no_body
+      long long llabs(long long i)
+      {      /* compute absolute value of long long argument */
+        return (i < 0 ? -i : i);
+      }
+      #pragma language=restore
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+
+/* We need to turn off this warning */
+#pragma diag_suppress = Pe076
+
+
+__intrinsic __nounwind int __iar_Atthreadexit(void (*)(void));
+__intrinsic __nounwind void __iar_Destroytls(void);
+
+
+
+
+
+
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+
+
+  /*
+   * ======================================================================
+   * Reduced support.  One locale (possibly "C") is hardwired.
+   */
+
+  /*
+   * This defined the Macro _LOCALE_WITH_USED (i.e. With used
+   * locale). Expands "f" to the corresponding identifier in the
+   * selected locale.
+   */
+
+/* localeuse.h - Pick the one locale to use (for non-full locale support).
+ * Copyright 2003-2010  IAR Systems AB.  
+ *
+ * Do not edit; this file was automatically generated by 'locparse'.
+ */
+
+
+  #pragma system_include
+
+
+
+
+/* locale_c.h Standard "C" locale definitions. */
+/* Copyright 2009-2010 IAR Systems AB. */
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+
+/* wchar.h standard header */
+/* Copyright 2003-2010 IAR Systems AB.  */
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+/* ysizet.h internal header file. */
+/* Copyright 2003-2010 IAR Systems AB.  */
+
+
+
+
+
+
+/* Consistency check */
+
+/* Module consistency. */
+#pragma rtmodel="__dlib_file_descriptor","0"
+
+/* Support for portable C++ object model. */
+
+
+                /* MACROS */
+
+
+
+                /* TYPE DEFINITIONS */
+typedef _Mbstatet mbstate_t;
+
+struct tm;
+
+
+  typedef _Wintt wint_t;
+
+
+                /* stdio DECLARATIONS */
+
+__intrinsic __nounwind wint_t getwchar(void);
+__intrinsic __nounwind wint_t __ungetwchar(wint_t);
+__intrinsic __nounwind wint_t putwchar(wchar_t);
+__intrinsic __nounwind int swprintf(wchar_t *, size_t, 
+                          const wchar_t *, ...);
+__intrinsic __nounwind int swscanf(const wchar_t *,
+                         const wchar_t *, ...);
+__intrinsic __nounwind int vswprintf(wchar_t *, size_t,
+                           const wchar_t *, __Va_list);
+__intrinsic __nounwind int vwprintf(const wchar_t *, __Va_list);
+  __intrinsic __nounwind int vswscanf(const wchar_t *, const wchar_t *,
+                            __Va_list);
+  __intrinsic __nounwind int vwscanf(const wchar_t *, __Va_list);
+__intrinsic __nounwind int wprintf(const wchar_t *, ...);
+__intrinsic __nounwind int wscanf(const wchar_t *, ...);
+
+                /* stdlib DECLARATIONS */
+__intrinsic __nounwind size_t mbrlen(const char *, size_t,
+                           mbstate_t *);
+__intrinsic __nounwind size_t mbrtowc(wchar_t *, const char *, size_t,
+                            mbstate_t *);
+__intrinsic __nounwind size_t mbsrtowcs(wchar_t *, const char **,
+                              size_t, mbstate_t *);
+__intrinsic __nounwind int mbsinit(const mbstate_t *);
+__intrinsic __nounwind size_t wcrtomb(char *, wchar_t, mbstate_t *);
+__intrinsic __nounwind size_t wcsrtombs(char *, const wchar_t **,
+                              size_t, mbstate_t *);
+__intrinsic __nounwind long wcstol(const wchar_t *, wchar_t **, int);
+__intrinsic __nounwind unsigned long wcstoul(const wchar_t *,
+                                   wchar_t **, int);
+
+    #pragma language=save
+    #pragma language=extended
+    __intrinsic __nounwind _Longlong wcstoll(const wchar_t *, 
+                                   wchar_t **, int);
+    __intrinsic __nounwind _ULonglong wcstoull(const wchar_t *, 
+                                     wchar_t **, int);
+    #pragma language=restore
+
+                /* string DECLARATIONS */
+__intrinsic __nounwind wchar_t * wcscat(wchar_t *, const wchar_t *);
+__intrinsic __nounwind int wcscmp(const wchar_t *, const wchar_t *);
+__intrinsic __nounwind int wcscoll(const wchar_t *, const wchar_t *);
+__intrinsic __nounwind wchar_t * wcscpy(wchar_t *, const wchar_t *);
+__intrinsic __nounwind size_t wcscspn(const wchar_t *, const wchar_t *);
+__intrinsic __nounwind size_t wcslen(const wchar_t *);
+__intrinsic __nounwind wchar_t * wcsncat(wchar_t *, const wchar_t *, 
+                               size_t);
+__intrinsic __nounwind int wcsncmp(const wchar_t *, const wchar_t *, size_t);
+__intrinsic __nounwind wchar_t * wcsncpy(wchar_t *, const wchar_t *,
+                               size_t);
+__intrinsic __nounwind size_t wcsspn(const wchar_t *, const wchar_t *);
+__intrinsic __nounwind wchar_t * wcstok(wchar_t *, const wchar_t *,
+                              wchar_t **);
+__intrinsic __nounwind size_t wcsxfrm(wchar_t *, const wchar_t *, 
+                            size_t);
+__intrinsic __nounwind int wmemcmp(const wchar_t *, const wchar_t *, size_t);
+__intrinsic __nounwind wchar_t * wmemcpy(wchar_t *, const wchar_t *, 
+                               size_t);
+__intrinsic __nounwind wchar_t * wmemmove(wchar_t *, const wchar_t *, size_t);
+__intrinsic __nounwind wchar_t * wmemset(wchar_t *, wchar_t, size_t);
+
+                /* time DECLARATIONS */
+__intrinsic __nounwind size_t wcsftime(wchar_t *, size_t,
+                             const wchar_t *, 
+                             const struct tm *);
+
+
+__intrinsic __nounwind wint_t btowc(int);
+  __intrinsic __nounwind float wcstof(const wchar_t *, wchar_t **);
+  __intrinsic __nounwind long double wcstold(const wchar_t *,
+                                   wchar_t **);
+__intrinsic __nounwind double wcstod(const wchar_t *, wchar_t **);
+__intrinsic __nounwind int wctob(wint_t);
+
+__intrinsic __nounwind wint_t __iar_Btowc(int);
+__intrinsic __nounwind int __iar_Wctob(wint_t);
+__intrinsic __nounwind double __iar_WStod(const wchar_t *, wchar_t **, long);
+__intrinsic __nounwind float __iar_WStof(const wchar_t *, wchar_t **, long);
+__intrinsic __nounwind long double __iar_WStold(const wchar_t *, wchar_t **, long);
+__intrinsic __nounwind unsigned long __iar_WStoul(const wchar_t *, wchar_t **, int);
+__intrinsic __nounwind _Longlong __iar_WStoll(const wchar_t *, wchar_t **, int);
+__intrinsic __nounwind _ULonglong __iar_WStoull(const wchar_t *, wchar_t **, int);
+
+__intrinsic __nounwind wchar_t * __iar_Wmemchr(const wchar_t *, wchar_t, size_t);
+__intrinsic __nounwind wchar_t * __iar_Wcschr(const wchar_t *, wchar_t);
+__intrinsic __nounwind wchar_t * __iar_Wcspbrk(const wchar_t *, const wchar_t *);
+__intrinsic __nounwind wchar_t * __iar_Wcsrchr(const wchar_t *, wchar_t);
+__intrinsic __nounwind wchar_t * __iar_Wcsstr(const wchar_t *, const wchar_t *);
+
+
+/* IAR, can't use the Dinkum stratagem for wmemchr,... */
+
+  __intrinsic __nounwind wchar_t * wmemchr(const wchar_t *, wchar_t, size_t);
+  __intrinsic __nounwind wchar_t * wcschr(const wchar_t *, wchar_t);
+  __intrinsic __nounwind wchar_t * wcspbrk(const wchar_t *, const wchar_t *);
+  __intrinsic __nounwind wchar_t * wcsrchr(const wchar_t *, wchar_t);
+  __intrinsic __nounwind wchar_t * wcsstr(const wchar_t *, const wchar_t *);
+
+    #pragma inline
+    wchar_t * wmemchr(const wchar_t *_S, wchar_t _C, size_t _N)
+    {
+      return (__iar_Wmemchr(_S, _C, _N));
+    }
+
+    #pragma inline
+    wchar_t * wcschr(const wchar_t *_S, wchar_t _C)
+    {
+      return (__iar_Wcschr(_S, _C));
+    }
+
+    #pragma inline
+    wchar_t * wcspbrk(const wchar_t *_S, const wchar_t *_P)
+    {
+      return (__iar_Wcspbrk(_S, _P));
+    }
+
+    #pragma inline
+    wchar_t * wcsrchr(const wchar_t *_S, wchar_t _C)
+    {
+      return (__iar_Wcsrchr(_S, _C));
+    }
+
+    #pragma inline
+    wchar_t * wcsstr(const wchar_t *_S, const wchar_t *_P)
+    {
+      return (__iar_Wcsstr(_S, _P));
+    }
+
+  #pragma inline
+  wint_t btowc(int _C)
+  {       /* convert single byte to wide character */
+    return (__iar_Btowc(_C));
+  }
+
+    #pragma inline
+    float wcstof(const wchar_t *_S,
+                 wchar_t **_Endptr)
+    {       /* convert wide string to double */
+      return (__iar_WStof(_S, _Endptr, 0));
+    }
+
+    #pragma inline
+    long double wcstold(const wchar_t *_S,
+                        wchar_t **_Endptr)
+    {       /* convert wide string to double */
+      return (__iar_WStold(_S, _Endptr, 0));
+    }
+
+      #pragma language=save
+      #pragma language=extended
+      #pragma inline
+       _Longlong wcstoll(const wchar_t * _S, 
+                         wchar_t ** _Endptr, int _Base)
+       {
+	return (__iar_WStoll(_S, _Endptr, _Base));
+       }
+
+      #pragma inline
+      _ULonglong wcstoull(const wchar_t * _S, 
+                          wchar_t ** _Endptr, int _Base)
+      {
+	return (__iar_WStoull(_S, _Endptr, _Base));
+      }
+      #pragma language=restore
+
+
+  #pragma inline
+  double wcstod(const wchar_t *_S,
+                wchar_t **_Endptr)
+  {       /* convert wide string to double */
+    return (__iar_WStod(_S, _Endptr, 0));
+  }
+
+
+  #pragma inline
+  unsigned long wcstoul(const wchar_t *_S,
+                        wchar_t **_Endptr, int _Base)
+  {       /* convert wide string to unsigned long */
+    return (__iar_WStoul(_S, _Endptr, _Base));
+  }
+
+  #pragma inline
+  int wctob(wint_t _Wc)
+  {       /* convert wide character to single byte */
+    return (__iar_Wctob(_Wc));
+  }
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+
+
+
+
+
+
+__intrinsic __nounwind int _LocaleC_toupper(int);
+__intrinsic __nounwind int _LocaleC_tolower(int);
+
+__intrinsic __nounwind int _LocaleC_isalpha(int);
+__intrinsic __nounwind int _LocaleC_iscntrl(int);
+__intrinsic __nounwind int _LocaleC_islower(int);
+__intrinsic __nounwind int _LocaleC_ispunct(int);
+__intrinsic __nounwind int _LocaleC_isspace(int);
+__intrinsic __nounwind int _LocaleC_isupper(int);
+
+
+__intrinsic __nounwind wint_t _LocaleC_towupper(wint_t);
+__intrinsic __nounwind wint_t _LocaleC_towlower(wint_t);
+
+__intrinsic __nounwind int _LocaleC_iswalpha(wint_t);
+__intrinsic __nounwind int _LocaleC_iswcntrl(wint_t);
+__intrinsic __nounwind int _LocaleC_iswlower(wint_t);
+__intrinsic __nounwind int _LocaleC_iswpunct(wint_t);
+__intrinsic __nounwind int _LocaleC_iswspace(wint_t);
+__intrinsic __nounwind int _LocaleC_iswupper(wint_t);
+__intrinsic __nounwind int _LocaleC_iswdigit(wint_t);
+__intrinsic __nounwind int _LocaleC_iswxdigit(wint_t);
+
+
+
+
+/*
+ * Inline definitions.
+ */
+
+  /* Note: The first two must precede the functions they are used in. */
+  #pragma inline
+  int _LocaleC_islower(int _C)
+  {
+    return (_C>='a' && _C<='z');
+  }
+
+  #pragma inline
+  int _LocaleC_isupper(int _C)
+  {
+    return (_C>='A' && _C<='Z');
+  }
+
+  #pragma inline
+  int _LocaleC_isalpha(int _C)
+  {
+    return (   _LocaleC_islower(_C)
+            || _LocaleC_isupper(_C));
+  }
+
+  #pragma inline
+  int _LocaleC_iscntrl(int _C)
+  {
+    return (   (_C>='\x00' && _C<='\x1f')
+            || _C=='\x7f');
+  }
+
+  #pragma inline
+  int _LocaleC_ispunct(int _C)
+  {
+    return (   (_C>='\x21' && _C<='\x2f')
+            || (_C>='\x3a' && _C<='\x40')
+            || (_C>='\x5b' && _C<='\x60')
+            || (_C>='\x7b' && _C<='\x7e'));
+  }
+
+  #pragma inline
+  int _LocaleC_isspace(int _C)
+  {
+    return (   (_C>='\x09' && _C<='\x0d')
+            || (_C==' '));
+  }
+
+  #pragma inline
+  int _LocaleC_tolower(int _C)
+  {
+    return (_LocaleC_isupper(_C)?_C-'A'+'a':_C);
+  }
+
+  #pragma inline
+  int _LocaleC_toupper(int _C)
+  {
+    return (_LocaleC_islower(_C)?_C-'a'+'A':_C);
+  }
+
+
+
+
+
+
+
+
+
+/* Module consistency. */
+#pragma rtmodel="__dlib_full_locale_support",   "0"
+
+
+
+
+         __intrinsic __nounwind int isalnum(int);
+         __intrinsic __nounwind int isalpha(int);
+         __intrinsic __nounwind int isblank(int);
+         __intrinsic __nounwind int iscntrl(int);
+_Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind int isdigit(int);
+         __intrinsic __nounwind int isgraph(int);
+         __intrinsic __nounwind int islower(int);
+         __intrinsic __nounwind int isprint(int);
+         __intrinsic __nounwind int ispunct(int);
+         __intrinsic __nounwind int isspace(int);
+         __intrinsic __nounwind int isupper(int);
+_Pragma("function_effects = no_state, no_errno") __intrinsic __nounwind int isxdigit(int);
+         __intrinsic __nounwind int tolower(int);
+         __intrinsic __nounwind int toupper(int);
+
+
+/* Aeabi table constants */
+
+    #pragma inline
+    int isblank(int _C)
+    {
+      return (   _C == ' '
+              || _C == '\t'
+              || isspace(_C));
+    }
+
+  #pragma inline
+  int isdigit(int _C)
+  {
+    return _C >= '0' && _C <= '9';
+  }
+
+  #pragma inline
+  int isxdigit(int _C)
+  {
+    return (   (_C >= 'a' && _C <= 'f')
+            || (_C >= 'A' && _C <= 'F')
+            || isdigit(_C));
+  }
+
+  #pragma inline
+  int isalnum(int _C)
+  {
+    return (   isalpha(_C)
+            || isdigit(_C));
+  }
+
+  #pragma inline
+  int isprint(int _C)
+  {
+    return (   (_C >= ' ' && _C <= '\x7e')
+            || isalpha(_C)
+            || ispunct(_C));
+  }
+
+  #pragma inline
+  int isgraph(int _C)
+  {
+    return (   _C != ' '
+            && isprint(_C));
+  }
+
+
+
+
+    /* In non-full mode we redirect the corresponding locale function. */
+    
+    extern int _LocaleC_toupper(int);
+    extern int _LocaleC_tolower(int);
+    extern int _LocaleC_isalpha(int);
+    extern int _LocaleC_iscntrl(int);
+    extern int _LocaleC_islower(int);
+    extern int _LocaleC_ispunct(int);
+    extern int _LocaleC_isspace(int);
+    extern int _LocaleC_isupper(int);
+    
+
+    #pragma inline
+    int toupper(int _C)
+    {
+      return _LocaleC_toupper(_C);
+    }
+
+    #pragma inline
+    int tolower(int _C)
+    {
+      return _LocaleC_tolower(_C);
+    }
+
+    #pragma inline
+    int isalpha(int _C)
+    {
+     return _LocaleC_isalpha(_C);
+    }
+
+    #pragma inline
+    int iscntrl(int _C)
+    {
+      return _LocaleC_iscntrl(_C);
+    }
+
+    #pragma inline
+    int islower(int _C)
+    {
+      return _LocaleC_islower(_C);
+    }
+
+    #pragma inline
+    int ispunct(int _C)
+    {
+      return _LocaleC_ispunct(_C);
+    }
+
+    #pragma inline
+    int isspace(int _C)
+    {
+      return _LocaleC_isspace(_C);
+    }
+
+    #pragma inline
+    int isupper(int _C)
+    {
+      return _LocaleC_isupper(_C);
+    }
+
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+/* stdlib.h standard header */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+/* string.h standard header */
+/* Copyright 2009-2010 IAR Systems AB. */
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+/* stdio.h standard header */
+/* Copyright 2003-2010 IAR Systems AB.  */
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+/* ysizet.h internal header file. */
+/* Copyright 2003-2010 IAR Systems AB.  */
+
+
+
+/* ystdio.h internal header */
+/* Copyright 2009-2010 IAR Systems AB. */
+
+  #pragma system_include
+
+
+
+
+/* File system functions that have debug variants. They are agnostic on 
+   whether the library is full or normal. */
+
+__intrinsic __nounwind int remove(const char *);
+__intrinsic __nounwind int rename(const char *, const char *);
+
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.042:0576 */
+
+
+
+/* Module consistency. */
+#pragma rtmodel="__dlib_file_descriptor","0"
+
+                /* macros */
+
+
+
+
+
+
+
+
+
+                /* type definitions */
+typedef _Fpost fpos_t;
+
+                /* printf and scanf pragma support */
+#pragma language=save
+#pragma language=extended
+
+
+
+
+             /* Corresponds to fgets(char *, int, stdin); */
+_Pragma("function_effects = no_read(1)")    __intrinsic __nounwind char * __gets(char *, int);
+_Pragma("function_effects = no_read(1)")    __intrinsic __nounwind char * gets(char *);
+_Pragma("function_effects = no_write(1)")    __intrinsic __nounwind void perror(const char *);
+_Pragma("function_effects = no_write(1)")    _Pragma("__printf_args") _Pragma("library_default_requirements _Printf = unknown") __intrinsic __nounwind int printf(const char *, ...);
+_Pragma("function_effects = no_write(1)")    __intrinsic __nounwind int puts(const char *);
+_Pragma("function_effects = no_write(1)")    _Pragma("__scanf_args") _Pragma("library_default_requirements _Scanf = unknown")  __intrinsic __nounwind int scanf(const char *, ...);
+_Pragma("function_effects = no_read(1), no_write(2)") _Pragma("__printf_args") _Pragma("library_default_requirements _Printf = unknown") __intrinsic __nounwind int sprintf(char *, 
+                                                 const char *, ...);
+_Pragma("function_effects = no_write(1,2)") _Pragma("__scanf_args") _Pragma("library_default_requirements _Scanf = unknown")  __intrinsic __nounwind int sscanf(const char *, 
+                                                const char *, ...);
+             __intrinsic __nounwind char * tmpnam(char *);
+             /* Corresponds to "ungetc(c, stdout)" */
+             __intrinsic __nounwind int __ungetchar(int);
+_Pragma("function_effects = no_write(1)")    _Pragma("__printf_args") _Pragma("library_default_requirements _Printf = unknown") __intrinsic __nounwind int vprintf(const char *,
+                                                 __Va_list);
+  _Pragma("function_effects = no_write(1)")    _Pragma("__scanf_args") _Pragma("library_default_requirements _Scanf = unknown")  __intrinsic __nounwind int vscanf(const char *, 
+                                                  __Va_list);
+  _Pragma("function_effects = no_write(1,2)") _Pragma("__scanf_args") _Pragma("library_default_requirements _Scanf = unknown")  __intrinsic __nounwind int vsscanf(const char *, 
+                                                   const char *, 
+                                                   __Va_list);
+_Pragma("function_effects = no_read(1), no_write(2)")  _Pragma("__printf_args") _Pragma("library_default_requirements _Printf = unknown") __intrinsic __nounwind int vsprintf(char *, 
+                                                   const char *,
+                                                   __Va_list);
+              /* Corresponds to fwrite(p, x, y, stdout); */
+_Pragma("function_effects = no_write(1)")      __intrinsic __nounwind size_t __write_array(const void *, size_t, size_t);
+  _Pragma("function_effects = no_read(1), no_write(3)") _Pragma("__printf_args") _Pragma("library_default_requirements _Printf = unknown") __intrinsic __nounwind int snprintf(char *, size_t, 
+                                                    const char *, ...);
+  _Pragma("function_effects = no_read(1), no_write(3)") _Pragma("__printf_args") _Pragma("library_default_requirements _Printf = unknown") __intrinsic __nounwind int vsnprintf(char *, size_t,
+                                                     const char *, 
+                                                     __Va_list);
+
+              __intrinsic __nounwind int getchar(void);
+              __intrinsic __nounwind int putchar(int);
+
+
+
+#pragma language=restore
+
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2002 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+/* stdarg.h standard header wrapper */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+  #pragma system_include
+
+/* ycheck.h internal checking header file. */
+/* Copyright 2005-2010 IAR Systems AB. */
+
+/* Note that there is no include guard for this header. This is intentional. */
+
+  #pragma system_include
+
+/* __INTRINSIC
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that intrinsic support could be turned off
+ * individually for each file.
+ */
+
+
+/* __AEABI_PORTABILITY_INTERNAL_LEVEL
+ *
+ * Note: Redefined each time ycheck.h is included, i.e. for each
+ * system header, to ensure that ABI support could be turned off/on
+ * individually for each file.
+ *
+ * Possible values for this preprocessor symbol:
+ *
+ * 0 - ABI portability mode is disabled.
+ *
+ * 1 - ABI portability mode (version 1) is enabled.
+ *
+ * All other values are reserved for future use.
+ */
+
+
+
+
+
+
+
+
+__intrinsic __nounwind char *__va_start1(void);
+
+
+typedef __Va_list va_list;
+
+
+
+
+
+
+
+
+
+/*
+ * Copyright (c) 1992-2009 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V5.04:0576 */
+
+/*******************************************************************************************
+ Generic Utilities
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+
+
+
+
+
+
+/**************************************************************************
+ *                                  Pre-processor Macros
+ **************************************************************************/
+
+// Misc:
+
+
+
+
+// Math-related:
+
+
+
+// Binary helpers:
+
+//lint -emacro((572,778), NEXT_POWER_OF_2)
+// Example usage: bytesRequired = NEXT_POWER_OF_2(115)	// 128
+
+
+// Example usage of B8, B16 and B32:
+// B8(01010101) // 85
+// B16(10101010,01010101) // 43,605
+// B32(10000000,11111111,10101010,01010101) // 2,164,238,933
+// reg = ( (B8(010) << 5) | (B8(11) << 3) | (B8(101) << 0) )
+
+
+/*************************************************************************
+*                                   ENDIAN
+**************************************************************************/
+
+
+
+
+
+
+
+/**************************************************************************
+ *                                  "Private" helpers to the macros
+ **************************************************************************/
+
+
+
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+BOOL CpuIsLittleEndian(void);
+
+INT32 antoi(char const *pStr, UINT32 maxChars);
+UINT32 GetStringIndexFromTable (char const *const *ppTable, char const *pSearchStr, UINT32 maxIndex);
+
+int stricmp(char const *pStr1, char const *pStr2);
+int strnicmp(char const *pStr1, char const *pStr2, UINT32 num);
+char * stristr(char *pStr1, char *pStr2);
+char const * strTrimFront(char const *pStr);		// Removes leading whitespace
+char * strTrimTail(char *pStr);	//lint -esym(534, strTrimTail)
+char * strTrim(char *pStr);
+char * Strxtoa(UINT32 v,char *pStr, INT32 r, INT32 isNeg);
+char * Stritoa(INT32 v, char *pStr, INT32 r);
+void strncatf(char *pDest, UINT32 maxLen, char const *pFormat, ...);
+
+UINT32 aton(char const *pAddr);
+char const * ntoa(UINT32 addr);
+void ntoa_r(char *pDest, UINT32 addr);
+void macToa(char *pDest, char const *pMac);
+void atoMac(char *pDest, char const *pMac);
+
+
+UINT32 BitReverseWord(UINT32 x);
+
+// "maxUlps" is the "Units in the Last Place", which specifies how big an error the caller is willing
+// to accept in terms of the value of the least significant digits of the FP number's representation.
+// AKA how many representable floats we are willing to accept between A and B
+BOOL Fp32AlmostEqual(FP32 A, FP32 B, INT32 maxUlps);
+
+/*******************************************************************************************
+File utilities
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+
+/**************************************************************************
+ *                                  Types
  **************************************************************************/
 /**************************************************************************
  *                                  Prototypes
  **************************************************************************/
+UINT8 FutilsDriveNum(char const *pName);
+char const * FutilsFileName(char const *pName);
+char const * FutilsFileExtension(char const *pName);
+BOOL FutilsFilenameIsValid(char const *pName, BOOL wildCardOkay);
+BOOL FutilsWildcardNameIsMatch(char const *pWildName, char const *pName);
+BOOL FutilsNameIsOnlyDots(char const *pName);
+char * FutilsUpDir(char *pPath);	//lint -esym(534, FutilsUpDir) Strip last folder from path and return folder name
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+
+
+/*******************************************************************************************
+Red Green Blue (RGB) common colors
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+// Standard RGB colors (as defined in .NET System.Drawing.Color):
+typedef enum
+{
+   COLOR_AliceBlue            = (0xF0F8FFuL),
+   COLOR_AntiqueWhite         = (0xFAEBD7uL),
+   COLOR_Aqua                 = (0x00FFFFuL),
+   COLOR_Aquamarine           = (0x7FFFD4uL),
+   COLOR_Azure                = (0xF0FFFFuL),
+   COLOR_Beige                = (0xF5F5DCuL),
+   COLOR_Bisque               = (0xFFE4C4uL),
+   COLOR_Black                = (0x000000uL),
+   COLOR_BlanchedAlmond       = (0xFFEBCDuL),
+   COLOR_Blue                 = (0x0000FFuL),
+   COLOR_BlueViolet           = (0x8A2BE2uL),
+   COLOR_Brown                = (0xA52A2AuL),
+   COLOR_BurlyWood            = (0xDEB887uL),
+   COLOR_CadetBlue            = (0x5F9EA0uL),
+   COLOR_Chartreuse           = (0x7FFF00uL),
+   COLOR_Chocolate            = (0xD2691EuL),
+   COLOR_Coral                = (0xFF7F50uL),
+   COLOR_CornflowerBlue       = (0x6495EDuL),
+   COLOR_Cornsilk             = (0xFFF8DCuL),
+   COLOR_Crimson              = (0xDC143CuL),
+   COLOR_Cyan                 = (0x00FFFFuL),
+   COLOR_DarkBlue             = (0x00008BuL),
+   COLOR_DarkCyan             = (0x008B8BuL),
+   COLOR_DarkGoldenrod        = (0xB8860BuL),
+   COLOR_DarkGray             = (0xA9A9A9uL),
+   COLOR_DarkGreen            = (0x006400uL),
+   COLOR_DarkKhaki            = (0xBDB76BuL),
+   COLOR_DarkMagenta          = (0x8B008BuL),
+   COLOR_DarkOliveGreen       = (0x556B2FuL),
+   COLOR_DarkOrange           = (0xFF8C00uL),
+   COLOR_DarkOrchid           = (0x9932CCuL),
+   COLOR_DarkRed              = (0x8B0000uL),
+   COLOR_DarkSalmon           = (0xE9967AuL),
+   COLOR_DarkSeaGreen         = (0x8FBC8BuL),
+   COLOR_DarkSlateBlue        = (0x483D8BuL),
+   COLOR_DarkSlateGray        = (0x2F4F4FuL),
+   COLOR_DarkTurquoise        = (0x00CED1uL),
+   COLOR_DarkViolet           = (0x9400D3uL),
+   COLOR_DeepPink             = (0xFF1493uL),
+   COLOR_DeepSkyBlue          = (0x00BFFFuL),
+   COLOR_DimGray              = (0x696969uL),
+   COLOR_DodgerBlue           = (0x1E90FFuL),
+   COLOR_Firebrick            = (0xB22222uL),
+   COLOR_FloralWhite          = (0xFFFAF0uL),
+   COLOR_ForestGreen          = (0x228B22uL),
+   COLOR_Fuchsia              = (0xFF00FFuL),
+   COLOR_Gainsboro            = (0xDCDCDCuL),
+   COLOR_GhostWhite           = (0xF8F8FFuL),
+   COLOR_Gold                 = (0xFFD700uL),
+   COLOR_Goldenrod            = (0xDAA520uL),
+   COLOR_Gray                 = (0x808080uL),
+   COLOR_Green                = (0x008000uL),
+   COLOR_GreenYellow          = (0xADFF2FuL),
+   COLOR_Honeydew             = (0xF0FFF0uL),
+   COLOR_HotPink              = (0xFF69B4uL),
+   COLOR_IndianRed            = (0xCD5C5CuL),
+   COLOR_Indigo               = (0x4B0082uL),
+   COLOR_Ivory                = (0xFFFFF0uL),
+   COLOR_Khaki                = (0xF0E68CuL),
+   COLOR_Lavender             = (0xE6E6FAuL),
+   COLOR_LavenderBlush        = (0xFFF0F5uL),
+   COLOR_LawnGreen            = (0x7CFC00uL),
+   COLOR_LemonChiffon         = (0xFFFACDuL),
+   COLOR_LightBlue            = (0xADD8E6uL),
+   COLOR_LightCoral           = (0xF08080uL),
+   COLOR_LightCyan            = (0xE0FFFFuL),
+   COLOR_LightGoldenrodYellow = (0xFAFAD2uL),
+   COLOR_LightGray            = (0xD3D3D3uL),
+   COLOR_LightGreen           = (0x90EE90uL),
+   COLOR_LightPink            = (0xFFB6C1uL),
+   COLOR_LightSalmon          = (0xFFA07AuL),
+   COLOR_LightSeaGreen        = (0x20B2AAuL),
+   COLOR_LightSkyBlue         = (0x87CEFAuL),
+   COLOR_LightSlateGray       = (0x778899uL),
+   COLOR_LightSteelBlue       = (0xB0C4DEuL),
+   COLOR_LightYellow          = (0xFFFFE0uL),
+   COLOR_Lime                 = (0x00FF00uL),
+   COLOR_LimeGreen            = (0x32CD32uL),
+   COLOR_Linen                = (0xFAF0E6uL),
+   COLOR_Magenta              = (0xFF00FFuL),
+   COLOR_Maroon               = (0x800000uL),
+   COLOR_MediumAquamarine     = (0x66CDAAuL),
+   COLOR_MediumBlue           = (0x0000CDuL),
+   COLOR_MediumOrchid         = (0xBA55D3uL),
+   COLOR_MediumPurple         = (0x9370DBuL),
+   COLOR_MediumSeaGreen       = (0x3CB371uL),
+   COLOR_MediumSlateBlue      = (0x7B68EEuL),
+   COLOR_MediumSpringGreen    = (0x00FA9AuL),
+   COLOR_MediumTurquoise      = (0x48D1CCuL),
+   COLOR_MediumVioletRed      = (0xC71585uL),
+   COLOR_MidnightBlue         = (0x191970uL),
+   COLOR_MintCream            = (0xF5FFFAuL),
+   COLOR_MistyRose            = (0xFFE4E1uL),
+   COLOR_Moccasin             = (0xFFE4B5uL),
+   COLOR_NavajoWhite          = (0xFFDEADuL),
+   COLOR_Navy                 = (0x000080uL),
+   COLOR_OldLace              = (0xFDF5E6uL),
+   COLOR_Olive                = (0x808000uL),
+   COLOR_OliveDrab            = (0x6B8E23uL),
+   COLOR_Orange               = (0xFFA500uL),
+   COLOR_OrangeRed            = (0xFF4500uL),
+   COLOR_Orchid               = (0xDA70D6uL),
+   COLOR_PaleGoldenrod        = (0xEEE8AAuL),
+   COLOR_PaleGreen            = (0x98FB98uL),
+   COLOR_PaleTurquoise        = (0xAFEEEEuL),
+   COLOR_PaleVioletRed        = (0xDB7093uL),
+   COLOR_PapayaWhip           = (0xFFEFD5uL),
+   COLOR_PeachPuff            = (0xFFDAB9uL),
+   COLOR_Peru                 = (0xCD853FuL),
+   COLOR_Pink                 = (0xFFC0CBuL),
+   COLOR_Plum                 = (0xDDA0DDuL),
+   COLOR_PowderBlue           = (0xB0E0E6uL),
+   COLOR_Purple               = (0x800080uL),
+   COLOR_Red                  = (0xFF0000uL),
+   COLOR_RosyBrown            = (0xBC8F8FuL),
+   COLOR_RoyalBlue            = (0x4169E1uL),
+   COLOR_SaddleBrown          = (0x8B4513uL),
+   COLOR_Salmon               = (0xFA8072uL),
+   COLOR_SandyBrown           = (0xF4A460uL),
+   COLOR_SeaGreen             = (0x2E8B57uL),
+   COLOR_SeaShell             = (0xFFF5EEuL),
+   COLOR_Sienna               = (0xA0522DuL),
+   COLOR_Silver               = (0xC0C0C0uL),
+   COLOR_SkyBlue              = (0x87CEEBuL),
+   COLOR_SlateBlue            = (0x6A5ACDuL),
+   COLOR_SlateGray            = (0x708090uL),
+   COLOR_Snow                 = (0xFFFAFAuL),
+   COLOR_SpringGreen          = (0x00FF7FuL),
+   COLOR_SteelBlue            = (0x4682B4uL),
+   COLOR_Tan                  = (0xD2B48CuL),
+   COLOR_Teal                 = (0x008080uL),
+   COLOR_Thistle              = (0xD8BFD8uL),
+   COLOR_Tomato               = (0xFF6347uL),
+   COLOR_Transparent          = (0xFFFFFFuL),
+   COLOR_Turquoise            = (0x40E0D0uL),
+   COLOR_Violet               = (0xEE82EEuL),
+   COLOR_Wheat                = (0xF5DEB3uL),
+   COLOR_White                = (0xFFFFFFuL),
+   COLOR_WhiteSmoke           = (0xF5F5F5uL),
+   COLOR_Yellow               = (0xFFFF00uL),
+   COLOR_YellowGreen          = (0x9ACD32uL),
+}COLOR;
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+/*   NOTE: this affects the PWM frequency for brightness/RGB coloring
+           --> videos range from 23.97 to 60 Hz. LED flickering is almost unnoticeable above 50 Hz
+     NOTE: The LED_UPDATE_RATE_MS must be fast enough to allow PWM resolution at the update rate
+*/
+
+/* RGB Color Gradient:
+There are a few common ways to cycle through RGB colors:
+0) Change one RGB component at a time
+	a) R=255, G=0, B=0
+	b) ramp up B to 255
+	c) ramp down R to 0
+	d) ramp up G to 255
+	e) ramp down B to 0
+	f) ramp up R to 255
+   g) ramp down G to 0
+   --> Tends to "hang" at magenta, cyan and yellow
+
+1) HSB/HSL hue cycling
+	HSB = "Hue", "Saturation" Brightness"
+	a) Set saturation and brightness as desired
+	b) Increment Hue (0-359) around the color wheel
+	c) Convert HSB to RGB values
+
+2) Sine-Wave trefoil (aka 3-phase sine wave similar to 3-phase motor control)
+	This is similar to HSB/HSL using 3-phase motor-like control. Essentially,
+	it uses a sine wave to set each RGB component, with each component phase-shifted
+	by 120 degress (same frequency and amplitude).
+	a) Store sine table
+	b) Lookup each component value, keeping them 120 degrees apart
+	c) Add any base offset for brightness
+*/
+
+// Define one of the algorithms for RGB color cycling:
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+typedef enum
+{
+   LED_WHITE,
+	LED_PURPLE,
+	LED_BLUE,
+   LED_CYAN,
+	LED_GREEN,
+	LED_YELLOW,
+   LED_ORANGE,
+	LED_RED,
+	LED_RGB_RED,
+	LED_RGB_GREEN,
+	LED_RGB_BLUE,
+   LED_COUNT,
+} LEDS;
+
+
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+// Core LED functions:
+void LedOn(LEDS led);
+void LedOff(LEDS led);
+void LedToggle(LEDS led);
+void LedSet(LEDS led, _Bool isOn);
+void LedSetPwm(LEDS led, u8 dutyPercent);
+void LedBlink(LEDS led, u16 onMs, u16 offMs);
+void LedBlinkPwm(LEDS led, u16 onMs, u16 offMs, u8 dutyPercent);
+void LedSequence(u16 cycleRateMs);
+
+// RGB functions:
+void LedRgbSet(COLOR rgb);
+
+/* cycleTimeMs = total time that it will take to cycle all colors
+   saturation = amount of color to show (0 = no color, 255 = full color)
+	brightness = LED intensity (0 = off, 255 = max) */
+void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness);
+
+// Application level init and update functions
+void LedInit(void);
+void LedUpdate(void);	// Must be called every 1ms
+
+/*******************************************************************************************
+NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD driver
+2x20 characters, I2C, FSTN
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+typedef struct
+{
+   _Bool on;
+   _Bool cursorOn;
+   _Bool blinkOn;
+   _Bool doubleHeight;
+   _Bool autoUpdate;
+   u8 contrast;
+}LCD_CFG;
+
+
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+void LcdInit(void);
+void LcdConfigSet(LCD_CFG const *pConfig);
+LCD_CFG const * LcdConfigGet(void);
+
+void LcdSetPos(u8 row, u8 col);
+void LcdClear(void);
+void LcdPutc(char c);
+void LcdPuts(char const *pSrc);
+void LcdPrintf(char const *pSrc, ...);
+void LcdWrite(void const *pSrc, u8 len);
+
+void LcdUpdate(void);
+
+/* Testing123 */
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+int DEFAULT_VOLTS = 0;
+int DEFAULT_PERIOD = 1000;
+
+float BUFFER_PERCENT = 10;
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+/**************************************************************************
+ *                                  Variables
+ **************************************************************************/
+int sol1Start;
+int sol1Stop;
+int sol2Start;
+int sol2Stop;
+int periodSol;
+int voltage;
+
+int tSinceTick;
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+
 /**************************************************************************
  *                                  Global Functions
  **************************************************************************/
 void SolenoidInit() {
-     
+     SetSolenoidParam(DEFAULT_VOLTS, DEFAULT_PERIOD);
 }
 
 void SolenoidUpdate() {
   
+  // update solenoid outputs
+  tSinceTick = GetTimeSinceTick();
+  
+  /* Testing123 */
+  LcdSetPos(0,0);
+  LcdPrintf("%d", tSinceTick);
+  LcdSetPos(1,0);
+  LcdPrintf("%d %d %d %d", sol1Start, sol1Stop, sol2Start, sol2Stop);
+  /* Testing123 */
+  
+  if ( sol1Start<tSinceTick && tSinceTick<sol1Stop ) {
+    LedOn(LED_GREEN);
+    LedOff(LED_ORANGE);
+  } else if ( sol2Start<tSinceTick && tSinceTick<sol2Stop ) {
+    LedOn(LED_ORANGE);
+    LedOff(LED_GREEN);
+  } else {
+    LedOff(LED_GREEN);
+    LedOn(LED_ORANGE);
+  }
+  //LedUpdate();
 }
 
+void SetSolenoidParam(int volts, int periodMs) {
+  periodSol = periodMs;
+  voltage = volts;
+  
+    // initialize variables
+  sol1Start = (int)(periodSol*BUFFER_PERCENT/100);
+  sol1Stop = (int)(periodSol*(0.5-BUFFER_PERCENT/100));
+  sol2Start = (int)(periodSol*(0.5+BUFFER_PERCENT/100));
+  sol2Stop = (int)(periodSol*(1-BUFFER_PERCENT/100));
+}
 /**************************************************************************
  *                                 Private Functions
  **************************************************************************/
-
-
 
