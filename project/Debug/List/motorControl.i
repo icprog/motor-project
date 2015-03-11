@@ -3801,6 +3801,7 @@ void LcdUpdate(void);
  **************************************************************************/
 void MotorControlInit () {
   TactInit();
+  SolenoidInit();
 }
 
 void MotorControlUpdate () {

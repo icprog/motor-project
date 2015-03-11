@@ -9,7 +9,7 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=1598796494
+Checksum=-687344711
 [JLinkDriver]
 CStepIntDis=_ 0
 [Exceptions]
@@ -44,6 +44,10 @@ ActionState=1
 [Trace1]
 Enabled=0
 ShowSource=1
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Count=0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -51,6 +55,9 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[Aliases]
+Count=0
+SuppressDialog=0
 [CallStackLog]
 Enabled=0
 [DriverProfiling]
@@ -59,11 +66,3 @@ Mode=0
 Graph=0
 Symbiont=0
 Exclusions=
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\src\drivers\solenoid.c}.61.3" 0 0 1 "" 0 "" 0
-Count=1
-[Aliases]
-Count=0
-SuppressDialog=0

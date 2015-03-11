@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      10/Mar/2015  21:49:56 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      11/Mar/2015  09:39:12 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -84,33 +84,35 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\app\motorControl.c
      30           **************************************************************************/
      31          void MotorControlInit () {
      32            TactInit();
-     33          }
-     34          
-     35          void MotorControlUpdate () {
-     36            
+     33            SolenoidInit();
+     34          }
+     35          
+     36          void MotorControlUpdate () {
      37            
      38            
-     39            /* Testing123 TactDriver *
-     40            if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
-     41            LcdSetPos(0,0);
-     42            LcdPrintf("%d \n", (int)GetRPM());
-     43            /* Testing123 TactDriver */
-     44            
-     45            SolenoidUpdate();
-     46          }
-     47          
-     48          /**************************************************************************
-     49           *                                 Private Functions
-     50           **************************************************************************/
-     51          
+     39            
+     40            /* Testing123 TactDriver *
+     41            if (GetTimeSinceTick() > 4000) LedSet(LED_BLUE, true);
+     42            LcdSetPos(0,0);
+     43            LcdPrintf("%d \n", (int)GetRPM());
+     44            /* Testing123 TactDriver */
+     45            
+     46            SolenoidUpdate();
+     47          }
+     48          
+     49          /**************************************************************************
+     50           *                                 Private Functions
+     51           **************************************************************************/
      52          
      53          
+     54          
 
    Maximum stack usage in bytes:
 
    .cstack Function
    ------- --------
        8   MotorControlInit
+         8   -> SolenoidInit
          8   -> TactInit
        8   MotorControlUpdate
          8   -> SolenoidUpdate
@@ -120,13 +122,13 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\app\motorControl.c
 
    Bytes  Function/Label
    -----  --------------
-       8  MotorControlInit
+      12  MotorControlInit
        8  MotorControlUpdate
 
  
- 16 bytes in section .text
+ 20 bytes in section .text
  
- 16 bytes of CODE memory
+ 20 bytes of CODE memory
 
 Errors: none
 Warnings: 1

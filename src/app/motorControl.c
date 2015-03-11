@@ -30,6 +30,7 @@ Quinn Miller
  **************************************************************************/
 void MotorControlInit () {
   TactInit();
+  SolenoidInit();
 }
 
 void MotorControlUpdate () {
