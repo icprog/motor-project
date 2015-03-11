@@ -3711,6 +3711,55 @@ void LedRgbCycleSet(u32 cycleTimeMs, u8 saturation, u8 brightness);
 void LedInit(void);
 void LedUpdate(void);	// Must be called every 1ms
 
+/*******************************************************************************************
+NHD-C0220BiZ-FS(RGB)-FBW-3VM LCD driver
+2x20 characters, I2C, FSTN
+
+This is free, public domain software and there is NO WARRANTY.
+No restriction on use. You can use, modify and redistribute it for
+personal, non-profit or commercial products UNDER YOUR RESPONSIBILITY.
+
+Sheldon Patterson
+********************************************************************************************/
+
+
+
+
+/**************************************************************************
+ *                                  Constants
+ **************************************************************************/
+
+
+/**************************************************************************
+ *                                  Types
+ **************************************************************************/
+typedef struct
+{
+   _Bool on;
+   _Bool cursorOn;
+   _Bool blinkOn;
+   _Bool doubleHeight;
+   _Bool autoUpdate;
+   u8 contrast;
+}LCD_CFG;
+
+
+/**************************************************************************
+ *                                  Prototypes
+ **************************************************************************/
+void LcdInit(void);
+void LcdConfigSet(LCD_CFG const *pConfig);
+LCD_CFG const * LcdConfigGet(void);
+
+void LcdSetPos(u8 row, u8 col);
+void LcdClear(void);
+void LcdPutc(char c);
+void LcdPuts(char const *pSrc);
+void LcdPrintf(char const *pSrc, ...);
+void LcdWrite(void const *pSrc, u8 len);
+
+void LcdUpdate(void);
+
 /* Testing123 */
 
 /**************************************************************************
@@ -3719,7 +3768,7 @@ void LedUpdate(void);	// Must be called every 1ms
 int DEFAULT_VOLTS = 0;
 int DEFAULT_PERIOD = 1000;
 
-int BUFFER_PERCENT = 10;
+float BUFFER_PERCENT = 10;
 /**************************************************************************
  *                                  Types
  **************************************************************************/
@@ -3750,6 +3799,13 @@ void SolenoidUpdate() {
   // update solenoid outputs
   tSinceTick = GetTimeSinceTick();
   
+  /* Testing123 */
+  LcdSetPos(0,0);
+  LcdPrintf("%d", tSinceTick);
+  LcdSetPos(1,0);
+  LcdPrintf("%d %d %d %d", sol1Start, sol1Stop, sol2Start, sol2Stop);
+  /* Testing123 */
+  
   if ( sol1Start<tSinceTick && tSinceTick<sol1Stop ) {
     LedOn(LED_GREEN);
     LedOff(LED_ORANGE);
@@ -3760,6 +3816,7 @@ void SolenoidUpdate() {
     LedOff(LED_GREEN);
     LedOn(LED_ORANGE);
   }
+  //LedUpdate();
 }
 
 void SetSolenoidParam(int volts, int periodMs) {

@@ -11,6 +11,7 @@ Quinn Miller
 
 /* Testing123 */
 #include "led.h"
+#include "lcd.h"
 /* Testing123 */
 
 /**************************************************************************
@@ -19,7 +20,7 @@ Quinn Miller
 int DEFAULT_VOLTS = 0;
 int DEFAULT_PERIOD = 1000;
 
-int BUFFER_PERCENT = 10;
+float BUFFER_PERCENT = 10;
 /**************************************************************************
  *                                  Types
  **************************************************************************/
@@ -50,6 +51,13 @@ void SolenoidUpdate() {
   // update solenoid outputs
   tSinceTick = GetTimeSinceTick();
   
+  /* Testing123 */
+  LcdSetPos(0,0);
+  LcdPrintf("%d", tSinceTick);
+  LcdSetPos(1,0);
+  LcdPrintf("%d %d %d %d", sol1Start, sol1Stop, sol2Start, sol2Stop);
+  /* Testing123 */
+  
   if ( sol1Start<tSinceTick && tSinceTick<sol1Stop ) {
     LedOn(LED_GREEN);
     LedOff(LED_ORANGE);
@@ -60,6 +68,7 @@ void SolenoidUpdate() {
     LedOff(LED_GREEN);
     LedOn(LED_ORANGE);
   }
+  //LedUpdate();
 }
 
 void SetSolenoidParam(int volts, int periodMs) {

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      10/Mar/2015  10:52:20 #
+# IAR ANSI C/C++ Compiler V6.60.2.5449/W32 for ARM      10/Mar/2015  21:59:03 #
 # Copyright 1999-2013 IAR Systems AB.                                         #
 #                                                                             #
 #    Cpu mode     =  thumb                                                    #
@@ -65,71 +65,80 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\solenoid.c
      11          
      12          /* Testing123 */
      13          #include "led.h"
-     14          /* Testing123 */
-     15          
-     16          /**************************************************************************
-     17           *                                  Constants
-     18           **************************************************************************/
-     19          int DEFAULT_VOLTS = 0;
-     20          int DEFAULT_PERIOD = 1000;
-     21          
-     22          int BUFFER_PERCENT = 10;
-     23          /**************************************************************************
-     24           *                                  Types
-     25           **************************************************************************/
-     26          /**************************************************************************
-     27           *                                  Variables
-     28           **************************************************************************/
-     29          int sol1Start;
-     30          int sol1Stop;
-     31          int sol2Start;
-     32          int sol2Stop;
-     33          int periodSol;
-     34          int voltage;
-     35          
-     36          int tSinceTick;
-     37          /**************************************************************************
-     38           *                                  Prototypes
-     39           **************************************************************************/
-     40          
-     41          /**************************************************************************
-     42           *                                  Global Functions
-     43           **************************************************************************/
-     44          void SolenoidInit() {
-     45               SetSolenoidParam(DEFAULT_VOLTS, DEFAULT_PERIOD);
-     46          }
-     47          
-     48          void SolenoidUpdate() {
-     49            
-     50            // update solenoid outputs
-     51            tSinceTick = GetTimeSinceTick();
-     52            
-     53            if ( sol1Start<tSinceTick && tSinceTick<sol1Stop ) {
-     54              LedOn(LED_GREEN);
-     55              LedOff(LED_ORANGE);
-     56            } else if ( sol2Start<tSinceTick && tSinceTick<sol2Stop ) {
-     57              LedOn(LED_ORANGE);
-     58              LedOff(LED_GREEN);
-     59            } else {
-     60              LedOff(LED_GREEN);
-     61              LedOn(LED_ORANGE);
-     62            }
-     63          }
-     64          
-     65          void SetSolenoidParam(int volts, int periodMs) {
-     66            periodSol = periodMs;
-     67            voltage = volts;
-     68            
-     69              // initialize variables
-     70            sol1Start = (int)(periodSol*BUFFER_PERCENT/100);
-     71            sol1Stop = (int)(periodSol*(0.5-BUFFER_PERCENT/100));
-     72            sol2Start = (int)(periodSol*(0.5+BUFFER_PERCENT/100));
-     73            sol2Stop = (int)(periodSol*(1-BUFFER_PERCENT/100));
-     74          }
-     75          /**************************************************************************
-     76           *                                 Private Functions
-     77           **************************************************************************/
-     78          
+     14          #include "lcd.h"
+     15          /* Testing123 */
+     16          
+     17          /**************************************************************************
+     18           *                                  Constants
+     19           **************************************************************************/
+     20          int DEFAULT_VOLTS = 0;
+     21          int DEFAULT_PERIOD = 1000;
+     22          
+     23          float BUFFER_PERCENT = 10;
+     24          /**************************************************************************
+     25           *                                  Types
+     26           **************************************************************************/
+     27          /**************************************************************************
+     28           *                                  Variables
+     29           **************************************************************************/
+     30          int sol1Start;
+     31          int sol1Stop;
+     32          int sol2Start;
+     33          int sol2Stop;
+     34          int periodSol;
+     35          int voltage;
+     36          
+     37          int tSinceTick;
+     38          /**************************************************************************
+     39           *                                  Prototypes
+     40           **************************************************************************/
+     41          
+     42          /**************************************************************************
+     43           *                                  Global Functions
+     44           **************************************************************************/
+     45          void SolenoidInit() {
+     46               SetSolenoidParam(DEFAULT_VOLTS, DEFAULT_PERIOD);
+     47          }
+     48          
+     49          void SolenoidUpdate() {
+     50            
+     51            // update solenoid outputs
+     52            tSinceTick = GetTimeSinceTick();
+     53            
+     54            /* Testing123 */
+     55            LcdSetPos(0,0);
+     56            LcdPrintf("%d", tSinceTick);
+     57            LcdSetPos(1,0);
+     58            LcdPrintf("%d %d %d %d", sol1Start, sol1Stop, sol2Start, sol2Stop);
+     59            /* Testing123 */
+     60            
+     61            if ( sol1Start<tSinceTick && tSinceTick<sol1Stop ) {
+     62              LedOn(LED_GREEN);
+     63              LedOff(LED_ORANGE);
+     64            } else if ( sol2Start<tSinceTick && tSinceTick<sol2Stop ) {
+     65              LedOn(LED_ORANGE);
+     66              LedOff(LED_GREEN);
+     67            } else {
+     68              LedOff(LED_GREEN);
+     69              LedOn(LED_ORANGE);
+     70            }
+     71            //LedUpdate();
+     72          }
+     73          
+     74          void SetSolenoidParam(int volts, int periodMs) {
+     75            periodSol = periodMs;
+     76            voltage = volts;
+     77            
+     78              // initialize variables
+     79            sol1Start = (int)(periodSol*BUFFER_PERCENT/100);
+     80            sol1Stop = (int)(periodSol*(0.5-BUFFER_PERCENT/100));
+     81            sol2Start = (int)(periodSol*(0.5+BUFFER_PERCENT/100));
+     82            sol2Stop = (int)(periodSol*(1-BUFFER_PERCENT/100));
+     83          }
+     84          /**************************************************************************
+     85           *                                 Private Functions
+     86           **************************************************************************/
+     87          
 
    Maximum stack usage in bytes:
 
@@ -140,11 +149,19 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\solenoid.c
         24   -> __aeabi_dadd
         24   -> __aeabi_dmul
         24   -> __aeabi_dsub
+        24   -> __aeabi_f2d
+        24   -> __aeabi_f2iz
+        24   -> __aeabi_fdiv
+        24   -> __aeabi_fmul
+        24   -> __aeabi_fsub
         24   -> __aeabi_i2d
+        24   -> __aeabi_i2f
        8   SolenoidInit
          8   -> SetSolenoidParam
        8   SolenoidUpdate
          8   -> GetTimeSinceTick
+         8   -> LcdPrintf
+         8   -> LcdSetPos
          8   -> LedOff
          8   -> LedOn
 
@@ -153,9 +170,14 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\solenoid.c
 
    Bytes  Function/Label
    -----  --------------
+      12  ?<Constant "%d %d %d %d">
+       4  ?<Constant "%d">
        4  ??DataTable2
        4  ??DataTable2_1
        4  ??DataTable2_10
+       4  ??DataTable2_11
+       4  ??DataTable2_12
+       4  ??DataTable2_13
        4  ??DataTable2_2
        4  ??DataTable2_3
        4  ??DataTable2_4
@@ -167,9 +189,9 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\solenoid.c
        4  BUFFER_PERCENT
        4  DEFAULT_PERIOD
        4  DEFAULT_VOLTS
-     164  SetSolenoidParam
+     194  SetSolenoidParam
       16  SolenoidInit
-     100  SolenoidUpdate
+     150  SolenoidUpdate
        4  periodSol
        4  sol1Start
        4  sol1Stop
@@ -181,10 +203,12 @@ C:\Users\Quinn\Documents\GitHub\motor-project\src\drivers\solenoid.c
  
   32 bytes in section .bss
    8 bytes in section .data
- 324 bytes in section .text
+  16 bytes in section .rodata
+ 416 bytes in section .text
  
- 324 bytes of CODE memory
-  40 bytes of DATA memory
+ 416 bytes of CODE  memory
+  16 bytes of CONST memory
+  40 bytes of DATA  memory
 
 Errors: none
 Warnings: none
